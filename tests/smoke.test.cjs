@@ -62,7 +62,7 @@ test('PWA manifest and service worker are wired', () => {
 });
 
 test('stable version is visible in page footer', () => {
-  assert.ok(html.includes('정식 버전 v0.4.0'));
+  assert.ok(html.includes('정식 버전 V1.01'));
 });
 
 test('service worker serves cached homepage when navigation is offline', async () => {
