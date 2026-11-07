@@ -60,3 +60,7 @@ test('PWA manifest and service worker are wired', () => {
   assert.ok(icon.includes('<svg'));
   assert.ok(sw.includes("request.mode==='navigate'"));
 });
+
+test('development version is visible in page footer', () => {
+  assert.ok(html.includes('개발 시제품 v0.4.0-beta'));
+});
