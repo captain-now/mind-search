@@ -64,3 +64,64 @@ test('PWA manifest and service worker are wired', () => {
 test('development version is visible in page footer', () => {
   assert.ok(html.includes('개발 시제품 v0.4.0-beta'));
 });
+
+test('service worker serves cached homepage when navigation is offline', async () => {
+  const sw = fs.readFileSync('sw.js', 'utf8');
+  const handlers = {};
+  const scope = 'https://example.test/mind-search/';
+  const offlinePage = { status: 200, text: async () => '<html>offline-ready</html>' };
+  const cache = {
+    addAll: async () => {},
+    put: async () => {},
+  };
+  const context = {
+    self: {
+      location: { origin: 'https://example.test' },
+      registration: { scope },
+      addEventListener: (type, handler) => { handlers[type] = handler; },
+      skipWaiting: async () => {},
+      clients: { claim: async () => {} },
+    },
+    caches: {
+      open: async () => cache,
+      keys: async () => [],
+      delete: async () => true,
+      match: async request => request === './index.html' ? offlinePage : undefined,
+    },
+    fetch: async () => { throw new Error('offline'); },
+    URL,
+    Response: { error: () => ({ status: 0 }) },
+  };
+  vm.runInNewContext(sw, context);
+  assert.equal(typeof handlers.fetch, 'function');
+  let responsePromise;
+  handlers.fetch({
+    request: { method: 'GET', url: scope, mode: 'navigate' },
+    respondWith: promise => { responsePromise = promise; },
+    waitUntil: () => {},
+  });
+  assert.ok(responsePromise, 'Navigation should be intercepted');
+  const response = await responsePromise;
+  assert.equal(await response.text(), '<html>offline-ready</html>');
+});
+
+test('service worker does not intercept non-GET or cross-origin requests', () => {
+  const sw = fs.readFileSync('sw.js', 'utf8');
+  const handlers = {};
+  vm.runInNewContext(sw, {
+    self: {
+      location: { origin: 'https://example.test' },
+      registration: { scope: 'https://example.test/mind-search/' },
+      addEventListener: (type, handler) => { handlers[type] = handler; },
+    },
+    URL,
+  });
+  let intercepted = 0;
+  for (const request of [
+    { method: 'POST', url: 'https://example.test/mind-search/', mode: 'navigate' },
+    { method: 'GET', url: 'https://external.test/', mode: 'navigate' },
+  ]) {
+    handlers.fetch({ request, respondWith: () => { intercepted++; } });
+  }
+  assert.equal(intercepted, 0);
+});
