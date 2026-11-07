@@ -125,3 +125,34 @@ test('service worker does not intercept non-GET or cross-origin requests', () =>
   }
   assert.equal(intercepted, 0);
 });
+
+test('backup validator accepts valid data and rejects malformed or oversized records', () => {
+  const begin = script.indexOf('function validBackup(v)');
+  const end = script.indexOf("$('backup').onclick", begin);
+  assert.ok(begin >= 0 && end > begin, 'Backup validator not found');
+  const validBackup = vm.runInNewContext(script.slice(begin, end) + ';validBackup', {});
+  const good = {
+    format: 'mind-search-backup',
+    version: 1,
+    data: {
+      sessions: ['2026-11-08T00:00:00.000Z'],
+      entries: [{ time: '2026-11-08T00:00:00.000Z', text: 'test entry' }],
+      tasks: { '2026-11-08': [0, 9] },
+    },
+  };
+  const clone = value => JSON.parse(JSON.stringify(value));
+  assert.equal(validBackup(good), true);
+  for (const mutate of [
+    v => { v.version = 999; },
+    v => { v.data.sessions = ['invalid-date']; },
+    v => { v.data.entries[0].text = 'x'.repeat(5001); },
+    v => { v.data.tasks['2026-11-08'] = [10]; },
+    v => { v.data.tasks['bad-key'] = [0]; },
+    v => { v.data.tasks = []; },
+    v => { v.data.entries = null; },
+  ]) {
+    const invalid = clone(good);
+    mutate(invalid);
+    assert.equal(validBackup(invalid), false);
+  }
+});
