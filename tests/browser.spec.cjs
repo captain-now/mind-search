@@ -80,3 +80,25 @@ test('invalid backup cannot overwrite existing journal', async ({ page }) => {
   await page.reload();
   await expect(page.locator('#entries')).toContainText(original);
 });
+
+test('TXT export downloads saved journal', async ({ page }) => {
+  const message = 'TXT 내보내기 확인';
+  await page.locator('#journalArea').fill(message);
+  await page.locator('#save').click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator('#export').click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('mind-search-journal.txt');
+  const fs = require('node:fs');
+  expect(fs.readFileSync(await download.path(), 'utf8')).toContain(message);
+});
+
+test('timer catches up after background and records completed session', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-11-08T09:00:00') });
+  await page.locator('#start').click();
+  await page.clock.fastForward('30:00');
+  await expect(page.locator('#sessions')).toHaveText('1회');
+  await expect(page.locator('#clock')).toHaveText('00:00');
+  await page.reload();
+  await expect(page.locator('#sessions')).toHaveText('1회');
+});
