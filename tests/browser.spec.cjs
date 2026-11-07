@@ -35,6 +35,7 @@ test('timer starts and can be paused and reset', async ({ page }) => {
   await expect(page.locator('#clock')).toHaveText('30:00');
   await page.locator('#start').click();
   await expect(page.locator('#start')).toContainText('일시정지');
+  await expect(page.locator('#clock')).not.toHaveText('30:00', { timeout: 5000 });
   await page.locator('#start').click();
   await expect(page.locator('#start')).toContainText('계속하기');
   await page.locator('#reset').click();
