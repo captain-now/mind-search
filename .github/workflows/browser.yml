@@ -1,0 +1,28 @@
+name: Browser validation
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop]
+    paths:
+      - 'index.html'
+      - 'tests/browser.spec.cjs'
+      - '.github/workflows/browser.yml'
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  browser-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright test runner
+        run: npm install --no-save @playwright/test@1.58.2
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run real browser tests
+        run: npx playwright test tests/browser.spec.cjs --browser=chromium --reporter=line
