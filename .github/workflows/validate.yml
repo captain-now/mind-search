@@ -1,5 +1,6 @@
 name: Validate mind search
 on:
+  workflow_dispatch:
   push:
     branches: [develop]
   pull_request:
