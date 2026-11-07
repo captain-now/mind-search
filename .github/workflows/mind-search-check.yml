@@ -1,0 +1,28 @@
+name: Mind Search Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check website
+        shell: bash
+        run: |
+          test -s index.html || { echo 'index.html missing'; exit 1; }
+          grep -qi '<html' index.html || exit 1
+          grep -qi '</html>' index.html || exit 1
+          if grep -En 'AIza[[:alnum:]_-]{30,}' index.html; then
+            echo 'Potential Google API key detected'
+            exit 1
+          fi
+          echo 'Mind Search basic checks passed'
