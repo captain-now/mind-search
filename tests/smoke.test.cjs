@@ -28,3 +28,22 @@ test('timer uses absolute deadline and handles failed persistence', () => {
   assert.ok(script.includes('Math.ceil((deadline-Date.now())/1000)'));
   assert.ok(script.includes('if(!persist()){data.sessions.pop()'));
 });
+
+test('backup and restore controls exist', () => {
+  for (const id of ['backup', 'restore', 'restoreFile']) {
+    assert.ok(html.includes('id="' + id + '"'), 'Missing element: ' + id);
+  }
+});
+
+test('backup schema and confirmation are present', () => {
+  assert.ok(script.includes("format:'mind-search-backup'"));
+  assert.ok(script.includes('version:1'));
+  assert.ok(script.includes('function validBackup(v)'));
+  assert.ok(script.includes('window.confirm('));
+});
+
+test('restore rejects malformed data and rolls back failed saves', () => {
+  assert.ok(script.includes('if(!validBackup(parsed))'));
+  assert.ok(script.includes('if(!persist()){data=previous;return}'));
+  assert.ok(script.includes('file.size>10*1024*1024'));
+});
