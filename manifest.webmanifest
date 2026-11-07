@@ -1,0 +1,19 @@
+{
+  "name": "mind search · 지금이 기적이다",
+  "short_name": "mind search",
+  "description": "마음챙김 수행과 마음 일지",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f0f2fb",
+  "theme_color": "#e9edf9",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
