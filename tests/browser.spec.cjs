@@ -41,3 +41,42 @@ test('timer starts and can be paused and reset', async ({ page }) => {
   await page.locator('#reset').click();
   await expect(page.locator('#clock')).toHaveText('30:00');
 });
+
+test('cancelled restore preserves existing journal', async ({ page }) => {
+  const original = '기존 기록은 유지되어야 합니다';
+  await page.locator('#journalArea').fill(original);
+  await page.locator('#save').click();
+  const backup = {
+    format: 'mind-search-backup',
+    version: 1,
+    data: {
+      sessions: [],
+      entries: [{ time: new Date().toISOString(), text: '덮어쓸 기록' }],
+      tasks: {},
+    },
+  };
+  page.once('dialog', dialog => dialog.dismiss());
+  await page.locator('#restoreFile').setInputFiles({
+    name: 'backup.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(backup)),
+  });
+  await expect(page.locator('#entries')).toContainText(original);
+  await expect(page.locator('#entries')).not.toContainText('덮어쓸 기록');
+  await page.reload();
+  await expect(page.locator('#entries')).toContainText(original);
+});
+
+test('invalid backup cannot overwrite existing journal', async ({ page }) => {
+  const original = '안전하게 남는 일지';
+  await page.locator('#journalArea').fill(original);
+  await page.locator('#save').click();
+  await page.locator('#restoreFile').setInputFiles({
+    name: 'invalid.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from('{"format":"mind-search-backup","version":99,"data":{}}'),
+  });
+  await expect(page.locator('#entries')).toContainText(original);
+  await page.reload();
+  await expect(page.locator('#entries')).toContainText(original);
+});
