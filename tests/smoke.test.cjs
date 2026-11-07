@@ -47,3 +47,16 @@ test('restore rejects malformed data and rolls back failed saves', () => {
   assert.ok(script.includes('if(!persist()){data=previous;return}'));
   assert.ok(script.includes('file.size>10*1024*1024'));
 });
+
+test('PWA manifest and service worker are wired', () => {
+  const manifest = JSON.parse(fs.readFileSync('manifest.webmanifest', 'utf8'));
+  const sw = fs.readFileSync('sw.js', 'utf8');
+  const icon = fs.readFileSync('icons/icon.svg', 'utf8');
+  assert.equal(manifest.display, 'standalone');
+  assert.equal(manifest.start_url, './');
+  assert.ok(html.includes('rel="manifest"'));
+  assert.ok(script.includes('navigator.serviceWorker.register("./sw.js")'));
+  assert.doesNotThrow(() => new vm.Script(sw));
+  assert.ok(icon.includes('<svg'));
+  assert.ok(sw.includes("request.mode==='navigate'"));
+});
