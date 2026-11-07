@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://captain-now.github.io/mind-search/sitemap.xml
