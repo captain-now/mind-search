@@ -158,4 +158,4 @@ comments.append(form);article.append(comments);postsEl.append(article)
 document.getElementById('boardForm').onsubmit=e=>{e.preventDefault();const name=document.getElementById('boardName').value.trim(),title=document.getElementById('boardTitle').value.trim(),body=document.getElementById('boardBody').value.trim();if(!name||!title||!body)return;if(posts.length>=200)return alert('이 기기의 게시글 한도(200개)에 도달했습니다.');const post={id:crypto.randomUUID(),name,title,body,time:new Date().toISOString(),comments:[]};posts.push(post);if(!save()){posts.pop();return}document.getElementById('boardTitle').value='';document.getElementById('boardBody').value='';render()};
 render();
 })();
-</script></body></html>
+</script><script src="./public-board.js" defer></script></body></html>
