@@ -73,7 +73,7 @@ async function setupLinkControls(){
  if(registeredNickname){
   const deletion=el('details');deletion.style.cssText='margin-top:16px;border-top:1px solid #cbd9cf;padding-top:12px';
   const summary=el('summary','고유 닉네임 / 계정 삭제');summary.style.cursor='pointer';deletion.append(summary);
-  const description=el('p','닉네임만 삭제하면 기존 게시글·댓글·채팅은 남고 이름을 다시 등록할 수 있습니다. 전체 삭제는 게시글·댓글·채팅과 익명 계정까지 영구 삭제합니다. 원래 닉네임을 만든 앱에서만 삭제할 수 있습니다.');
+  const description=el('p','닉네임만 삭제하면 기존 게시글·댓글·채팅은 남고 이름을 다시 등록할 수 있습니다. 계정 전체 삭제는 관리자에게 신청하며, 관리자가 승인하면 게시글·댓글·채팅과 익명 계정까지 영구 삭제됩니다. 원래 닉네임을 만든 앱에서만 삭제할 수 있습니다.');
   deletion.append(description);
   const nickBtn=el('button','고유 닉네임만 삭제');nickBtn.type='button';
   nickBtn.onclick=async()=>{
@@ -83,14 +83,14 @@ async function setupLinkControls(){
    nickBtn.disabled=true;
    try{const r=await client.rpc('board_delete_nickname',{p_confirmation:typed});if(r.error)throw r.error;location.reload()}catch(e){setStatus('닉네임 삭제 실패: '+e.message);nickBtn.disabled=false}
   };
-  const allBtn=el('button','계정 및 모든 기록 영구 삭제');allBtn.type='button';allBtn.style.cssText='margin-left:8px;background:#9b2636;color:white';
+  const allBtn=el('button','관리자에게 계정 삭제 신청');allBtn.type='button';allBtn.style.cssText='margin-left:8px;background:#8d4d36;color:white';
   allBtn.onclick=async()=>{
-   const expected='계정삭제 '+registeredNickname;
-   const typed=prompt('복구할 수 없습니다. 게시글·댓글·채팅·계정이 모두 삭제됩니다. 계속하려면 정확히 입력하세요: '+expected);
+   const expected='계정삭제 신청 '+registeredNickname;
+   const typed=prompt('관리자에게 계정 및 모든 기록 삭제를 신청합니다. 관리자가 승인하면 복구할 수 없습니다. 확인 문구: '+expected);
    if(typed!==expected)return;
-   if(!confirm('마지막 확인: 모든 기록과 계정을 영구 삭제할까요?'))return;
+   if(!confirm('계정 삭제 신청을 관리자에게 제출할까요? 제출 즉시 삭제되지는 않습니다.'))return;
    allBtn.disabled=true;
-   try{const r=await client.rpc('board_delete_account',{p_confirmation:typed});if(r.error)throw r.error;await client.auth.signOut({scope:'local'});location.reload()}catch(e){setStatus('전체 삭제 실패: '+e.message);allBtn.disabled=false}
+   try{const r=await client.rpc('board_request_account_deletion',{p_confirmation:typed});if(r.error)throw r.error;setStatus('계정 삭제 신청이 접수됐습니다. 관리자가 확인한 뒤 처리합니다.');allBtn.textContent='계정 삭제 신청 접수됨'}catch(e){setStatus('계정 삭제 신청 실패: '+e.message);allBtn.disabled=false}
   };
   deletion.append(nickBtn,allBtn);panel.append(deletion);
  }
