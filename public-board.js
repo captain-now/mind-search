@@ -171,8 +171,9 @@ async function refresh(){
  reply.onsubmit=async e=>{e.preventDefault();const body=input.value.trim();if(!body)return;submit.disabled=true;try{const r=await client.from('board_comments').insert({post_id:p.id,author_id:user.id,nickname:registeredNickname,body});if(r.error)throw r.error;await refresh()}catch(err){setStatus('댓글 작성 실패: '+err.message)}finally{submit.disabled=false}};
  replies.append(reply);article.append(replies);postsEl.append(article);
  }
- if(!posts.data.length)postsEl.append(el('p','아직 글이 없습니다.'));
- setStatus('공개 게시판 연결됨 · 최근 글 50개');
+ if(!pagePosts.length)postsEl.append(el('p',currentPage?'이 페이지에는 글이 없습니다. 최신 글로 돌아가 주세요.':'아직 글이 없습니다.'));
+ postsEl.append(pageControls(hasMore));
+ setStatus('공개 게시판 연결됨 · '+(currentPage+1)+'페이지 · 페이지당 최대 50개');
  }catch(e){setStatus('게시판 불러오기 실패: '+e.message)}finally{loading=false}
 }
 async function init(){
