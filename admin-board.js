@@ -139,16 +139,20 @@ byId('loginForm').onsubmit=async event=>{
 };
 byId('changeCodeForm').addEventListener('submit',async e=>{
  e.preventDefault();
+ const notice=byId('changeCodeStatus');
+ const showResult=text=>{notice.textContent=text;msg(text)};
+ notice.textContent='';
  const form=e.currentTarget,button=form.querySelector('button');
  const current=byId('currentAdminCode').value,next=byId('newAdminCode').value;
- if(next!==byId('confirmAdminCode').value){msg('새 코드 확인이 일치하지 않습니다.');return}
- if(next.length!==12||!/[A-Za-z]/.test(next)||!/[0-9]/.test(next)||!/[^A-Za-z0-9]/.test(next)){msg('새 코드는 영문, 숫자, 특수문자를 포함한 12자리여야 합니다.');return}
+ if(next!==byId('confirmAdminCode').value){showResult('새 코드 확인이 일치하지 않습니다.');return}
+ if(next.length!==12||!/[A-Za-z]/.test(next)||!/[0-9]/.test(next)||!/[^A-Za-z0-9]/.test(next)){showResult('새 코드는 영문, 숫자, 특수문자를 포함한 12자리여야 합니다.');return}
  button.disabled=true;
  try{
   const r=await client.rpc('board_admin_change_access_code',{p_current:current,p_new:next});
   if(r.error)throw r.error;
-  form.reset();msg('운영자 코드가 변경되었습니다.');
- }catch(err){msg('변경 실패: '+err.message)}
+  if(r.data!==true)throw Error('변경 결과를 확인할 수 없습니다.');
+  form.reset();showResult('✓ 운영자 비밀번호 변경 성공! 다음 로그인부터 새 코드를 사용하세요.');
+ }catch(err){showResult('비밀번호 변경 실패: '+err.message)}
  finally{button.disabled=false}
 });
 byId('refresh').onclick=async()=>{try{await refresh();await refreshDeletions()}catch(e){msg('목록 조회 실패: '+e.message)}};
