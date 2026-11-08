@@ -12,10 +12,35 @@ async function authorized(){
  if(r.error)throw r.error;
  return r.data===true;
 }
+const turnstileSiteKey='0x4AAAAAAF4XQ_wl1XONk2be';
+let captchaToken=null,captchaWidget=null;
+function loadCaptcha(){
+ const start=()=>{
+  if(!window.turnstile)return;
+  captchaWidget=window.turnstile.render('#adminCaptcha',{
+   sitekey:turnstileSiteKey,
+   callback:token=>{captchaToken=token;},
+   'expired-callback':()=>{captchaToken=null;},
+   'error-callback':()=>{captchaToken=null;msg('보안 인증을 완료해 주세요.')}
+  });
+ };
+ if(window.turnstile){start();return}
+ const script=document.createElement('script');
+ script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+ script.onload=start;
+ script.onerror=()=>msg('보안 인증 화면을 불러오지 못했습니다. 새로고침해 주세요.');
+ document.head.append(script);
+}
+function resetCaptcha(){
+ captchaToken=null;
+ if(window.turnstile&&captchaWidget!==null)window.turnstile.reset(captchaWidget);
+}
 async function ensureSession(){
  const {data}=await client.auth.getUser();
  if(data?.user)return;
- const r=await client.auth.signInAnonymously();
+ if(!captchaToken)throw Error('먼저 보안 인증을 완료해 주세요.');
+ const r=await client.auth.signInAnonymously({options:{captchaToken}});
+ resetCaptcha();
  if(r.error)throw r.error;
 }
 async function refresh(){
@@ -89,9 +114,9 @@ byId('loginForm').onsubmit=async event=>{
   if(result.error)throw result.error;
   if(result.data!==true)throw Error('코드가 틀렸거나 입력 제한에 걸렸습니다. 15분 후 다시 시도할 수 있습니다.');
   byId('adminCode').value='';await show();
- }catch(e){msg('로그인 실패: '+e.message)}finally{button.disabled=false}
+ }catch(e){msg('로그인 실패: '+e.message);if(captchaToken)resetCaptcha()}finally{button.disabled=false}
 };
 byId('refresh').onclick=async()=>{try{await refresh();await refreshDeletions()}catch(e){msg('목록 조회 실패: '+e.message)}};
 byId('logout').onclick=async()=>{await client.rpc('board_admin_code_logout');await client.auth.signOut();reportsEl.replaceChildren();await show()};
-show();
+show();loadCaptcha();
 })();
