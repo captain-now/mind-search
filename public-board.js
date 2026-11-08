@@ -77,51 +77,6 @@ async function setupNickname(){
  };
 }
 
-function accountAccess(){
- const panel=el('section');panel.className='card';panel.style.cssText='margin:16px 0;padding:14px;border:1px solid #8aa99a;border-radius:12px';
- panel.append(el('h3','🔐 앱 · 브라우저 계정 연동'));
- const description=el('p','기존 닉네임을 유지하려면 앱에서 이메일을 연결한 다음, 인터넷 브라우저에서 같은 이메일로 로그인하세요. 닉네임을 새로 등록하지 마세요.');
- panel.append(description);
- const note=el('p');note.setAttribute('role','status');note.style.cssText='font-size:13px;white-space:pre-wrap';
- const email=el('input');email.type='email';email.className='field';email.placeholder='본인 이메일';email.autocomplete='email';email.required=true;
- const password=el('input');password.type='password';password.className='field';password.placeholder='비밀번호 (8자 이상)';password.autocomplete='new-password';password.minLength=8;password.required=true;
- const emailForm=el('form');const emailBtn=el('button','① 기존 계정에 이메일 연결');emailBtn.type='submit';emailForm.append(email,emailBtn);
- const passwordForm=el('form');const passwordBtn=el('button','② 이메일 인증 후 비밀번호 설정');passwordBtn.type='submit';passwordForm.append(password,passwordBtn);
- const loginForm=el('form');const loginEmail=el('input');loginEmail.type='email';loginEmail.className='field';loginEmail.placeholder='연결한 이메일';loginEmail.autocomplete='email';loginEmail.required=true;
- const loginPassword=el('input');loginPassword.type='password';loginPassword.className='field';loginPassword.placeholder='설정한 비밀번호';loginPassword.autocomplete='current-password';loginPassword.required=true;
- const loginBtn=el('button','기존 계정으로 로그인');loginBtn.type='submit';loginForm.append(loginEmail,loginPassword,loginBtn);
- const existing=!!registeredNickname;
- if(existing){
-  panel.append(el('p','현재 닉네임: '+registeredNickname+' · 반드시 이 닉네임이 표시되는 앱에서 연결하세요.'));
-  panel.append(emailForm,passwordForm);
- }else{
-  panel.append(el('p','이미 앱에 닉네임이 있다면 여기서 새 닉네임을 만들지 말고, 앱에서 이메일 연결을 먼저 완료하세요.'));
-  panel.append(loginForm);
- }
- panel.append(note);root.insertBefore(panel,form);
- emailForm.onsubmit=async e=>{e.preventDefault();emailBtn.disabled=true;try{
-  const current=await client.auth.getUser();if(current.error)throw current.error;
-  if(!current.data.user||current.data.user.id!==user.id||!registeredNickname)throw Error('기존 닉네임 소유자 계정에서만 연결할 수 있습니다.');
-  if(current.data.user.email)throw Error('이미 이메일이 연결돼 있습니다. 인증 후 비밀번호를 설정하세요.');
-  const result=await client.auth.updateUser({email:email.value.trim()});if(result.error)throw result.error;
-  note.textContent='인증 메일을 보냈습니다. 이메일 인증을 완료한 뒤 이 앱으로 돌아와 ② 비밀번호 설정을 진행하세요.';
- }catch(err){note.textContent='이메일 연결 실패: '+err.message}finally{emailBtn.disabled=false}};
- passwordForm.onsubmit=async e=>{e.preventDefault();passwordBtn.disabled=true;try{
-  const current=await client.auth.getUser();if(current.error)throw current.error;
-  if(!current.data.user?.email_confirmed_at)throw Error('먼저 이메일 인증을 완료해 주세요.');
-  if(current.data.user.id!==user.id)throw Error('계정이 변경되었습니다. 진행을 중단합니다.');
-  const result=await client.auth.updateUser({password:password.value});if(result.error)throw result.error;
-  password.value='';note.textContent='연결 완료! 이제 인터넷 브라우저의 게시판에서 같은 이메일과 비밀번호로 로그인하세요.';
- }catch(err){note.textContent='비밀번호 설정 실패: '+err.message}finally{passwordBtn.disabled=false}};
- loginForm.onsubmit=async e=>{e.preventDefault();loginBtn.disabled=true;try{
-  const result=await client.auth.signInWithPassword({email:loginEmail.value.trim(),password:loginPassword.value});if(result.error)throw result.error;
-  const profile=await client.from('board_profiles').select('nickname').eq('user_id',result.data.user.id).maybeSingle();
-  if(profile.error)throw profile.error;
-  if(!profile.data){await client.auth.signOut();throw Error('이 계정에는 기존 닉네임이 없습니다. 앱에서 연결한 이메일인지 확인해 주세요.')}
-  location.reload();
- }catch(err){note.textContent='로그인 실패: '+err.message}finally{loginBtn.disabled=false}};
-}
-
 async function remove(table,id){if(!confirm('정말 삭제할까요?'))return;const result=await client.from(table).delete().eq('id',id).eq('author_id',user.id);if(result.error)throw result.error;await refresh()}
 function addDelete(container,table,item){if(item.author_id!==user.id)return;const btn=el('button','내 글 삭제');btn.type='button';btn.onclick=async()=>{try{await remove(table,item.id)}catch(e){setStatus('삭제 실패: '+e.message)}};container.append(btn)}
 let activeReportDialog=null;
@@ -238,7 +193,6 @@ async function refresh(){
 async function init(){
  try{user=await ensureUser();if(!user)throw Error('익명 인증에 실패했습니다.');
  await setupNickname();
- accountAccess();
  // Enable posting only after remote authentication succeeds.
  form.hidden=!registeredNickname;
  form.onsubmit=async e=>{e.preventDefault();const nickname=registeredNickname,title=titleInput.value.trim(),body=bodyInput.value.trim();if(!nickname||!title||!body)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const r=await client.from('board_posts').insert({author_id:user.id,nickname,title,body});if(r.error)throw r.error;titleInput.value='';bodyInput.value='';currentPage=0;await refresh()}catch(err){setStatus('글 작성 실패: '+err.message)}finally{submit.disabled=false}};
