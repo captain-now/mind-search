@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 const config={url:'https://iqohtsakhfnwtlbarjut.supabase.co',anonKey:'sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w'};
-const client=window.supabase.createClient(config.url,config.anonKey,{auth:{storageKey:'mind-search-admin-auth',persistSession:true,autoRefreshToken:true}});
+const client=window.supabase.createClient(config.url,config.anonKey,{auth:{storageKey:'mind-search-admin-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'implicit'}});
 const byId=id=>document.getElementById(id),login=byId('login'),dashboard=byId('dashboard'),status=byId('status'),reportsEl=byId('reports');
 function msg(value){status.textContent=value}
 function el(tag,text){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n}
@@ -79,10 +79,47 @@ byId('loginForm').onsubmit=async event=>{
   });
   if(result.error)throw result.error;
   msg('로그인 메일을 보냈습니다. 메일함에서 최신 로그인 링크를 열어 주세요.');
- }catch(e){msg('로그인 링크 요청 실패: '+e.message)}
+ }catch(e){const limited=/rate limit|too many requests|429/i.test(e.message||'');msg(limited?'이메일 발송 한도에 도달했습니다. 지금은 다시 요청하지 마세요. 발송 제한이 풀린 뒤 한 번만 시도해 주세요.':'로그인 링크 요청 실패: '+e.message)}
  finally{button.disabled=false;captchaToken=null;if(widgetId!==null&&window.turnstile)window.turnstile.reset(widgetId)}
 };
 byId('refresh').onclick=()=>refresh().catch(e=>msg('신고 조회 실패: '+e.message));
 byId('logout').onclick=async()=>{await client.auth.signOut();reportsEl.replaceChildren();await show()};
-show();setupCaptcha().catch(e=>msg(e.message));
+let authReady=false;
+let showing=false;
+async function renderAuth(){
+ if(showing)return;
+ showing=true;
+ try{await show()}finally{showing=false}
+}
+async function initialize(){
+ const query=new URLSearchParams(window.location.search);
+ const fragment=new URLSearchParams(window.location.hash.replace(/^#/,''));
+ const error=query.get('error_description')||fragment.get('error_description');
+ if(error){msg('인증 링크 오류: '+error+'. 새 링크는 발송 제한이 풀린 후 요청해 주세요.');}
+ else if(query.has('code')){
+  msg('이메일 인증을 처리하고 있습니다...');
+  const result=await client.auth.exchangeCodeForSession(query.get('code'));
+  if(result.error)msg('이메일 인증 실패: '+result.error.message);
+  else window.history.replaceState(null,'',window.location.pathname);
+ }else if(fragment.has('access_token')&&fragment.has('refresh_token')){
+  msg('이메일 인증을 처리하고 있습니다...');
+  const result=await client.auth.setSession({access_token:fragment.get('access_token'),refresh_token:fragment.get('refresh_token')});
+  if(result.error)msg('이메일 인증 실패: '+result.error.message);
+  else window.history.replaceState(null,'',window.location.pathname);
+ }
+ const session=await client.auth.getSession();
+ if(session.error)msg('세션 확인 실패: '+session.error.message);
+ authReady=true;
+ await renderAuth();
+ if(!dashboard.hidden)return;
+ setupCaptcha().catch(e=>msg(e.message));
+}
+client.auth.onAuthStateChange((event)=>{
+ if(!authReady)return;
+ if(event==='SIGNED_IN'||event==='SIGNED_OUT'||event==='TOKEN_REFRESHED'){
+  // Defer queries outside the auth event callback to avoid auth-client deadlocks.
+  setTimeout(()=>renderAuth().catch(e=>msg('인증 상태 확인 실패: '+e.message)),0);
+ }
+});
+initialize().catch(e=>msg('인증 처리 실패: '+e.message));
 })();
