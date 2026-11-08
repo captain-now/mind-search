@@ -149,7 +149,9 @@ async function refresh(){
  if(profileResult.error)throw profileResult.error;
  const verifiedNames=new Map(profileResult.data.map(p=>[p.user_id,p.nickname]));
  const displayName=item=>verifiedNames.get(item.author_id)===item.nickname?item.nickname+' · 고유 닉네임':item.nickname+' · 이전 기록(미인증)';
- const hasMore=posts.data.length>POSTS_PER_PAGE;\n const pagePosts=posts.data.slice(0,POSTS_PER_PAGE);\n const ids=pagePosts.map(p=>p.id);
+ const hasMore=posts.data.length>POSTS_PER_PAGE;
+ const pagePosts=posts.data.slice(0,POSTS_PER_PAGE);
+ const ids=pagePosts.map(p=>p.id);
  const comments=ids.length?await client.from('board_comments').select('id,post_id,author_id,nickname,body,created_at').in('post_id',ids).order('created_at',{ascending:true}).limit(500):{data:[],error:null};
  if(comments.error)throw comments.error;
  postsEl.replaceChildren();
