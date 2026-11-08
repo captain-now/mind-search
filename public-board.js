@@ -75,9 +75,10 @@ async function refresh(){
  addDelete(line,'board_comments',c);replies.append(line);
  }
  const reply=el('form');reply.className='board-comment-form';
+ const replyName=el('input');replyName.className='field';replyName.maxLength=30;replyName.placeholder='댓글 별명 (미입력 시 익명)';replyName.setAttribute('aria-label','댓글 작성자 별명');
  const input=el('input');input.className='field';input.required=true;input.maxLength=500;input.placeholder='댓글';
- const submit=el('button','댓글 달기');submit.type='submit';reply.append(input,submit);
- reply.onsubmit=async e=>{e.preventDefault();const body=input.value.trim();if(!body)return;submit.disabled=true;try{const r=await client.from('board_comments').insert({post_id:p.id,author_id:user.id,nickname:nameInput.value.trim()||'익명',body});if(r.error)throw r.error;await refresh()}catch(err){setStatus('댓글 작성 실패: '+err.message)}finally{submit.disabled=false}};
+ const submit=el('button','댓글 달기');submit.type='submit';reply.append(replyName,input,submit);
+ reply.onsubmit=async e=>{e.preventDefault();const body=input.value.trim();if(!body)return;submit.disabled=true;try{const r=await client.from('board_comments').insert({post_id:p.id,author_id:user.id,nickname:replyName.value.trim()||'익명',body});if(r.error)throw r.error;await refresh()}catch(err){setStatus('댓글 작성 실패: '+err.message)}finally{submit.disabled=false}};
  replies.append(reply);article.append(replies);postsEl.append(article);
  }
  if(!posts.data.length)postsEl.append(el('p','아직 글이 없습니다.'));
