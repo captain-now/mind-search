@@ -94,7 +94,7 @@ const btn=document.createElement('select');btn.id='languageToggle';btn.setAttrib
 for(const [code,label] of [['ko','🇰🇷 한국어'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語']]){const o=document.createElement('option');o.value=code;o.textContent=label;btn.append(o)}
 const languageSlot=document.getElementById('languageSlot');if(languageSlot)languageSlot.appendChild(btn);else{const nav=document.querySelector('.nav');nav.parentNode.insertBefore(btn,nav)}
 function translate(value){
- const match=value.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);if(!match)return value;
+ const match=value.match(/^(\s*)([\s\S]*?)(\s*)$/);if(!match)return value;
  let core=match[2],prefix='';if(!core)return value;
  const task=core.match(/^([✓○] )(.*)$/);if(task){prefix=task[1];core=task[2]}
  let ko=allReverse.get(core)||core;
