@@ -61,8 +61,8 @@ test('PWA manifest and service worker are wired', () => {
   assert.ok(sw.includes("request.mode==='navigate'"));
 });
 
-test('stable version is visible in page footer', () => {
-  assert.ok(html.includes('정식 버전 V1.01'));
+test('release or clearly labeled development version is visible in page footer', () => {
+  assert.ok(html.includes('정식 버전 V1.01') || (html.includes('V1.02 REBIRTH 개발 시제품') && html.includes('정식 V1.01 및 기존 NOW V34 운영 데이터는 변경하지 않았습니다.')));;
 });
 
 test('service worker serves cached homepage when navigation is offline', async () => {
