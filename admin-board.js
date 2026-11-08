@@ -63,9 +63,34 @@ async function refresh(){
   reportsEl.append(article);
  }
 }
+async function refreshDeletions(){
+ const holder=byId('deletionRequests');
+ const r=await client.rpc('board_admin_list_deletion_requests');
+ if(r.error)throw r.error;
+ holder.replaceChildren();
+ if(!r.data.length){holder.append(el('p','대기 중인 계정 삭제 신청이 없습니다.'));return}
+ for(const item of r.data){
+  const article=el('article');
+  article.append(el('strong',item.nickname),el('small','신청일: '+new Date(item.created_at).toLocaleString('ko-KR')),el('small','계정 ID: '+item.user_id));
+  const approve=el('button','계정 및 기록 삭제 승인');approve.className='danger';
+  const reject=el('button','신청 거절');
+  const review=async yes=>{
+   if(yes){
+    const typed=prompt('이 계정과 게시글·댓글·채팅이 영구 삭제됩니다. 확인하려면 고유 닉네임을 입력하세요: '+item.nickname);
+    if(typed!==item.nickname)return;
+    if(!confirm('최종 확인: 해당 계정과 모든 기록을 영구 삭제할까요?'))return;
+   }else if(!confirm('계정 삭제 신청을 거절할까요?'))return;
+   approve.disabled=true;reject.disabled=true;
+   try{const x=await client.rpc('board_admin_review_deletion_request',{p_id:item.id,p_approve:yes});if(x.error)throw x.error;msg(yes?'계정 삭제 승인 및 처리 완료':'삭제 신청을 거절했습니다.');await refreshDeletions()}
+   catch(e){msg('계정 삭제 처리 실패: '+e.message);approve.disabled=false;reject.disabled=false}
+  };
+  approve.onclick=()=>review(true);reject.onclick=()=>review(false);
+  article.append(approve,reject);holder.append(article);
+ }
+}
 async function show(){
  try{const ok=await authorized();login.hidden=ok;dashboard.hidden=!ok;
- if(ok){msg('운영자 인증 완료');await refresh()}
+ if(ok){msg('운영자 인증 완료');await refresh();await refreshDeletions()}
  else{msg('운영자 권한이 있는 계정으로 로그인해야 합니다.')}
  }catch(e){login.hidden=false;dashboard.hidden=true;msg('접근 확인 실패: '+e.message)}
 }
@@ -82,7 +107,7 @@ byId('loginForm').onsubmit=async event=>{
  }catch(e){msg('로그인 링크 요청 실패: '+e.message)}
  finally{button.disabled=false;captchaToken=null;if(widgetId!==null&&window.turnstile)window.turnstile.reset(widgetId)}
 };
-byId('refresh').onclick=()=>refresh().catch(e=>msg('신고 조회 실패: '+e.message));
+byId('refresh').onclick=async()=>{try{await refresh();await refreshDeletions()}catch(e){msg('목록 조회 실패: '+e.message)}};
 byId('logout').onclick=async()=>{await client.auth.signOut();reportsEl.replaceChildren();await show()};
 show();setupCaptcha().catch(e=>msg(e.message));
 })();
