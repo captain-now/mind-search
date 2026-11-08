@@ -15,7 +15,7 @@ const nameInput=document.getElementById('boardName'),titleInput=document.getElem
 const localNotice=root.querySelector('.disclaimer');if(localNotice)localNotice.textContent='공개 게시판 · 별명은 공개되지만 작성자 삭제 권한은 익명 계정으로 확인합니다. 브라우저의 로그인 정보가 삭제되면 기존 글을 삭제하지 못할 수 있습니다.';
 function el(tag,txt){const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;return n}
 function setStatus(msg){status.textContent=msg}
-let user=null,loading=false,registeredNickname=null;
+let user=null,loading=false,registeredNickname=null,canonicalId=null;
 const turnstileSiteKey=cfg.turnstileSiteKey;
 let captchaToken=null,widgetId=null;
 function loadTurnstile(){
@@ -53,11 +53,31 @@ async function ensureUser(){
  if(result.error)throw result.error;
  return result.data.user;
 }
+async function setupLinkControls(){
+ const panel=el('section');panel.className='board-nickname-register';
+ panel.setAttribute('aria-label','고유 닉네임 기기 연동');
+ const title=el('strong','🔑 고유 닉네임 일회용 연동');
+ const help=el('p',registeredNickname?'다른 브라우저에서 같은 닉네임을 사용하려면 이곳에서 코드를 발급하세요. 코드는 5분 동안 한 번만 사용할 수 있습니다.':'이미 다른 앱에서 고유 닉네임을 사용 중이라면 그 앱에서 발급한 연동 코드를 입력하세요.');
+ panel.append(title,help);
+ if(registeredNickname){
+  const issue=el('button','일회용 연동 코드 발급');issue.type='button';
+  const result=el('p');result.style.cssText='font-size:19px;font-weight:750;overflow-wrap:anywhere;user-select:all';
+  issue.onclick=async()=>{issue.disabled=true;try{const r=await client.rpc('board_issue_link_code');if(r.error)throw r.error;result.textContent=r.data;setStatus('코드가 발급됐습니다. 다른 브라우저에서 5분 안에 입력하세요. 코드는 다른 사람에게 보여주지 마세요.')}catch(e){setStatus('코드 발급 실패: '+e.message)}finally{issue.disabled=false}};
+  panel.append(issue,result);
+ }else{
+  const input=el('input');input.className='field';input.placeholder='24자리 연동 코드';input.maxLength=24;input.autocomplete='off';input.spellcheck=false;
+  const redeem=el('button','기존 닉네임 연결');redeem.type='button';
+  redeem.onclick=async()=>{redeem.disabled=true;try{const r=await client.rpc('board_redeem_link_code',{p_code:input.value.trim()});if(r.error)throw r.error;setStatus('연동이 완료됐습니다. 게시판을 다시 불러옵니다.');location.reload()}catch(e){setStatus('연동 실패: '+e.message)}finally{redeem.disabled=false}};
+  panel.append(input,redeem);
+ }
+ root.insertBefore(panel,form);
+}
 async function setupNickname(){
- const found=await client.from('board_profiles').select('nickname').eq('user_id',user.id).maybeSingle();
+ const found=await client.from('board_profiles').select('nickname').eq('user_id',canonicalId).maybeSingle();
  if(found.error)throw found.error;
- if(found.data){registeredNickname=found.data.nickname;nameInput.value=registeredNickname;nameInput.readOnly=true;return;}
+ if(found.data){registeredNickname=found.data.nickname;nameInput.value=registeredNickname;nameInput.readOnly=true;await setupLinkControls();return;}
  form.hidden=true;
+ await setupLinkControls();
  const wrapper=el('div');wrapper.className='board-nickname-register';
  const label=el('label','고유 닉네임 등록 (2~30자 · 변경 및 복구 불가)');
  const field=el('input');field.className='field';field.minLength=2;field.maxLength=30;field.required=true;field.placeholder='사용할 고유 닉네임';
@@ -77,8 +97,8 @@ async function setupNickname(){
  };
 }
 
-async function remove(table,id){if(!confirm('정말 삭제할까요?'))return;const result=await client.from(table).delete().eq('id',id).eq('author_id',user.id);if(result.error)throw result.error;await refresh()}
-function addDelete(container,table,item){if(item.author_id!==user.id)return;const btn=el('button','내 글 삭제');btn.type='button';btn.onclick=async()=>{try{await remove(table,item.id)}catch(e){setStatus('삭제 실패: '+e.message)}};container.append(btn)}
+async function remove(table,id){if(!confirm('정말 삭제할까요?'))return;const result=await client.from(table).delete().eq('id',id).eq('author_id',canonicalId);if(result.error)throw result.error;await refresh()}
+function addDelete(container,table,item){if(item.author_id!==canonicalId)return;const btn=el('button','내 글 삭제');btn.type='button';btn.onclick=async()=>{try{await remove(table,item.id)}catch(e){setStatus('삭제 실패: '+e.message)}};container.append(btn)}
 let activeReportDialog=null;
 function reportItem(table,item,button){
  if(activeReportDialog){activeReportDialog.remove();activeReportDialog=null}
@@ -124,7 +144,7 @@ function reportItem(table,item,button){
  document.body.append(backdrop);activeReportDialog=backdrop;const first=group.querySelector('input');if(first)first.focus();
 }
 function addReport(container,table,item){
- if(item.author_id===user.id)return;
+ if(item.author_id===canonicalId)return;
  const button=el('button','신고');button.type='button';
  button.setAttribute('aria-label','이 '+(table==='board_posts'?'게시글':'댓글')+' 신고');
  button.onclick=()=>reportItem(table,item,button);
@@ -182,7 +202,7 @@ async function refresh(){
  const reply=el('form');reply.className='board-comment-form';
  const input=el('input');input.className='field';input.required=true;input.maxLength=500;input.placeholder='댓글';
  const submit=el('button','댓글 달기');submit.type='submit';reply.append(input,submit);
- reply.onsubmit=async e=>{e.preventDefault();const body=input.value.trim();if(!body)return;submit.disabled=true;try{const r=await client.from('board_comments').insert({post_id:p.id,author_id:user.id,nickname:registeredNickname,body});if(r.error)throw r.error;await refresh()}catch(err){setStatus('댓글 작성 실패: '+err.message)}finally{submit.disabled=false}};
+ reply.onsubmit=async e=>{e.preventDefault();const body=input.value.trim();if(!body)return;submit.disabled=true;try{const r=await client.from('board_comments').insert({post_id:p.id,author_id:canonicalId,nickname:registeredNickname,body});if(r.error)throw r.error;await refresh()}catch(err){setStatus('댓글 작성 실패: '+err.message)}finally{submit.disabled=false}};
  replies.append(reply);article.append(replies);postsEl.append(article);
  }
  if(!pagePosts.length)postsEl.append(el('p',currentPage?'이 페이지에는 글이 없습니다. 최신 글로 돌아가 주세요.':'아직 글이 없습니다.'));
@@ -192,10 +212,11 @@ async function refresh(){
 }
 async function init(){
  try{user=await ensureUser();if(!user)throw Error('익명 인증에 실패했습니다.');
+ const canonical=await client.rpc('board_canonical_user_id');if(canonical.error)throw canonical.error;canonicalId=canonical.data;
  await setupNickname();
  // Enable posting only after remote authentication succeeds.
  form.hidden=!registeredNickname;
- form.onsubmit=async e=>{e.preventDefault();const nickname=registeredNickname,title=titleInput.value.trim(),body=bodyInput.value.trim();if(!nickname||!title||!body)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const r=await client.from('board_posts').insert({author_id:user.id,nickname,title,body});if(r.error)throw r.error;titleInput.value='';bodyInput.value='';currentPage=0;await refresh()}catch(err){setStatus('글 작성 실패: '+err.message)}finally{submit.disabled=false}};
+ form.onsubmit=async e=>{e.preventDefault();const nickname=registeredNickname,title=titleInput.value.trim(),body=bodyInput.value.trim();if(!nickname||!title||!body)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const r=await client.from('board_posts').insert({author_id:canonicalId,nickname,title,body});if(r.error)throw r.error;titleInput.value='';bodyInput.value='';currentPage=0;await refresh()}catch(err){setStatus('글 작성 실패: '+err.message)}finally{submit.disabled=false}};
  await refresh();
  }catch(e){setStatus('공개 게시판 연결 실패: '+e.message+' · 새로고침 후 다시 시도해 주세요.')}
 }
