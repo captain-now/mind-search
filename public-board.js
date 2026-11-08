@@ -78,23 +78,49 @@ async function setupNickname(){
 }
 async function remove(table,id){if(!confirm('정말 삭제할까요?'))return;const result=await client.from(table).delete().eq('id',id).eq('author_id',user.id);if(result.error)throw result.error;await refresh()}
 function addDelete(container,table,item){if(item.author_id!==user.id)return;const btn=el('button','내 글 삭제');btn.type='button';btn.onclick=async()=>{try{await remove(table,item.id)}catch(e){setStatus('삭제 실패: '+e.message)}};container.append(btn)}
-async function reportItem(table,item,button){
- const reason=prompt('신고 사유를 선택하세요.\\n1. 스팸/광고\\n2. 괴롭힘/욕설\\n3. 개인정보 침해\\n4. 기타','1');
- if(reason===null)return;
- const reasons={'1':'spam','2':'harassment','3':'privacy','4':'other'};
- if(!reasons[reason.trim()]){setStatus('신고 사유는 1~4 중에서 선택해 주세요.');return;}
- const details=prompt('상세 설명 (선택, 최대 500자)','');
- if(details===null)return;
- if(details.length>500){setStatus('신고 설명은 500자 이내로 입력해 주세요.');return;}
- button.disabled=true;
- try{
-  const payload={reporter_id:user.id,reason:reasons[reason.trim()],details};
-  payload[table==='board_posts'?'post_id':'comment_id']=item.id;
-  const result=await client.from('board_reports').insert(payload);
-  if(result.error)throw result.error;
-  setStatus('신고가 접수되었습니다. 운영자가 확인할 수 있도록 안전하게 저장되었습니다.');
- }catch(err){setStatus(err.code==='23505'?'이미 신고한 항목입니다.':'신고 실패: '+err.message)}
- finally{button.disabled=false}
+let activeReportDialog=null;
+function reportItem(table,item,button){
+ if(activeReportDialog){activeReportDialog.remove();activeReportDialog=null}
+ const backdrop=el('div');
+ backdrop.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box';
+ const panel=el('section');panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label','게시판 신고');
+ panel.style.cssText='background:#fff;color:#203b32;border-radius:16px;padding:20px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-sizing:border-box';
+ const heading=el('h2',table==='board_posts'?'게시글 신고':'댓글 신고');
+ const description=el('p','신고 사유를 선택하세요.');
+ const form=el('form');
+ const choices=[['spam','스팸 및 광고'],['harassment','욕설 및 괴롭힘'],['privacy','개인정보 침해'],['other','기타']];
+ const group=el('fieldset');group.style.cssText='border:0;padding:0;margin:12px 0';
+ const legend=el('legend','신고 사유');group.append(legend);
+ for(const [value,label] of choices){
+  const row=el('label');row.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 0;cursor:pointer';
+  const radio=el('input');radio.type='radio';radio.name='report-reason';radio.value=value;radio.checked=value==='spam';
+  row.append(radio,el('span',label));group.append(row);
+ }
+ const detailLabel=el('label','상세 설명 (선택, 최대 500자)');
+ const detail=el('textarea');detail.className='field';detail.maxLength=500;detail.rows=3;detail.style.width='100%';detail.style.boxSizing='border-box';
+ detailLabel.append(detail);
+ const actions=el('div');actions.style.cssText='display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap';
+ const cancel=el('button','취소');cancel.type='button';
+ const submit=el('button','신고 접수');submit.type='submit';
+ actions.append(cancel,submit);form.append(group,detailLabel,actions);panel.append(heading,description,form);backdrop.append(panel);
+ const previousFocus=document.activeElement;
+ const close=()=>{backdrop.remove();if(activeReportDialog===backdrop)activeReportDialog=null;if(previousFocus&&previousFocus.focus)previousFocus.focus()};
+ cancel.onclick=close;
+ backdrop.onclick=e=>{if(e.target===backdrop)close()};
+ backdrop.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();close()}};
+ form.onsubmit=async e=>{
+  e.preventDefault();const selected=form.querySelector('input[name="report-reason"]:checked');if(!selected)return;
+  submit.disabled=true;cancel.disabled=true;button.disabled=true;
+  try{
+   const payload={reporter_id:user.id,reason:selected.value,details:detail.value.trim()};
+   payload[table==='board_posts'?'post_id':'comment_id']=item.id;
+   const result=await client.from('board_reports').insert(payload);
+   if(result.error)throw result.error;
+   close();setStatus('신고가 접수되었습니다. 운영자가 확인할 수 있도록 저장되었습니다.');
+  }catch(err){setStatus(err.code==='23505'?'이미 신고한 항목입니다.':'신고 실패: '+err.message);submit.disabled=false;cancel.disabled=false}
+  finally{button.disabled=false}
+ };
+ document.body.append(backdrop);activeReportDialog=backdrop;const first=group.querySelector('input');if(first)first.focus();
 }
 function addReport(container,table,item){
  if(item.author_id===user.id)return;
