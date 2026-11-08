@@ -64,6 +64,12 @@ async function refresh(){
     }catch(e){msg('처리 실패: '+e.message)}finally{b.disabled=false}};article.append(b);
    }
   }
+  if(item.status==='dismissed'){
+   const rejected=el('button','기각됨');rejected.disabled=true;rejected.title='이미 기각 처리된 신고입니다.';article.append(rejected);
+  }
+  if(item.status==='resolved'){
+   const resolved=el('button','처리 완료됨');resolved.disabled=true;article.append(resolved);
+  }
   if(target.data){
    const del=el('button','대상 삭제');del.className='danger';del.onclick=async()=>{if(!confirm('신고된 콘텐츠를 영구 삭제할까요? 이 작업은 되돌릴 수 없습니다.'))return;del.disabled=true;try{
     const result=await client.from(targetTable).delete().eq('id',targetId);
