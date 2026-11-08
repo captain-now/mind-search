@@ -35,39 +35,89 @@ body{background:#f4f1ea;color:var(--rebirth-ink)}
 'use strict';const $=id=>document.getElementById(id),key='mindsearch-v03';let data={sessions:[],entries:[],tasks:{}};try{const d=JSON.parse(localStorage.getItem(key)||'null');if(d&&Array.isArray(d.sessions)&&Array.isArray(d.entries)&&typeof d.tasks==='object')data=d}catch(e){}function persist(){try{localStorage.setItem(key,JSON.stringify(data));return true}catch(e){notice('저장 공간에 접근할 수 없습니다. 기록을 내보내 주세요.');return false}}function notice(s){$('toast').textContent=s;$('toast').classList.remove('hidden');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),3300)}document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>$(b.dataset.go).scrollIntoView({behavior:'smooth'})));$('reflect').onclick=()=>notice('지금 이 물음을 잠시 바라보세요. 이뭣고?');const taskNames=['감사하기','친절 베풀기','독서하기','걷기·운동','청소·정리','환경 보호','가족·이웃 돌보기','나눔·봉사','좋은 말하기','하루 돌아보기'];const today=()=>new Date().toLocaleDateString('en-CA');function render(){const t=today();const completed=data.tasks[t]||[];$('tasks').replaceChildren();taskNames.forEach((name,i)=>{let b=document.createElement('button');b.className='task'+(completed.includes(i)?' done':'');b.textContent=(completed.includes(i)?'✓ ':'○ ')+name;b.onclick=()=>{let a=data.tasks[t]||[];data.tasks[t]=a.includes(i)?a.filter(x=>x!==i):[...a,i];if(!persist())data.tasks[t]=a;render()};$('tasks').append(b)});$('todayCount').textContent=completed.length+'/10';$('sessions').textContent=data.sessions.length+'회';$('journalCount').textContent=data.entries.length+'개';$('entries').replaceChildren();data.entries.slice().reverse().forEach((entry)=>{let div=document.createElement('div');div.className='entry';let time=document.createElement('small');time.textContent=new Date(entry.time).toLocaleString('ko-KR');let p=document.createElement('div');p.textContent=entry.text;div.append(time,p);$('entries').append(div)});$('chart').replaceChildren();$('days').replaceChildren();for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);let k=d.toLocaleDateString('en-CA');let n=data.sessions.filter(x=>new Date(x).toLocaleDateString('en-CA')===k).length;let bar=document.createElement('div');bar.className='bar'+(i===0?' today':'');bar.style.height=Math.max(8,Math.min(100,n*25))+'%';bar.title=k+': '+n+'회';$('chart').append(bar);let label=document.createElement('span');label.textContent=['일','월','화','수','목','금','토'][d.getDay()];$('days').append(label)}}$('save').onclick=()=>{let v=$('journalArea').value.trim();if(!v)return notice('내용을 입력해 주세요.');data.entries.push({time:new Date().toISOString(),text:v});if(!persist()){data.entries.pop();return}$('journalArea').value='';render();notice('이 기기에 일지를 저장했습니다.')};$('export').onclick=()=>{let text=data.entries.map(e=>new Date(e.time).toLocaleString('ko-KR')+'\n'+e.text).join('\n\n---\n\n');let url=URL.createObjectURL(new Blob([text||'아직 기록이 없습니다.'],{type:'text/plain;charset=utf-8'}));let a=document.createElement('a');a.href=url;a.download='mind-search-journal.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)};
 function downloadBackup(){const payload={format:'mind-search-backup',version:1,exportedAt:new Date().toISOString(),data};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='mind-search-backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);notice('전체 기록 백업 파일을 만들었습니다. 안전한 곳에 보관하세요.')}function validBackup(v){if(!v||v.format!=='mind-search-backup'||v.version!==1||!v.data)return false;const d=v.data;if(!Array.isArray(d.sessions)||!Array.isArray(d.entries)||!d.tasks||typeof d.tasks!=='object'||Array.isArray(d.tasks))return false;if(d.sessions.length>100000||d.entries.length>100000||Object.keys(d.tasks).length>100000)return false;if(!d.sessions.every(x=>typeof x==='string'&&!Number.isNaN(Date.parse(x))))return false;if(!d.entries.every(x=>x&&typeof x.time==='string'&&!Number.isNaN(Date.parse(x.time))&&typeof x.text==='string'&&x.text.length<=5000))return false;return Object.entries(d.tasks).every(([k,v])=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&Array.isArray(v)&&v.every(x=>Number.isInteger(x)&&x>=0&&x<10))}$('backup').onclick=downloadBackup;$('restore').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=async e=>{const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;if(file.size>10*1024*1024)return notice('백업 파일은 10MB 이하만 복원할 수 있습니다.');let parsed;try{parsed=JSON.parse(await file.text())}catch(err){return notice('JSON 백업 파일을 읽을 수 없습니다.')}if(!validBackup(parsed))return notice('지원하지 않거나 손상된 백업 파일입니다.');if(!window.confirm('현재 기기의 일지·수행·실천 기록을 백업 파일로 교체합니다. 계속할까요?'))return;const previous=data;data=parsed.data;if(!persist()){data=previous;return}render();notice('전체 기록을 복원했습니다.')};let remaining=1800,interval=null,deadline=0;function draw(){let m=Math.floor(remaining/60),s=remaining%60;$('clock').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');$('start').textContent=interval?'일시정지 Ⅱ':remaining===1800?'수행 시작 ▶':'계속하기 ▶'}function tick(){if(!interval)return;remaining=Math.max(0,Math.ceil((deadline-Date.now())/1000));draw();if(remaining===0){clearInterval(interval);interval=null;data.sessions.push(new Date().toISOString());if(!persist()){data.sessions.pop();notice('수행을 마쳤지만 기록 저장에 실패했습니다.')}else notice('30분 수행을 마쳤습니다.');render();$('timerState').textContent='수행을 마쳤습니다.';draw()}}$('start').onclick=()=>{if(interval){tick();if(!interval)return;clearInterval(interval);interval=null;$('timerState').textContent='일시정지 중';draw()}else{if(remaining===0)remaining=1800;deadline=Date.now()+remaining*1000;interval=setInterval(tick,500);$('timerState').textContent='수행 중 · 화면을 켜 두세요';draw()}};$('reset').onclick=()=>{clearInterval(interval);interval=null;deadline=0;remaining=1800;draw();$('timerState').textContent='초기화되었습니다.'};document.addEventListener('visibilitychange',()=>{if(!document.hidden&&interval)tick()});render();draw();if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
 </script><script>
-/* REBIRTH: non-destructive English interface for navigation and landing experience */
+/* REBIRTH bilingual UI. Never translate user-generated journal entries or stored data. */
 (function(){
 'use strict';
 const pairs=[
 ['홈','Home'],['수행','Practice'],['일지','Journal'],['실천','Daily'],['소개','About'],
+['본문 바로가기','Skip to content'],['지금이 기적이다 · NOW 마음챙김','The present is a miracle · NOW Mindfulness'],
+['NOW 마음챙김 ↗','NOW Mindfulness ↗'],['mind search · 마음의 탐구','mind search · explore your mind'],
 ['지금, 여기…','Here and now…'],['그것이 전부입니다.','That is enough.'],
+['답을 찾기보다, 물음에 머무르는 순간.','Stay with the question, rather than chasing answers.'],
+['당신의 삶은 이미 진행형입니다.','Your life is already unfolding.'],
 ['오늘도, 나에게 돌아오는 시간','A moment to return to yourself'],
-['수행하고 · 기록하고 · 작은 변화를 발견하세요.','Practice, reflect, and grow.'],
+['수행하고 · 기록하고 · 작은 변화를 발견하세요.','Practice, reflect, and notice small changes.'],
 ['현재를 알아차리기','Notice the present'],['명상과 화두 참구','Meditation and inquiry'],
-['나의 변화 돌아보기','Reflect on your journey'],['일상 속 마음챙김','Mindfulness every day'],
-['🟣 오늘의 화두','🟣 Today’s reflection'],['🟢 지금, 명상할까요?','🟢 Ready to meditate?'],
-['⭐ 나의 NOW 현황','⭐ Your progress'],['💬 오늘의 한마디','💬 A thought for today'],
-['📈 수행의 발자취','📈 Your journey'],['🌍 함께하는 마음','🌍 Mindfulness for everyone'],
-['🌱 오늘의 실천 10가지','🌱 Ten daily practices'],['📖 마음 일지','📖 Mind journal'],
-['기록 저장','Save entry'],['일지 내보내기','Export journal'],['전체 기록 백업','Back up data'],
-['백업 복원','Restore backup'],['수행 시작 ▶','Start meditation ▶'],['초기화','Reset'],
-['지금','Now'],['V1.02 실험실','V1.02 LAB']
+['나의 변화 돌아보기','Reflect on your journey'],['일상 속 마음챙김','Mindfulness in daily life'],
+['지금','Now'],['V1.02 실험실','V1.02 LAB'],
+['🟣 오늘의 화두','🟣 Today’s reflection'],['이뭣고?','Who am I?'],
+['답을 찾기보다, 물음에 머무르기','Stay with the question'],
+['잠시 참구하기','Pause and reflect'],
+['🟢 지금, 명상할까요?','🟢 Ready to meditate?'],['수행 시작 ▶','Start meditation ▶'],
+['일시정지 Ⅱ','Pause Ⅱ'],['계속하기 ▶','Resume ▶'],['초기화','Reset'],
+['30분 동안 지금에 머물러 보세요.','Stay present for 30 minutes.'],
+['일시정지 중','Paused'],['수행 중 · 화면을 켜 두세요','Meditating · keep this screen on'],
+['초기화되었습니다.','Timer reset.'],['수행을 마쳤습니다.','Session completed.'],
+['⭐ 나의 NOW 현황','⭐ Your progress'],['완료한 수행','Sessions completed'],
+['오늘의 실천','Daily practices'],['마음 일지','Mind journal'],
+['숫자는 승패가 아닌 나의 기록입니다.','These numbers are reflections, not a competition.'],
+['💬 오늘의 한마디','💬 A thought for today'],
+['📈 수행의 발자취','📈 Your journey'],['최근 7일간 완료한 수행 횟수','Completed sessions in the last 7 days'],
+['🌍 함께하는 마음','🌍 Mindfulness for everyone'],
+['전 세계 누구나 자신을 돌아볼 수 있는 공간을 지향합니다.','A space where anyone can pause and reflect.'],
+['커뮤니티와 다국어 기능은 향후 개발 예정입니다.','Community features are planned.'],
+['🌱 오늘의 실천 10가지','🌱 Ten daily practices'],
+['실천했다면 표시해 보세요. 경쟁하거나 점수를 매기지 않습니다.','Check off your practices. There is no competition.'],
+['📖 마음 일지','📖 Mind journal'],['지금 떠오르는 마음을 적어보세요.','Write down what is on your mind.'],
+['기록 저장','Save entry'],['일지 내보내기','Export journal'],
+['전체 기록 백업','Back up all data'],['백업 복원','Restore backup'],
+['이 버전의 일지와 실천 기록은 현재 브라우저의 로컬 저장소에만 저장됩니다. 기기를 바꾸거나 브라우저 데이터를 삭제하면 사라질 수 있습니다. Firebase 및 기존 NOW 계정 기록과는 연결되어 있지 않습니다.','Your journal and practices are stored only in this browser. They may be lost if you clear browser data or change devices. They are not linked to Firebase or NOW accounts.'],
+['감사하기','Practice gratitude'],['친절 베풀기','Show kindness'],['독서하기','Read a book'],
+['걷기·운동','Walk or exercise'],['청소·정리','Tidy up'],['환경 보호','Care for the environment'],
+['가족·이웃 돌보기','Care for others'],['나눔·봉사','Give or volunteer'],
+['좋은 말하기','Speak kindly'],['하루 돌아보기','Reflect on your day'],
+['내용을 입력해 주세요.','Please enter a journal entry.'],
+['이 기기에 일지를 저장했습니다.','Journal saved on this device.'],
+['전체 기록 백업 파일을 만들었습니다. 안전한 곳에 보관하세요.','Backup created. Keep the file somewhere safe.'],
+['백업 파일은 10MB 이하만 복원할 수 있습니다.','Backup files must be 10 MB or smaller.'],
+['JSON 백업 파일을 읽을 수 없습니다.','Could not read the JSON backup file.'],
+['지원하지 않거나 손상된 백업 파일입니다.','This backup file is unsupported or damaged.'],
+['전체 기록을 복원했습니다.','All records restored.'],
+['저장 공간에 접근할 수 없습니다. 기록을 내보내 주세요.','Storage unavailable. Please export your records.'],
+['수행을 마쳤지만 기록 저장에 실패했습니다.','Session finished, but saving failed.'],
+['30분 수행을 마쳤습니다.','Your 30-minute session is complete.']
 ];
-const map=Object.fromEntries(pairs),reverse=Object.fromEntries(pairs.map(p=>[p[1],p[0]]));
+const koToEn=new Map(pairs),enToKo=new Map(pairs.map(([k,v])=>[v,k]));
 let lang='ko';try{lang=localStorage.getItem('mindsearch-ui-language')==='en'?'en':'ko'}catch(e){}
-const btn=document.createElement('button');btn.type='button';btn.id='languageToggle';btn.style.cssText='border:1px solid #cbdacf;background:white;color:#355a48;border-radius:24px;padding:8px 12px;font-weight:750;cursor:pointer';
+const btn=document.createElement('button');btn.type='button';btn.id='languageToggle';
+btn.setAttribute('aria-label','Switch between Korean and English');
+btn.style.cssText='border:1px solid #cbdacf;background:white;color:#355a48;border-radius:24px;padding:8px 12px;font-weight:750;cursor:pointer';
 const nav=document.querySelector('.nav');nav.parentNode.insertBefore(btn,nav);
+function translate(value){
+ const match=value.match(/^(\s*)([\s\S]*?)(\s*)$/);if(!match)return value;
+ const core=match[2],table=lang==='en'?koToEn:enToKo;
+ if(table.has(core))return match[1]+table.get(core)+match[3];
+ const task=core.match(/^([✓○] )(.*)$/);
+ if(task&&table.has(task[2]))return match[1]+task[1]+table.get(task[2])+match[3];
+ const count=core.match(/^(\d+)(회|개)$/);
+ if(lang==='en'&&count)return match[1]+count[1]+(count[2]==='회'?' sessions':' entries')+match[3];
+ const reverseCount=core.match(/^(\d+) (sessions|entries)$/);
+ if(lang==='ko'&&reverseCount)return match[1]+reverseCount[1]+(reverseCount[2]==='sessions'?'회':'개')+match[3];
+ return value;
+}
+let translating=false;
 function apply(){
- const table=lang==='en'?map:reverse;
- document.querySelectorAll('.nav button,.hero h1,.rebirth-intro h2,.rebirth-intro p,.rebirth-pill,.tile strong,.tile small,.card h2,#save,#export,#backup,#restore,#start,#reset').forEach(el=>{
- if(el.children.length)return;
- const original=el.textContent.trim(),translated=table[original];
- if(translated)el.textContent=translated;
- });
+ if(translating)return;translating=true;
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+ const nodes=[];while(walker.nextNode()){const n=walker.currentNode;if(!n.parentElement.closest('script,style,#entries,#journalArea,#days,#chart'))nodes.push(n)}
+ for(const n of nodes){const next=translate(n.nodeValue);if(next!==n.nodeValue)n.nodeValue=next}
+ const area=document.getElementById('journalArea');
+ area.placeholder=lang==='en'?'What is on your mind...':'지금 나의 마음은...';
  document.documentElement.lang=lang;btn.textContent=lang==='en'?'한국어':'English';
+ translating=false;
 }
 btn.onclick=()=>{lang=lang==='ko'?'en':'ko';try{localStorage.setItem('mindsearch-ui-language',lang)}catch(e){}apply()};
-apply();
-const start=document.getElementById('start');new MutationObserver(()=>{if(lang==='en'&&map[start.textContent])start.textContent=map[start.textContent]}).observe(start,{childList:true});
+let queued=false;const observer=new MutationObserver(()=>{if(translating||queued)return;queued=true;queueMicrotask(()=>{queued=false;observer.disconnect();apply();observer.observe(document.body,{childList:true,subtree:true,characterData:true})})});
+apply();observer.observe(document.body,{childList:true,subtree:true,characterData:true});
 })();
 </script></body></html>
