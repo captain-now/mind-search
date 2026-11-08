@@ -3,7 +3,7 @@
 (function(){
 'use strict';
 const cfg=window.MIND_SEARCH_BOARD_CONFIG;
-if(!cfg || !/^https:\/\//.test(cfg.url||'') || !cfg.anonKey || !window.supabase)return;
+if(!cfg || !/^https:\/\//.test(cfg.url||'') || !cfg.anonKey || !window.supabase){const root=document.getElementById('community');if(root){const p=document.createElement('p');p.setAttribute('role','alert');p.textContent='공개 게시판 연결을 준비 중입니다. 잠시 후 다시 시도해 주세요.';root.prepend(p)}return;}
 const client=window.supabase.createClient(cfg.url,cfg.anonKey,{auth:{persistSession:true,autoRefreshToken:true}});
 const root=document.getElementById('community');
 if(!root)return;
@@ -50,10 +50,11 @@ async function refresh(){
 }
 async function init(){
  try{user=await ensureUser();if(!user)throw Error('익명 인증에 실패했습니다.');
- // Replace the local-only handler only after remote authentication succeeds.
+ // Enable posting only after remote authentication succeeds.
+ form.hidden=false;
  form.onsubmit=async e=>{e.preventDefault();const nickname=nameInput.value.trim(),title=titleInput.value.trim(),body=bodyInput.value.trim();if(!nickname||!title||!body)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const r=await client.from('board_posts').insert({author_id:user.id,nickname,title,body});if(r.error)throw r.error;titleInput.value='';bodyInput.value='';await refresh()}catch(err){setStatus('글 작성 실패: '+err.message)}finally{submit.disabled=false}};
  await refresh();
- }catch(e){setStatus('공개 게시판 연결 실패: '+e.message+' · 기기 내 시험용 게시판을 사용하세요.')}
+ }catch(e){setStatus('공개 게시판 연결 실패: '+e.message+' · 새로고침 후 다시 시도해 주세요.')}
 }
 init();
 })();
