@@ -76,6 +76,21 @@ async function refresh(){
     if(result.error)throw result.error;await refresh();msg('대상 콘텐츠 삭제 요청을 처리했습니다.');
    }catch(e){msg('삭제 실패: '+e.message)}finally{del.disabled=false}};article.append(del);
   }
+  if(item.status==='dismissed'||item.status==='resolved'){
+   const removeReport=el('button','신고 내역 삭제');
+   removeReport.className='danger';
+   removeReport.onclick=async()=>{
+    if(!confirm('이 신고 내역만 삭제할까요? 원본 게시글이나 댓글은 삭제되지 않습니다.'))return;
+    removeReport.disabled=true;
+    try{
+     const result=await client.from('board_reports').delete().eq('id',item.id).in('status',['dismissed','resolved']).select('id');
+     if(result.error)throw result.error;
+     if(!result.data?.length)throw Error('삭제할 수 있는 완료된 신고 내역이 없습니다.');
+     await refresh();msg('신고 내역만 삭제했습니다. 원본 콘텐츠는 유지됩니다.');
+    }catch(e){msg('신고 내역 삭제 실패: '+e.message);removeReport.disabled=false}
+   };
+   article.append(removeReport);
+  }
   reportsEl.append(article);
  }
 }
