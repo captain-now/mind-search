@@ -78,6 +78,31 @@ async function setupNickname(){
 }
 async function remove(table,id){if(!confirm('정말 삭제할까요?'))return;const result=await client.from(table).delete().eq('id',id).eq('author_id',user.id);if(result.error)throw result.error;await refresh()}
 function addDelete(container,table,item){if(item.author_id!==user.id)return;const btn=el('button','내 글 삭제');btn.type='button';btn.onclick=async()=>{try{await remove(table,item.id)}catch(e){setStatus('삭제 실패: '+e.message)}};container.append(btn)}
+async function reportItem(table,item,button){
+ const reason=prompt('신고 사유를 선택하세요.\\n1. 스팸/광고\\n2. 괴롭힘/욕설\\n3. 개인정보 침해\\n4. 기타','1');
+ if(reason===null)return;
+ const reasons={'1':'spam','2':'harassment','3':'privacy','4':'other'};
+ if(!reasons[reason.trim()]){setStatus('신고 사유는 1~4 중에서 선택해 주세요.');return;}
+ const details=prompt('상세 설명 (선택, 최대 500자)','');
+ if(details===null)return;
+ if(details.length>500){setStatus('신고 설명은 500자 이내로 입력해 주세요.');return;}
+ button.disabled=true;
+ try{
+  const payload={reporter_id:user.id,reason:reasons[reason.trim()],details};
+  payload[table==='board_posts'?'post_id':'comment_id']=item.id;
+  const result=await client.from('board_reports').insert(payload);
+  if(result.error)throw result.error;
+  setStatus('신고가 접수되었습니다. 운영자가 확인할 수 있도록 안전하게 저장되었습니다.');
+ }catch(err){setStatus(err.code==='23505'?'이미 신고한 항목입니다.':'신고 실패: '+err.message)}
+ finally{button.disabled=false}
+}
+function addReport(container,table,item){
+ if(item.author_id===user.id)return;
+ const button=el('button','신고');button.type='button';
+ button.setAttribute('aria-label','이 '+(table==='board_posts'?'게시글':'댓글')+' 신고');
+ button.onclick=()=>reportItem(table,item,button);
+ container.append(button);
+}
 async function refresh(){
  if(loading)return;loading=true;
  try{
@@ -94,12 +119,12 @@ async function refresh(){
  for(const p of posts.data){
  const article=el('article');article.className='board-post';
  article.append(el('small',displayName(p)+' · '+new Date(p.created_at).toLocaleString()),el('h3',p.title),el('p',p.body));
- addDelete(article,'board_posts',p);
+ addDelete(article,'board_posts',p);addReport(article,'board_posts',p);
  const replies=el('div');replies.className='board-comments';
  for(const c of comments.data.filter(c=>c.post_id===p.id)){
  const line=el('div');line.className='board-comment';
  line.append(el('small',displayName(c)+' · '+new Date(c.created_at).toLocaleString()),el('p',c.body));
- addDelete(line,'board_comments',c);replies.append(line);
+ addDelete(line,'board_comments',c);addReport(line,'board_comments',c);replies.append(line);
  }
  const reply=el('form');reply.className='board-comment-form';
  const input=el('input');input.className='field';input.required=true;input.maxLength=500;input.placeholder='댓글';
