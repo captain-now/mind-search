@@ -83,18 +83,22 @@ async function refresh(){
  try{
  const posts=await client.from('board_posts').select('id,author_id,nickname,title,body,created_at').order('created_at',{ascending:false}).limit(50);
  if(posts.error)throw posts.error;
+ const profileResult=await client.from('board_profiles').select('user_id,nickname');
+ if(profileResult.error)throw profileResult.error;
+ const verifiedNames=new Map(profileResult.data.map(p=>[p.user_id,p.nickname]));
+ const displayName=item=>verifiedNames.get(item.author_id)===item.nickname?item.nickname+' · 고유 닉네임':item.nickname+' · 이전 기록(미인증)';
  const ids=posts.data.map(p=>p.id);
  const comments=ids.length?await client.from('board_comments').select('id,post_id,author_id,nickname,body,created_at').in('post_id',ids).order('created_at',{ascending:true}).limit(500):{data:[],error:null};
  if(comments.error)throw comments.error;
  postsEl.replaceChildren();
  for(const p of posts.data){
  const article=el('article');article.className='board-post';
- article.append(el('small',p.nickname+' · '+new Date(p.created_at).toLocaleString()),el('h3',p.title),el('p',p.body));
+ article.append(el('small',displayName(p)+' · '+new Date(p.created_at).toLocaleString()),el('h3',p.title),el('p',p.body));
  addDelete(article,'board_posts',p);
  const replies=el('div');replies.className='board-comments';
  for(const c of comments.data.filter(c=>c.post_id===p.id)){
  const line=el('div');line.className='board-comment';
- line.append(el('small',c.nickname+' · '+new Date(c.created_at).toLocaleString()),el('p',c.body));
+ line.append(el('small',displayName(c)+' · '+new Date(c.created_at).toLocaleString()),el('p',c.body));
  addDelete(line,'board_comments',c);replies.append(line);
  }
  const reply=el('form');reply.className='board-comment-form';
