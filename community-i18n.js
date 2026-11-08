@@ -8,7 +8,7 @@ const button=document.createElement('button');button.type='button';button.id='la
 const header=document.querySelector('.head,.top .container');
 if(header){header.append(button)}else document.body.prepend(button);
 function protectedNode(n){const e=n.parentElement;if(!e)return true;
-return !!e.closest('script,style,textarea,#messages .bubble,#boardPosts .board-post h3,#boardPosts .board-post > p,#boardPosts .board-comment > p,#boardPosts small,#boardName,#nicknameNotice input,.board-nickname-register input:not([placeholder])') || !!e.closest('#boardPosts .board-post small,#boardPosts .board-comment small');
+return !!e.closest('script,style,textarea,#messages .bubble .meta,#messages .bubble > div:not(.meta),#boardPosts .board-post h3,#boardPosts .board-post > p,#boardPosts .board-comment > p,#boardPosts small,#boardName,#nicknameNotice input,.board-nickname-register input:not([placeholder])') || !!e.closest('#boardPosts .board-post small,#boardPosts .board-comment small');
 }
 function translateText(value){
 const m=value.match(/^(\s*)([\s\S]*?)(\s*)$/);if(!m)return value;
