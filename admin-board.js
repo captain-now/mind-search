@@ -87,6 +87,7 @@ byId('loginForm').onsubmit=async event=>{
   if(code.length!==12||!/[A-Za-z]/.test(code)||!/[0-9]/.test(code)||! /[^A-Za-z0-9]/.test(code))throw Error('영문·숫자·특수문자를 혼합한 12자리 코드를 입력하세요.');
   const result=await client.rpc('board_admin_code_login',{p_code:code});
   if(result.error)throw result.error;
+  if(result.data!==true)throw Error('코드가 틀렸거나 입력 제한에 걸렸습니다. 15분 후 다시 시도할 수 있습니다.');
   byId('adminCode').value='';await show();
  }catch(e){msg('로그인 실패: '+e.message)}finally{button.disabled=false}
 };
