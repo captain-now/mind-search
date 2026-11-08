@@ -5,33 +5,18 @@ const client=window.supabase.createClient(config.url,config.anonKey,{auth:{stora
 const byId=id=>document.getElementById(id),login=byId('login'),dashboard=byId('dashboard'),status=byId('status'),reportsEl=byId('reports');
 function msg(value){status.textContent=value}
 function el(tag,text){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n}
-const turnstileSiteKey='0x4AAAAAAF4XQ_wl1XONk2be';
-let captchaToken=null,widgetId=null;
-function setupCaptcha(){
- return new Promise((resolve,reject)=>{
-  if(!window.turnstile){
-   const script=document.createElement('script');
-   script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-   script.onload=()=>resolve();
-   script.onerror=()=>reject(Error('보안 인증을 불러오지 못했습니다.'));
-   document.head.append(script);
-  }else resolve();
- }).then(()=>{
-  widgetId=window.turnstile.render(byId('captcha'),{
-   sitekey:turnstileSiteKey,
-   callback:token=>{captchaToken=token;msg('보안 인증 완료. 로그인 링크를 요청할 수 있습니다.');},
-   'expired-callback':()=>{captchaToken=null;msg('보안 인증이 만료되었습니다. 다시 확인해 주세요.');},
-   'error-callback':()=>{captchaToken=null;msg('보안 인증 오류. 새로고침 후 다시 시도해 주세요.')}
-  });
- });
-}
 async function authorized(){
  const {data,error}=await client.auth.getUser();
  if(error||!data.user)return false;
- // Membership is controlled by the database, not a nickname or editable user metadata.
- const r=await client.from('board_admins').select('user_id').eq('user_id',data.user.id).maybeSingle();
+ const r=await client.rpc('board_admin_code_authorized');
  if(r.error)throw r.error;
- return Boolean(r.data);
+ return r.data===true;
+}
+async function ensureSession(){
+ const {data}=await client.auth.getUser();
+ if(data?.user)return;
+ const r=await client.auth.signInAnonymously();
+ if(r.error)throw r.error;
 }
 async function refresh(){
  const r=await client.from('board_reports').select('id,post_id,comment_id,reason,details,created_at,status').order('created_at',{ascending:false}).limit(100);
@@ -97,17 +82,15 @@ async function show(){
 byId('loginForm').onsubmit=async event=>{
  event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;
  try{
-  if(!captchaToken)throw Error('먼저 보안 인증을 완료해 주세요.');
-  const result=await client.auth.signInWithOtp({
-   email:byId('email').value.trim(),
-   options:{emailRedirectTo:'https://captain-now.github.io/mind-search/admin.html',shouldCreateUser:false,captchaToken}
-  });
+  await ensureSession();
+  const code=byId('adminCode').value;
+  if(code.length!==12||!/[A-Za-z]/.test(code)||!/[0-9]/.test(code)||! /[^A-Za-z0-9]/.test(code))throw Error('영문·숫자·특수문자를 혼합한 12자리 코드를 입력하세요.');
+  const result=await client.rpc('board_admin_code_login',{p_code:code});
   if(result.error)throw result.error;
-  msg('로그인 메일을 보냈습니다. 메일함에서 최신 로그인 링크를 열어 주세요.');
- }catch(e){msg('로그인 링크 요청 실패: '+e.message)}
- finally{button.disabled=false;captchaToken=null;if(widgetId!==null&&window.turnstile)window.turnstile.reset(widgetId)}
+  byId('adminCode').value='';await show();
+ }catch(e){msg('로그인 실패: '+e.message)}finally{button.disabled=false}
 };
 byId('refresh').onclick=async()=>{try{await refresh();await refreshDeletions()}catch(e){msg('목록 조회 실패: '+e.message)}};
-byId('logout').onclick=async()=>{await client.auth.signOut();reportsEl.replaceChildren();await show()};
-show();setupCaptcha().catch(e=>msg(e.message));
+byId('logout').onclick=async()=>{await client.rpc('board_admin_code_logout');await client.auth.signOut();reportsEl.replaceChildren();await show()};
+show();
 })();
