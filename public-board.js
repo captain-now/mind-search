@@ -18,10 +18,20 @@ function setStatus(msg){status.textContent=msg}
 let user=null,loading=false;
 const turnstileSiteKey=cfg.turnstileSiteKey;
 let captchaToken=null,widgetId=null;
-function prepareCaptcha(){
- if(!turnstileSiteKey)return Promise.reject(Error('Turnstile 사이트 키가 설정되지 않았습니다.'));
+function loadTurnstile(){
+ if(window.turnstile)return Promise.resolve();
  return new Promise((resolve,reject)=>{
-  if(!window.turnstile)return reject(Error('Turnstile 스크립트를 불러오지 못했습니다.'));
+  const script=document.createElement('script');
+  script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  script.onload=()=>window.turnstile?resolve():reject(Error('Turnstile 초기화 실패'));
+  script.onerror=()=>reject(Error('Turnstile 스크립트를 불러오지 못했습니다.'));
+  document.head.append(script);
+ });
+}
+async function prepareCaptcha(){
+ if(!turnstileSiteKey)throw Error('Turnstile 사이트 키가 설정되지 않았습니다.');
+ await loadTurnstile();
+ return new Promise((resolve,reject)=>{
   const holder=document.createElement('div');holder.id='boardCaptcha';root.insertBefore(holder,form);
   widgetId=window.turnstile.render(holder,{
    sitekey:turnstileSiteKey,
