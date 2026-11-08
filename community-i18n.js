@@ -9,11 +9,11 @@ const button=document.createElement('select');button.id='languageToggle';button.
 for(const [code,label] of [['ko','🇰🇷 한국어'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語']]){const o=document.createElement('option');o.value=code;o.textContent=label;button.append(o)}
 const header=document.querySelector('.head,.top .container');if(header)header.append(button);else document.body.prepend(button);
 function protectedNode(n){const e=n.parentElement;if(!e)return true;return !!e.closest('script,style,textarea,#messages .bubble .meta,#messages .bubble > div:not(.meta),#boardPosts .board-post h3,#boardPosts .board-post > p,#boardPosts .board-comment > p,#boardPosts small,#boardName,#nicknameNotice input,.board-nickname-register input:not([placeholder])')}
-function translateText(value){const m=value.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);if(!m)return value;let core=m[2];if(!core)return value;
+function translateText(value){const m=value.match(/^(\s*)([\s\S]*?)(\s*)$/);if(!m)return value;let core=m[2];if(!core)return value;
 const exact=origins.get(core)||core;
 const target=ko=>lang==='ko'?ko:lang==='en'?(map.get(ko)||ko):((extra[ko]||[])[lang==='zh'?0:1]||map.get(ko)||ko);
 if(map.has(exact)||extra[exact]||origins.has(core))return m[1]+target(exact)+m[3];
-if(/^\\d+(페이지| Page|页|ページ)$/.test(core)){const n=core.match(/^\\d+/)[0];return m[1]+n+({ko:'페이지',en:' Page',zh:'页',ja:'ページ'})[lang]+m[3]}
+if(/^\d+(페이지| Page|页|ページ)$/.test(core)){const n=core.match(/^\d+/)[0];return m[1]+n+({ko:'페이지',en:' Page',zh:'页',ja:'ページ'})[lang]+m[3]}
 for(const [ko,en] of pairs){if(ko.length<9)continue;for(const candidate of [ko,en,...(extra[ko]||[])]){if(candidate&&core.includes(candidate)){core=core.split(candidate).join(target(ko))}}}
 return m[1]+core+m[3]}
 let working=false;
