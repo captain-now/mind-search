@@ -22,10 +22,10 @@ async function start(){try{
  if(profile.error)throw profile.error;
  if(!profile.data){status('게시판 닉네임 등록이 필요합니다.');$('join').innerHTML='<p>게시판에서 고유 닉네임을 등록해 주세요.</p><a href="./board.html">게시판으로 이동</a>';return}
  nickname=profile.data.nickname;
+ const notice=$('nicknameNotice');if(notice)notice.hidden=true;
  $('join').classList.add('hidden');$('room').classList.remove('hidden');
  await refresh();await subscribe();status('게시판 닉네임 '+nickname+'으로 입장했습니다.');
  }catch(e){status('채팅방 연결 실패: '+e.message)}}
-start();
 $('compose').onsubmit=async e=>{e.preventDefault();if(submitting)return;const body=$('message').value.trim();if(!body)return;if(Date.now()-lastSent<5000){status('메시지는 5초 간격으로 보내 주세요.');return}submitting=true;$('send').disabled=true;try{const r=await client.from('chat_messages').insert({user_id:user.id,nickname,body});if(r.error)throw r.error;lastSent=Date.now();$('message').value='';status('메시지를 보냈습니다.');await refresh()}catch(err){status('전송 실패: '+err.message)}finally{submitting=false;$('send').disabled=false}};
 start();
 })();
