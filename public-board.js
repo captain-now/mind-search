@@ -152,15 +152,28 @@ async function refresh(){
  const hasMore=posts.data.length>POSTS_PER_PAGE;
  const pagePosts=posts.data.slice(0,POSTS_PER_PAGE);
  const ids=pagePosts.map(p=>p.id);
- const comments=ids.length?await client.from('board_comments').select('id,post_id,author_id,nickname,body,created_at').in('post_id',ids).order('created_at',{ascending:true}).limit(500):{data:[],error:null};
- if(comments.error)throw comments.error;
+ const comments={data:[]};
+ if(ids.length){
+  const COMMENT_BATCH=500;
+  for(let offset=0;;offset+=COMMENT_BATCH){
+   const batch=await client.from('board_comments').select('id,post_id,author_id,nickname,body,created_at').in('post_id',ids).order('created_at',{ascending:true}).order('id',{ascending:true}).range(offset,offset+COMMENT_BATCH-1);
+   if(batch.error)throw batch.error;
+   comments.data.push(...batch.data);
+   if(batch.data.length<COMMENT_BATCH)break;
+  }
+ }
+ const commentsByPost=new Map();
+ for(const comment of comments.data){
+  if(!commentsByPost.has(comment.post_id))commentsByPost.set(comment.post_id,[]);
+  commentsByPost.get(comment.post_id).push(comment);
+ }
  postsEl.replaceChildren();
  for(const p of pagePosts){
  const article=el('article');article.className='board-post';
  article.append(el('small',displayName(p)+' · '+new Date(p.created_at).toLocaleString()),el('h3',p.title),el('p',p.body));
  addDelete(article,'board_posts',p);addReport(article,'board_posts',p);
  const replies=el('div');replies.className='board-comments';
- for(const c of comments.data.filter(c=>c.post_id===p.id)){
+ for(const c of commentsByPost.get(p.id)||[]){
  const line=el('div');line.className='board-comment';
  line.append(el('small',displayName(c)+' · '+new Date(c.created_at).toLocaleString()),el('p',c.body));
  addDelete(line,'board_comments',c);addReport(line,'board_comments',c);replies.append(line);
