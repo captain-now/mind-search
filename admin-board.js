@@ -4,6 +4,15 @@ const config={url:'https://iqohtsakhfnwtlbarjut.supabase.co',anonKey:'sb_publish
 const client=window.supabase.createClient(config.url,config.anonKey,{auth:{storageKey:'mind-search-admin-auth',persistSession:true,autoRefreshToken:true}});
 const byId=id=>document.getElementById(id),login=byId('login'),dashboard=byId('dashboard'),status=byId('status'),reportsEl=byId('reports');
 function msg(value){status.textContent=value}
+function loginErrorMessage(error){
+ const code=error&&error.code;
+ const statusCode=error&&(error.status||error.statusCode);
+ if(code==='over_email_send_rate_limit'||statusCode===429||/email rate limit exceeded/i.test(error.message||''))return '이메일 발송 한도에 도달했습니다. 잠시 후 다시 시도해 주세요. 반복되면 운영자에게 이메일 발송 설정(SMTP) 확인이 필요합니다.';
+ if(code==='email_address_not_authorized')return '현재 이메일 발송 설정에서 이 주소로 전송할 수 없습니다. 운영자에게 SMTP 또는 Supabase 팀 이메일 설정 확인을 요청해 주세요.';
+ if(code==='captcha_failed')return '보안 인증이 확인되지 않았습니다. 인증을 다시 완료한 뒤 요청해 주세요.';
+ if(code==='over_request_rate_limit')return '로그인 요청이 너무 많습니다. 잠시 기다렸다가 다시 시도해 주세요.';
+ return '로그인 링크 요청 실패: '+(error.message||'알 수 없는 오류');
+}
 function el(tag,text){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n}
 const turnstileSiteKey='0x4AAAAAAF4XQ_wl1XONk2be';
 let captchaToken=null,widgetId=null;
@@ -78,8 +87,8 @@ byId('loginForm').onsubmit=async event=>{
    options:{emailRedirectTo:'https://captain-now.github.io/mind-search/admin.html',shouldCreateUser:false,captchaToken}
   });
   if(result.error)throw result.error;
-  msg('로그인 메일을 보냈습니다. 메일함에서 최신 로그인 링크를 열어 주세요.');
- }catch(e){msg('로그인 링크 요청 실패: '+e.message)}
+  msg('로그인 이메일 요청이 접수되었습니다. 메일함과 스팸함을 확인해 주세요. 수신되지 않으면 발송 설정 확인이 필요합니다.');
+ }catch(e){msg(loginErrorMessage(e))}
  finally{button.disabled=false;captchaToken=null;if(widgetId!==null&&window.turnstile)window.turnstile.reset(widgetId)}
 };
 byId('refresh').onclick=()=>refresh().catch(e=>msg('신고 조회 실패: '+e.message));
