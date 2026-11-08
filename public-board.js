@@ -129,20 +129,33 @@ function addReport(container,table,item){
  button.onclick=()=>reportItem(table,item,button);
  container.append(button);
 }
+const POSTS_PER_PAGE=50;
+let currentPage=0;
+function pageControls(hasMore){
+ const nav=el('nav');nav.setAttribute('aria-label','게시글 페이지 이동');nav.style.cssText='display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:24px 0';
+ const prev=el('button','← 최신 글');prev.type='button';prev.disabled=currentPage===0;
+ const label=el('span',(currentPage+1)+'페이지');label.setAttribute('aria-live','polite');
+ const next=el('button','이전 글 보기 →');next.type='button';next.disabled=!hasMore;
+ prev.onclick=()=>{if(currentPage>0){currentPage--;refresh()}};
+ next.onclick=()=>{if(hasMore){currentPage++;refresh()}};
+ nav.append(prev,label,next);return nav;
+}
 async function refresh(){
  if(loading)return;loading=true;
  try{
- const posts=await client.from('board_posts').select('id,author_id,nickname,title,body,created_at').order('created_at',{ascending:false}).limit(50);
+ const posts=await client.from('board_posts').select('id,author_id,nickname,title,body,created_at').order('created_at',{ascending:false}).order('id',{ascending:false}).range(currentPage*POSTS_PER_PAGE,(currentPage+1)*POSTS_PER_PAGE);
  if(posts.error)throw posts.error;
  const profileResult=await client.from('board_profiles').select('user_id,nickname');
  if(profileResult.error)throw profileResult.error;
  const verifiedNames=new Map(profileResult.data.map(p=>[p.user_id,p.nickname]));
  const displayName=item=>verifiedNames.get(item.author_id)===item.nickname?item.nickname+' · 고유 닉네임':item.nickname+' · 이전 기록(미인증)';
- const ids=posts.data.map(p=>p.id);
+ const hasMore=posts.data.length>POSTS_PER_PAGE;
+ const pagePosts=posts.data.slice(0,POSTS_PER_PAGE);
+ const ids=pagePosts.map(p=>p.id);
  const comments=ids.length?await client.from('board_comments').select('id,post_id,author_id,nickname,body,created_at').in('post_id',ids).order('created_at',{ascending:true}).limit(500):{data:[],error:null};
  if(comments.error)throw comments.error;
  postsEl.replaceChildren();
- for(const p of posts.data){
+ for(const p of pagePosts){
  const article=el('article');article.className='board-post';
  article.append(el('small',displayName(p)+' · '+new Date(p.created_at).toLocaleString()),el('h3',p.title),el('p',p.body));
  addDelete(article,'board_posts',p);addReport(article,'board_posts',p);
@@ -167,7 +180,7 @@ async function init(){
  await setupNickname();
  // Enable posting only after remote authentication succeeds.
  form.hidden=!registeredNickname;
- form.onsubmit=async e=>{e.preventDefault();const nickname=registeredNickname,title=titleInput.value.trim(),body=bodyInput.value.trim();if(!nickname||!title||!body)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const r=await client.from('board_posts').insert({author_id:user.id,nickname,title,body});if(r.error)throw r.error;titleInput.value='';bodyInput.value='';await refresh()}catch(err){setStatus('글 작성 실패: '+err.message)}finally{submit.disabled=false}};
+ form.onsubmit=async e=>{e.preventDefault();const nickname=registeredNickname,title=titleInput.value.trim(),body=bodyInput.value.trim();if(!nickname||!title||!body)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const r=await client.from('board_posts').insert({author_id:user.id,nickname,title,body});if(r.error)throw r.error;titleInput.value='';bodyInput.value='';currentPage=0;await refresh()}catch(err){setStatus('글 작성 실패: '+err.message)}finally{submit.disabled=false}};
  await refresh();
  }catch(e){setStatus('공개 게시판 연결 실패: '+e.message+' · 새로고침 후 다시 시도해 주세요.')}
 }
