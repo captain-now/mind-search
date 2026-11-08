@@ -70,6 +70,30 @@ async function setupLinkControls(){
   redeem.onclick=async()=>{redeem.disabled=true;try{const r=await client.rpc('board_redeem_link_code',{p_code:input.value.trim()});if(r.error)throw r.error;setStatus('연동이 완료됐습니다. 게시판을 다시 불러옵니다.');location.reload()}catch(e){setStatus('연동 실패: '+e.message)}finally{redeem.disabled=false}};
   panel.append(input,redeem);
  }
+ if(registeredNickname){
+  const deletion=el('details');deletion.style.cssText='margin-top:16px;border-top:1px solid #cbd9cf;padding-top:12px';
+  const summary=el('summary','고유 닉네임 / 계정 삭제');summary.style.cursor='pointer';deletion.append(summary);
+  const description=el('p','닉네임만 삭제하면 기존 게시글·댓글·채팅은 남고 이름을 다시 등록할 수 있습니다. 전체 삭제는 게시글·댓글·채팅과 익명 계정까지 영구 삭제합니다. 원래 닉네임을 만든 앱에서만 삭제할 수 있습니다.');
+  deletion.append(description);
+  const nickBtn=el('button','고유 닉네임만 삭제');nickBtn.type='button';
+  nickBtn.onclick=async()=>{
+   const typed=prompt('닉네임만 삭제합니다. 게시글과 댓글은 유지됩니다. 확인하려면 현재 고유 닉네임을 입력하세요: '+registeredNickname);
+   if(typed!==registeredNickname)return;
+   if(!confirm('고유 닉네임을 삭제하고 다른 기기와의 연결도 해제할까요?'))return;
+   nickBtn.disabled=true;
+   try{const r=await client.rpc('board_delete_nickname',{p_confirmation:typed});if(r.error)throw r.error;location.reload()}catch(e){setStatus('닉네임 삭제 실패: '+e.message);nickBtn.disabled=false}
+  };
+  const allBtn=el('button','계정 및 모든 기록 영구 삭제');allBtn.type='button';allBtn.style.cssText='margin-left:8px;background:#9b2636;color:white';
+  allBtn.onclick=async()=>{
+   const expected='계정삭제 '+registeredNickname;
+   const typed=prompt('복구할 수 없습니다. 게시글·댓글·채팅·계정이 모두 삭제됩니다. 계속하려면 정확히 입력하세요: '+expected);
+   if(typed!==expected)return;
+   if(!confirm('마지막 확인: 모든 기록과 계정을 영구 삭제할까요?'))return;
+   allBtn.disabled=true;
+   try{const r=await client.rpc('board_delete_account',{p_confirmation:typed});if(r.error)throw r.error;await client.auth.signOut({scope:'local'});location.reload()}catch(e){setStatus('전체 삭제 실패: '+e.message);allBtn.disabled=false}
+  };
+  deletion.append(nickBtn,allBtn);panel.append(deletion);
+ }
  root.insertBefore(panel,form);
 }
 async function setupNickname(){
