@@ -16,7 +16,33 @@ const localNotice=root.querySelector('.disclaimer');if(localNotice)localNotice.t
 function el(tag,txt){const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;return n}
 function setStatus(msg){status.textContent=msg}
 let user=null,loading=false;
-async function ensureUser(){const current=await client.auth.getUser();if(current.data.user)return current.data.user;const result=await client.auth.signInAnonymously();if(result.error)throw result.error;return result.data.user}
+const turnstileSiteKey=cfg.turnstileSiteKey;
+let captchaToken=null,widgetId=null;
+function prepareCaptcha(){
+ if(!turnstileSiteKey)return Promise.reject(Error('Turnstile 사이트 키가 설정되지 않았습니다.'));
+ return new Promise((resolve,reject)=>{
+  if(!window.turnstile)return reject(Error('Turnstile 스크립트를 불러오지 못했습니다.'));
+  const holder=document.createElement('div');holder.id='boardCaptcha';root.insertBefore(holder,form);
+  widgetId=window.turnstile.render(holder,{
+   sitekey:turnstileSiteKey,
+   callback:token=>{captchaToken=token;resolve();},
+   'expired-callback':()=>{captchaToken=null;setStatus('보안 인증이 만료되었습니다. 다시 인증해 주세요.');},
+   'error-callback':()=>{captchaToken=null;setStatus('보안 인증에 실패했습니다. 다시 시도해 주세요.');}
+  });
+  setStatus('게시판 이용을 위해 보안 인증을 완료해 주세요.');
+ });
+}
+async function ensureUser(){
+ const current=await client.auth.getUser();
+ if(current.data.user)return current.data.user;
+ await prepareCaptcha();
+ if(!captchaToken)throw Error('보안 인증 토큰이 없습니다.');
+ const result=await client.auth.signInAnonymously({options:{captchaToken}});
+ captchaToken=null;
+ if(widgetId!==null && window.turnstile)window.turnstile.reset(widgetId);
+ if(result.error)throw result.error;
+ return result.data.user;
+}
 async function remove(table,id){if(!confirm('정말 삭제할까요?'))return;const result=await client.from(table).delete().eq('id',id).eq('author_id',user.id);if(result.error)throw result.error;await refresh()}
 function addDelete(container,table,item){if(item.author_id!==user.id)return;const btn=el('button','내 글 삭제');btn.type='button';btn.onclick=async()=>{try{await remove(table,item.id)}catch(e){setStatus('삭제 실패: '+e.message)}};container.append(btn)}
 async function refresh(){
