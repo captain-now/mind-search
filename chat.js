@@ -11,12 +11,12 @@ function draw(m){const box=element('div',undefined,'bubble'+(user&&m.user_id===u
 }
 async function refresh(){const r=await client.from('chat_messages').select('id,user_id,nickname,body,created_at').order('created_at',{ascending:false}).limit(100);if(r.error)throw r.error;$('messages').replaceChildren();r.data.reverse().forEach(draw)}
 async function subscribe(){if(channel)await client.removeChannel(channel);channel=client.channel('mind-search-chat').on('postgres_changes',{event:'*',schema:'public',table:'chat_messages'},async payload=>{
- if(payload.eventType==='DELETE'){await refresh();return}
+ if(payload.eventType==='DELETE'){try{await refresh()}catch(e){status('대화 목록 갱신 실패: '+e.message)}return}
  if(payload.eventType==='INSERT'&&!$('messages').querySelector('[data-id="'+payload.new.id+'"]'))draw(payload.new);
  }).subscribe(s=>{if(s==='SUBSCRIBED')status('실시간 채팅에 연결됐습니다.');if(s==='CHANNEL_ERROR'||s==='TIMED_OUT')status('실시간 연결이 불안정합니다. 새로고침해 주세요.')})}
 function captcha(){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';s.onload=()=>resolve();s.onerror=()=>reject(Error('보안 인증을 불러오지 못했습니다.'));document.head.append(s)})}
 async function start(){try{const session=await client.auth.getUser();if(session.data.user)user=session.data.user;await captcha();widget=window.turnstile.render('#captcha',{sitekey:config.siteKey,callback:t=>{captchaToken=t},'expired-callback':()=>{captchaToken=''},'error-callback':()=>{captchaToken='';status('보안 인증에 실패했습니다.')}});status('닉네임과 보안 인증을 완료해 주세요.')}catch(e){status(e.message)}}
-$('joinButton').onclick=async()=>{if(submitting)return;nickname=$('nickname').value.trim();if(nickname.length<2||nickname.length>24){status('닉네임은 2~24자로 입력해 주세요.');return}submitting=true;$('joinButton').disabled=true;try{
+$('joinButton').onclick=async()=>{if(submitting)return;nickname=$('nickname').value.trim();if(nickname.length<2||nickname.length>24){status('닉네임은 2~24자로 입력해 주세요.');return}if(/^(운영자|관리자|admin|administrator|moderator|mind\\s*search)$/i.test(nickname)){status('이 닉네임은 사용할 수 없습니다.');return}submitting=true;$('joinButton').disabled=true;try{
  if(!user){if(!captchaToken)throw Error('보안 인증을 완료해 주세요.');const r=await client.auth.signInAnonymously({options:{captchaToken}});if(r.error)throw r.error;user=r.data.user}
  $('join').classList.add('hidden');$('room').classList.remove('hidden');await refresh();await subscribe();status('채팅방에 입장했습니다.')
  }catch(e){$('join').classList.remove('hidden');$('room').classList.add('hidden');status('입장 실패: '+e.message)}finally{submitting=false;$('joinButton').disabled=false;if(widget!==null&&window.turnstile)window.turnstile.reset(widget);captchaToken=''}};
