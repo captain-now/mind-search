@@ -234,10 +234,27 @@ async function refresh(){
  setStatus('공개 게시판 연결됨 · '+(currentPage+1)+'페이지 · 페이지당 최대 50개');
  }catch(e){setStatus('게시판 불러오기 실패: '+e.message)}finally{loading=false}
 }
+async function updateAdminReportBadge(){
+ const link=document.querySelector('a[href="./admin.html"]');
+ if(!link)return;
+ let badge=link.querySelector('.admin-report-badge');
+ try{
+  const r=await client.rpc('board_pending_report_count');
+  if(r.error)throw r.error;
+  const count=Number(r.data)||0;
+  if(!badge){badge=el('span');badge.className='admin-report-badge';badge.style.cssText='display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;margin-left:5px;border-radius:12px;background:#c72e40;color:#fff;font-size:12px;font-weight:800;vertical-align:middle';link.append(badge)}
+  badge.textContent=count>99?'99+':String(count);
+  badge.hidden=count===0;
+  link.setAttribute('aria-label','운영자 관리실, 대기 중인 신고 '+count+'건');
+ }catch(e){if(badge)badge.hidden=true}
+}
 async function init(){
  try{user=await ensureUser();if(!user)throw Error('익명 인증에 실패했습니다.');
  const canonical=await client.rpc('board_canonical_user_id');if(canonical.error)throw canonical.error;canonicalId=canonical.data;
  await setupNickname();
+ await updateAdminReportBadge();
+ setInterval(()=>{if(!document.hidden)updateAdminReportBadge()},30000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateAdminReportBadge()});
  // Enable posting only after remote authentication succeeds.
  form.hidden=!registeredNickname;
  form.onsubmit=async e=>{e.preventDefault();const nickname=registeredNickname,title=titleInput.value.trim(),body=bodyInput.value.trim();if(!nickname||!title||!body)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const r=await client.from('board_posts').insert({author_id:canonicalId,nickname,title,body});if(r.error)throw r.error;titleInput.value='';bodyInput.value='';currentPage=0;await refresh()}catch(err){setStatus('글 작성 실패: '+err.message)}finally{submit.disabled=false}};
