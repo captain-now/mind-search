@@ -158,4 +158,4 @@ comments.append(form);article.append(comments);postsEl.append(article)
 document.getElementById('boardForm').onsubmit=e=>{e.preventDefault();const name=document.getElementById('boardName').value.trim(),title=document.getElementById('boardTitle').value.trim(),body=document.getElementById('boardBody').value.trim();if(!name||!title||!body)return;if(posts.length>=200)return alert('이 기기의 게시글 한도(200개)에 도달했습니다.');const post={id:crypto.randomUUID(),name,title,body,time:new Date().toISOString(),comments:[]};posts.push(post);if(!save()){posts.pop();return}document.getElementById('boardTitle').value='';document.getElementById('boardBody').value='';render()};
 render();
 })();
-</script><script src="./public-board.js" defer></script></body></html>
+</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.10/dist/umd/supabase.min.js" defer></script><script defer>window.MIND_SEARCH_BOARD_CONFIG={url:"https://iqohtsakhfnwtlbarjut.supabase.co",anonKey:"sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w"};</script><script src="./public-board.js" defer></script></body></html>
