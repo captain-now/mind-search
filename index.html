@@ -139,13 +139,13 @@ const photo=overlay.querySelector('.med-photo');
 photo.style.backgroundImage='url("./meditation-background.jpg?v=3")';
 function sync(){clock.textContent=document.getElementById('clock').textContent;pauseButton.textContent=timer.isRunning()?'일시정지':'계속하기';}
 function show(){overlay.classList.add('active');document.body.style.overflow='hidden';sync();}
-function hide(){overlay.classList.remove('active');document.body.style.overflow='';}
+function hide(){timer.pause();sync();overlay.classList.remove('active');document.body.style.overflow='';}
 document.getElementById('start').addEventListener('click',()=>{if(timer.isRunning())show();else if(overlay.classList.contains('active'))sync();});
 pauseButton.addEventListener('click',()=>{timer.toggle();sync();});
-document.getElementById('medClose').addEventListener('click',()=>{timer.pause();sync();hide();});
-document.getElementById('medEnd').addEventListener('click',()=>{timer.pause();sync();hide();});
+document.getElementById('medClose').addEventListener('click',hide);
+document.getElementById('medEnd').addEventListener('click',hide);
 const observer=new MutationObserver(()=>{if(overlay.classList.contains('active'))sync();});
 observer.observe(document.getElementById('clock'),{childList:true,characterData:true,subtree:true});
-window.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('active')){timer.pause();hide();}});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('active'))hide();});
 })();
 </script></body></html>
