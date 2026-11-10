@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 125" role="img" aria-label="한국 전통 사찰 전각 그림">
+<defs><linearGradient id="roof" x2="0" y2="1"><stop stop-color="#59636a"/><stop offset="1" stop-color="#28353a"/></linearGradient><linearGradient id="wood" x2="0" y2="1"><stop stop-color="#cb653a"/><stop offset="1" stop-color="#9e3829"/></linearGradient></defs>
+<path d="M18 101q-6-28 8-36 9 10 6 35M140 103q7-31-7-39-10 14-5 39" fill="#6d9e54"/><path d="M5 111q20-17 41-9 28-11 53-3 30-8 56 11" fill="#78a05b"/>
+<path d="M39 90h85v18H39z" fill="#d3c4a2"/><path d="M32 105h99v5H32z" fill="#b1a18c"/>
+<path d="M39 48h85v48H39z" fill="#b94f31"/><path d="M45 51h73v9H45z" fill="#28746b"/><path d="M45 60h73v5H45z" fill="#d8ae5c"/>
+<path d="M48 66h17v29H48zm23 0h17v29H71zm23 0h17v29H94z" fill="#d6b678" stroke="#28564b" stroke-width="3"/>
+<path d="M78 66v29M54 80h5m18 0h5m18 0h5" stroke="#28564b" stroke-width="2"/>
+<path d="M33 47q46-11 94 0l-3 9H37z" fill="#2e8271"/>
+<path d="M9 48q25 4 43-15 26-23 55 0 17 19 44 15-19 15-42-4-29-19-56 0Q28 63 9 48z" fill="url(#roof)" stroke="#25383b" stroke-width="2"/>
+<path d="M13 46q25 2 41-16 26-24 52 0 17 18 41 16" fill="none" stroke="#b8c0bb" stroke-width="4"/>
+<path d="M42 51l4-6m12 4 3-6m12 5 1-7m12 7-1-7m13 8-3-6m14 8-5-6" stroke="#b3c0bd" stroke-width="2"/>
+<path d="M68 96h29l10 14H57z" fill="#d2c4a7"/><path d="M63 103h38m-33 4h29" stroke="#ad9c7c" stroke-width="2"/>
+<circle cx="29" cy="92" r="12" fill="#729c53"/><circle cx="136" cy="94" r="11" fill="#83a75b"/>
+</svg>
