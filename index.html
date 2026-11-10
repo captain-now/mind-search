@@ -145,7 +145,7 @@ function hide(){overlay.classList.remove('active');document.body.style.overflow=
 start.addEventListener('click',()=>{if(start.textContent.includes('일시정지'))show();});
 pause.addEventListener('click',()=>{start.click();sync();});
 document.getElementById('medClose').addEventListener('click',hide);
-document.getElementById('medEnd').addEventListener('click',()=>{reset.click();hide();});
+document.getElementById('medEnd').addEventListener('click',()=>{if(start.textContent.includes('일시정지'))start.click();sync();hide();});
 const observer=new MutationObserver(()=>{if(overlay.classList.contains('active'))sync();});
 observer.observe(document.getElementById('clock'),{childList:true,characterData:true,subtree:true});
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('active'))hide();});
