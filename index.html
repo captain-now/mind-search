@@ -138,7 +138,7 @@ const overlay=document.getElementById('meditationOverlay'),clock=document.getEle
 const start=document.getElementById('start'),reset=document.getElementById('reset');
 const photo=overlay.querySelector('.med-photo'),hero=document.querySelector('.hero');
 const bg=getComputedStyle(hero).backgroundImage;const image=bg.match(/url\((?:"|')?(data:image\/[^)"']+)(?:"|')?\)/);
-photo.style.backgroundImage=image?'url("'+image[1]+'")':bg;
+photo.style.backgroundImage='url("./meditation-background.jpg?v=2")';
 function sync(){clock.textContent=document.getElementById('clock').textContent;pause.textContent=start.textContent.includes('일시정지')?'일시정지':'계속하기';}
 function show(){overlay.classList.add('active');document.body.style.overflow='hidden';sync();}
 function hide(){overlay.classList.remove('active');document.body.style.overflow='';}
