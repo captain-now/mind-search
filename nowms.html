@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1ea">
+  <meta name="description" content="NOW Mind Search(NOWMS)의 발행 및 교환 계획을 안내합니다.">
+  <title>NOWMS | Mind Search</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f4f1ea; color: #263d36; font: 1rem/1.65 system-ui, sans-serif; }
+    a { color: #355a48; text-underline-offset: .2em; }
+    a:focus-visible { outline: 3px solid #477866; outline-offset: 5px; }
+    header { border-bottom: 1px solid #e2e8de; background: #f8f7f2; }
+    header > div, main { width: min(100% - 2rem, 52rem); margin-inline: auto; }
+    header > div { padding-block: 1rem; }
+    main { padding-block: 1.5rem 3rem; }
+    section { padding: clamp(1rem, 4vw, 2rem); margin-bottom: 1rem; border: 1px solid #e2e8de; border-radius: 1.25rem; background: #fffefa; }
+    .hero { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
+    .hero img { width: clamp(5rem, 20vw, 8rem); height: auto; }
+    .hero > div { flex: 1 1 14rem; }
+    h1, h2 { margin: 0; line-height: 1.2; }
+    h1 { font-size: clamp(1.8rem, 6vw, 2.7rem); }
+    h2 { font-size: 1.25rem; }
+    p { margin: .65rem 0 0; }
+    .status { color: #355a48; font-weight: 700; }
+    dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: .75rem 1.5rem; margin: 1rem 0 0; }
+    dt { color: #486458; font-size: .9rem; }
+    dd { margin: 0; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-variant-numeric: tabular-nums; }
+    th, td { padding: .55rem .35rem; border-bottom: 1px solid #e2e8de; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    tbody th { font-weight: 500; }
+  </style>
+</head>
+<body>
+  <header><div><a href="./">← Mind Search</a></div></header>
+  <main>
+    <section class="hero" aria-labelledby="token-name">
+      <img src="./assets/nowms-logo.webp" width="512" height="512" alt="">
+      <div>
+        <h1 id="token-name">NOW Mind Search <span>(NOWMS)</span></h1>
+        <p class="status" data-copy="status">발행 준비 중</p>
+        <p data-copy="address">공식 솔라나 토큰 주소는 발행 후 이 페이지에 공개합니다.</p>
+      </div>
+    </section>
+    <section aria-labelledby="issuance">
+      <h2 id="issuance" data-copy="issuance">발행 계획</h2>
+      <dl>
+        <div><dt data-copy="network">네트워크</dt><dd>Solana</dd></div>
+        <div><dt data-copy="supply">총발행 예정량</dt><dd>100,000,000 NOWMS</dd></div>
+        <div><dt data-copy="exchangeAllocation">교환용</dt><dd>80,000,000 NOWMS</dd></div>
+        <div><dt data-copy="operatorAllocation">운영자용</dt><dd>20,000,000 NOWMS</dd></div>
+      </dl>
+      <p data-copy="mint">1억 개를 한 번에 발행한 뒤 추가 발행 권한을 폐기할 계획입니다.</p>
+    </section>
+    <section aria-labelledby="exchange">
+      <h2 id="exchange" data-copy="exchange">NOW 마음챙김 적립 코인 교환 계획</h2>
+      <p data-copy="exchangeTiming">교환은 준비 중입니다. 시작일과 교환 방법은 확정 후 공개합니다.</p>
+      <table aria-labelledby="exchange">
+        <thead>
+          <tr><th scope="col" data-copy="phase">구간</th><th scope="col" data-copy="allocation">배정량(NOWMS)</th><th scope="col" data-copy="points">NOWMS 1개당 적립 코인</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">1</th><td>20,000,000</td><td>1</td></tr>
+          <tr><th scope="row">2</th><td>20,000,000</td><td>10</td></tr>
+          <tr><th scope="row">3</th><td>15,000,000</td><td>100</td></tr>
+          <tr><th scope="row">4</th><td>15,000,000</td><td>1,000</td></tr>
+          <tr><th scope="row">5</th><td>10,000,000</td><td>10,000</td></tr>
+        </tbody>
+      </table>
+      <p data-copy="longTerm">5차의 마지막 1천만 NOWMS는 장기 교환용으로 배정할 계획입니다.</p>
+    </section>
+    <section aria-labelledby="use">
+      <h2 id="use" data-copy="use">사용처 및 거래소 상장</h2>
+      <p data-copy="useTiming">NOWMS 사용처와 거래소 상장 여부는 추후 결정합니다.</p>
+    </section>
+  </main>
+  <script>
+    const translations = {
+      en: {
+        status: 'Issuance in preparation',
+        address: 'The official Solana token address will be published here after issuance.',
+        issuance: 'Issuance plan', network: 'Network', supply: 'Planned supply',
+        exchangeAllocation: 'For exchange', operatorAllocation: 'For operations',
+        mint: 'The plan is to issue all 100 million tokens at once and then revoke the mint authority.',
+        exchange: 'NOW Mindfulness points exchange plan',
+        exchangeTiming: 'The exchange is in preparation. The start date and instructions will be announced once confirmed.',
+        phase: 'Phase', allocation: 'Allocation (NOWMS)', points: 'Points per NOWMS',
+        longTerm: 'The final 10 million NOWMS in Phase 5 are planned for long-term exchange.',
+        use: 'Use cases and exchange listings',
+        useTiming: 'NOWMS use cases and whether to pursue exchange listings will be decided later.'
+      },
+      zh: {
+        status: '发行筹备中', address: '发行后将在本页公布官方 Solana 代币地址。',
+        issuance: '发行计划', network: '网络', supply: '计划发行总量',
+        exchangeAllocation: '兑换份额', operatorAllocation: '运营份额',
+        mint: '计划一次性发行 1 亿枚代币，随后撤销增发权限。',
+        exchange: 'NOW 正念积分兑换计划', exchangeTiming: '兑换筹备中。开始日期及兑换方式将在确定后公布。',
+        phase: '阶段', allocation: '分配量（NOWMS）', points: '每枚 NOWMS 所需积分',
+        longTerm: '第 5 阶段的最后 1,000 万枚 NOWMS 计划用于长期兑换。',
+        use: '用途与交易所上线', useTiming: 'NOWMS 的用途及是否在交易所上线将于日后决定。'
+      },
+      ja: {
+        status: '発行準備中', address: '発行後、公式の Solana トークンアドレスをこのページで公開します。',
+        issuance: '発行計画', network: 'ネットワーク', supply: '発行予定総数',
+        exchangeAllocation: '交換用', operatorAllocation: '運営用',
+        mint: '1億枚を一括で発行し、その後に追加発行権限を放棄する予定です。',
+        exchange: 'NOW マインドフルネスのポイント交換計画',
+        exchangeTiming: '交換は準備中です。開始日と交換方法は確定後にお知らせします。',
+        phase: '段階', allocation: '割当数（NOWMS）', points: '1 NOWMS に必要なポイント',
+        longTerm: '第5段階の最後の1,000万 NOWMS は長期交換用に割り当てる予定です。',
+        use: '用途と取引所への上場', useTiming: 'NOWMS の用途や取引所への上場の可否は今後決定します。'
+      }
+    };
+    let language = 'ko';
+    try { language = localStorage.getItem('mindsearch-ui-language') || 'ko'; } catch {}
+    if (Object.hasOwn(translations, language)) {
+      document.documentElement.lang = language;
+      document.querySelectorAll('[data-copy]').forEach(element => {
+        element.textContent = translations[language][element.dataset.copy];
+      });
+    }
+  </script>
+</body>
+</html>
