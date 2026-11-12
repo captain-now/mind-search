@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline'; connect-src https://api.devnet.solana.com; base-uri 'none'; form-action 'none'">
+<title>NOWMS 데브넷 서명 확인</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#0c1220;color:#edf1f9}
+body{margin:0;padding:clamp(20px,6vw,56px)}
+main{max-width:460px;margin:8vh auto;background:#161f31;border:1px solid #34445e;border-radius:18px;padding:24px}
+h1{font-size:1.65rem;margin:0 0 16px;line-height:1.3}
+p{line-height:1.65}
+button{width:100%;min-height:52px;border:0;border-radius:10px;background:#f2d58b;color:#171401;font:inherit;font-weight:700;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+button:focus-visible{outline:3px solid #fff;outline-offset:4px}
+#status{min-height:3.4em;color:#c3cee1;overflow-wrap:anywhere;margin-bottom:0}
+</style>
+</head>
+<body><main>
+<h1>NOWMS 데브넷 서명 확인</h1>
+<p>Phantom에서 시험용 NOWMS 100개 발행 거래에 서명할 수 있는지 확인합니다. 확인은 서명에서 끝나며 거래는 전송되지 않습니다.</p>
+<button type="button" id="start">Phantom에서 서명 확인</button>
+<p id="status" role="status" aria-live="polite">Phantom 앱 안의 브라우저에서 열어 주세요.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.4/lib/index.iife.min.js" integrity="sha384-I45YF+S0YGWIolUyTksLk9TNtTqaDgZg8e6T1OoBoJvvFmphqYNIPZw3Kl0TkZNN" crossorigin="anonymous"></script>
+<script>
+'use strict';
+const template = 'AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAECJLiA3OBJquaOr80n8oac8EKAVnP/xCN36VpUKoDZthTFzeTDW41QHjjz3jmt4mamn3DHtWEXv+cUEhRbSiu3MNGCGnoMGiUFtrc4ACXMSk+LUMSvw+HTBomzsa8G1boMr89RxYStnk0Fe2mw7rEFHHDRIMfhy/P4hI2jkp7axKOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACMlyWPTiSJ8bs9ECkUjg2DC1oTmdr/EIQEjnvY2+n4WQtwZbHj0XxFOJ1Sf2sEw81YuGxzGqD9tUm20bwD+ClGBt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUEAgABNAAAAAAwRxAAAAAAAFIAAAAAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKkHAQFDFAaS4gNzgSarmjq/NJ/KGnPBCgFZz/8Qjd+laVCqA2bYUwGS4gNzgSarmjq/NJ/KGnPBCgFZz/8Qjd+laVCqA2bYUwUGAAIAAQQHAQEHAwECAAoOAOH1BQAAAAAGBgYDAQAAAATlASEPAAAATk9XIE1pbmQgU2VhcmNoBQAAAE5PV01TvQAAAGRhdGE6YXBwbGljYXRpb24vanNvbjtiYXNlNjQsZXlKdVlXMWxJam9pVGs5WElFMXBibVFnVTJWaGNtTm9JaXdpYzNsdFltOXNJam9pVGs5WFRWTWlMQ0pwYldGblpTSTZJbWgwZEhCek9pOHZZMkZ3ZEdGcGJpMXViM2N1WjJsMGFIVmlMbWx2TDIxcGJtUXRjMlZoY21Ob0wyRnpjMlYwY3k5dWIzZHRjeTFzYjJkdkxuZGxZbkFpZlE9PQAAAAAAAQA=';
+const expectedWallet = 'AtNQrkhP1wtEpwbVQ1tu9dCAARR9kyNCTU2LeR9seJGa';
+const rpcUrl = 'https://api.devnet.solana.com';
+const start = document.getElementById('start');
+const status = document.getElementById('status');
+async function rpc(method, params) {
+  const response = await fetch(rpcUrl, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({jsonrpc: '2.0', id: 1, method, params})
+  });
+  if (!response.ok) throw new Error('데브넷 응답 오류 (' + response.status + ')');
+  const reply = await response.json();
+  if (reply.error) throw new Error(reply.error.message);
+  return reply.result;
+}
+const asBase64 = (bytes) => btoa(String.fromCharCode(...bytes));
+start.addEventListener('click', async () => {
+  const phantom = window.phantom?.solana ?? window.solana;
+  if (!phantom?.isPhantom) {
+    status.textContent = 'Phantom 앱 안의 브라우저에 이 페이지 주소를 붙여 넣어 주세요.';
+    return;
+  }
+  if (!window.solanaWeb3) {
+    status.textContent = '거래 도구를 불러오지 못했어요. 페이지를 새로고침해 주세요.';
+    return;
+  }
+  start.disabled = true;
+  try {
+    status.textContent = 'Phantom 연결을 확인해 주세요.';
+    const {publicKey} = await phantom.connect();
+    if (publicKey.toBase58() !== expectedWallet) {
+      throw new Error('테스트에 사용한 Phantom 계정을 선택해 주세요.');
+    }
+    status.textContent = '데브넷에서 거래를 미리 확인하고 있어요.';
+    const {value: {blockhash}} = await rpc('getLatestBlockhash', [{commitment: 'confirmed'}]);
+    const tx = window.solanaWeb3.Transaction.from(Uint8Array.from(atob(template), char => char.charCodeAt(0)));
+    tx.recentBlockhash = blockhash;
+    const message = asBase64(tx.serializeMessage());
+    const {value} = await rpc('simulateTransaction', [
+      asBase64(tx.serialize({requireAllSignatures: false, verifySignatures: false})),
+      {encoding: 'base64', commitment: 'confirmed', sigVerify: false}
+    ]);
+    if (value.err || !value.postTokenBalances?.some(balance => balance.owner === expectedWallet && balance.uiTokenAmount.uiAmountString === '100')) {
+      throw new Error('데브넷에서 시험용 100개 발행을 확인할 수 없어요.');
+    }
+    status.textContent = 'Phantom 승인 창에서 내용을 확인해 주세요.';
+    const signed = await phantom.signTransaction(tx);
+    const signature = signed.signatures.find(item => item.publicKey.toBase58() === expectedWallet);
+    if (!signature?.signature || asBase64(signed.serializeMessage()) !== message || !signed.verifySignatures(false)) {
+      throw new Error('Phantom 서명을 검증할 수 없어요.');
+    }
+    status.textContent = '서명 확인 성공. Phantom의 서명이 유효합니다.';
+    start.textContent = '확인 완료';
+  } catch (error) {
+    const code = Number.isInteger(error?.code) ? ' (' + error.code + ')' : '';
+    status.textContent = '확인 실패' + code + ' · ' + (error?.message || '오류 정보를 받지 못했어요.');
+    start.disabled = false;
+  }
+});
+</script>
+</body></html>
