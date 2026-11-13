@@ -240,6 +240,29 @@
     @media (max-height: 600px) and (orientation: landscape) {
       .interior.with-chant:not([hidden]) { grid-template-rows: minmax(0, 1fr) auto; }
     }
+    .temple-cushion[type="button"], .chair-name-button { position: relative; }
+    .seat-name-label {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      pointer-events: none;
+      padding: 2px;
+      font: 700 clamp(8px, 2.7vw, 13px)/1.12 system-ui, sans-serif;
+    }
+    .seat-name-line {
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding: 0 2px;
+      box-sizing: border-box;
+      border-radius: 3px;
+      background: #261b15ed;
+      color: #fff;
+    }
     .cushion-dialog {
       box-sizing: border-box;
       position: fixed;
@@ -300,7 +323,7 @@
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
       </div>
-      <a class="home-return" href="./prayer.html?v=mobileform">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=seatlabel">기도공간으로 돌아가기</a>
     </section>
   </main>
     <template id="church-seating-template">
@@ -555,6 +578,17 @@
           return;
         }
         entries.set(seatNumber, { year, name });
+        const lines = [memorial ? year : year + '년생', name];
+        const display = selectedButton.querySelector('.seat-name-label');
+        display.replaceChildren(...lines.map((text) => {
+          const line = document.createElement('span');
+          line.className = 'seat-name-line';
+          line.textContent = text;
+          return line;
+        }));
+        const summary = lines.join(' ');
+        selectedButton.title = summary;
+        selectedButton.setAttribute('aria-label', seatLabel + ' ' + seatNumber + '번, ' + summary);
       });
       plan.querySelectorAll('.paired-row > *').forEach((seat, index) => {
         const number = index + 1;
@@ -567,6 +601,10 @@
         button.setAttribute('aria-pressed', 'false');
         seat.replaceWith(button);
         if (seatLabel === '좌석') button.append(seat);
+        const display = document.createElement('span');
+        display.className = 'seat-name-label';
+        display.setAttribute('aria-hidden', 'true');
+        button.append(display);
         button.addEventListener('click', () => {
           selectedButton?.setAttribute('aria-pressed', 'false');
           selectedButton = button;
@@ -638,7 +676,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=mobileform';
+        backLink.href = './temple.html?v=seatlabel';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
