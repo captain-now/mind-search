@@ -224,6 +224,29 @@
     @media (max-height: 600px) and (orientation: landscape) {
       .interior.with-chant:not([hidden]) { grid-template-rows: minmax(0, 1fr) auto; }
     }
+    .cushion-dialog {
+      box-sizing: border-box;
+      width: min(420px, calc(100% - 32px));
+      padding: 22px;
+      border: 1px solid #ccb48e;
+      border-radius: 16px;
+      background: #fff9ed;
+      color: #30251b;
+    }
+    .cushion-dialog::backdrop { background: #251a14a8; }
+    .cushion-dialog h2 { margin: 0 0 14px; }
+    .cushion-dialog form { display: grid; gap: 8px; }
+    .cushion-dialog input {
+      box-sizing: border-box; width: 100%; min-height: 44px; padding: 8px 10px;
+      border: 1px solid #89715b; border-radius: 8px; font: inherit;
+    }
+    .cushion-dialog p { margin: 0; font-size: 14px; }
+    .cushion-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+    .cushion-actions button {
+      min-height: 44px; padding: 6px 12px; border: 1px solid #355a48;
+      border-radius: 10px; background: #fff9ed; color: #355a48; font: inherit;
+    }
+    .cushion-actions button[type="submit"] { background: #355a48; color: #fff; }
   </style>
 </head>
 <body>
@@ -275,6 +298,19 @@
         <div class="paired-row"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"></div>
       </div>
     </template>
+  <dialog class="cushion-dialog" aria-labelledby="cushion-title">
+    <h2 id="cushion-title">좌복 이름 입력</h2>
+    <form method="dialog">
+      <label for="cushion-name">출생연도와 이름</label>
+      <input id="cushion-name" type="text" placeholder="1971년생 김완호" aria-describedby="cushion-name-help"
+        maxlength="60" pattern="[0-9]{4}년생\s+.*\S.*" required autofocus>
+      <p id="cushion-name-help">예시 1971년생 김완호</p>
+      <div class="cushion-actions">
+        <button type="button">닫기</button>
+        <button type="submit" value="confirm">확인</button>
+      </div>
+    </form>
+  </dialog>
   <script>
     const galleryCaptions = {
       cathedral: [
@@ -447,6 +483,24 @@
       plan.classList.add('paired-plan');
       if (selectable) plan.setAttribute('role', 'group');
       let selectedCushion = null;
+      let openNameDialog;
+      if (selectable) {
+        const dialog = document.querySelector('.cushion-dialog');
+        const title = dialog.querySelector('h2');
+        const input = dialog.querySelector('input');
+        const entries = new Map();
+        let cushionNumber;
+        dialog.querySelector('button[type="button"]').addEventListener('click', () => dialog.close());
+        dialog.querySelector('form').addEventListener('submit', () => {
+          entries.set(cushionNumber, input.value.trim());
+        });
+        openNameDialog = (number) => {
+          cushionNumber = number;
+          title.textContent = '좌복 ' + number + '번 이름 입력';
+          input.value = entries.get(number) ?? '';
+          dialog.showModal();
+        };
+      }
       plan.style.setProperty('--cushion-color', hall.color);
       plan.setAttribute('aria-label', '중앙 통로 양쪽에 좌복 두 개씩, 네 줄로 배치된 수행 자리 16개');
       const aisle = document.createElement('div');
@@ -460,12 +514,15 @@
           cushion.className = 'temple-cushion';
           if (selectable) {
             cushion.type = 'button';
-            cushion.setAttribute('aria-label', '좌복 ' + (rowIndex * 4 + index + 1) + '번');
+            const number = rowIndex * 4 + index + 1;
+            cushion.setAttribute('aria-label', '좌복 ' + number + '번');
+            cushion.setAttribute('aria-haspopup', 'dialog');
             cushion.setAttribute('aria-pressed', 'false');
             cushion.addEventListener('click', () => {
               selectedCushion?.setAttribute('aria-pressed', 'false');
-              selectedCushion = selectedCushion === cushion ? null : cushion;
-              selectedCushion?.setAttribute('aria-pressed', 'true');
+              selectedCushion = cushion;
+              cushion.setAttribute('aria-pressed', 'true');
+              openNameDialog(number);
             });
           }
           row.append(cushion);
@@ -501,7 +558,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=cushiontap';
+        backLink.href = './temple.html?v=cushionname';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
