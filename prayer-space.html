@@ -125,7 +125,7 @@
     }
     .paired-row > .first-seat-right { grid-column: calc(var(--seats-per-side) + 2); }
     .temple-cushion[type="button"], .chair-name-button { padding: 0; cursor: pointer; }
-    .temple-cushion:disabled { cursor: default; opacity: 1; }
+    .temple-cushion:disabled, .chair-name-button:disabled { cursor: default; opacity: 1; }
     .chair-name-button {
       min-height: 0;
       border: 0;
@@ -280,7 +280,7 @@
       최대 <span class="seat-capacity"></span>명까지 가능합니다.</p>
     <section class="seating" aria-label="좌석">
       <div class="seating-plan" role="group"></div>
-      <a class="home-return" href="./prayer.html?v=fixed-prayer-seats">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=shared-fixed-seats">기도공간으로 돌아가기</a>
     </section>
   </main>
   <dialog class="cushion-dialog" aria-labelledby="cushion-title">
@@ -601,7 +601,8 @@
       }, 2500);
     }
 
-    const daejeokgwangjeonFixedSeats = new Map([
+    const hallsWithFixedSeats = new Set(['daejeokgwangjeon', 'daeungjeon', 'gwaneumjeon']);
+    const sharedFixedSeats = new Map([
       [1, { year: '', name: '이승오' }],
       [2, { year: '1976', name: '김경하' }],
       [3, { year: '1976', name: '김선하' }],
@@ -619,7 +620,7 @@
       let fallback;
       const origin = location.origin;
       const editorUrl = new URL(location.href);
-      editorUrl.search = '?seat-entry=1&v=fixed-prayer-seats';
+      editorUrl.search = '?seat-entry=1&v=shared-fixed-seats';
       editorUrl.hash = '';
 
       function saveSeatName(button, number, { year, name }) {
@@ -678,7 +679,7 @@
         if (fixedEntry) {
           button.disabled = true;
           saveSeatName(button, number, fixedEntry);
-          button.setAttribute('aria-description', '이름이 고정된 좌복');
+          button.setAttribute('aria-description', '이름이 고정된 ' + seatLabel);
           return;
         }
         button.setAttribute('aria-description', '이름 입력 화면을 새 창으로 열기');
@@ -784,15 +785,15 @@
         plan.style.setProperty('--cushion-color', hall.color);
         openTempleHall(hall, interior);
         const memorial = hallId === 'muryangsujeon' || hallId === 'jijangjeon';
-        const fixedSeats = hallId === 'daejeokgwangjeon' ? daejeokgwangjeonFixedSeats : undefined;
+        const fixedSeats = hallsWithFixedSeats.has(hallId) ? sharedFixedSeats : undefined;
         enableSeatNames(plan, '좌복', memorial, fixedSeats);
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=fixed-prayer-seats';
+        backLink.href = './temple.html?v=shared-fixed-seats';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
-        enableSeatNames(plan, '좌석');
+        enableSeatNames(plan, '좌석', false, sharedFixedSeats);
         startGallery(space);
         if (space === 'church') {
           addHallChants(interior, [['maranatha', '마라나타']], './assets/church/chant/');
