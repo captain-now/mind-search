@@ -601,7 +601,6 @@
       }, 2500);
     }
 
-    const hallsWithFixedSeats = new Set(['daejeokgwangjeon', 'daeungjeon', 'gwaneumjeon', 'samseonggak']);
     const sharedFixedSeats = new Map([
       [1, { year: '', name: '이승오' }],
       [2, { year: '1976', name: '김경하' }],
@@ -609,6 +608,17 @@
       [4, { year: '', name: '박영규' }],
       [6, { year: '1971', name: '김완호' }],
       [7, { year: '', name: '박세인' }],
+    ]);
+
+    const fixedSeatsByHall = new Map([
+      ['daejeokgwangjeon', sharedFixedSeats],
+      ['daeungjeon', sharedFixedSeats],
+      ['gwaneumjeon', sharedFixedSeats],
+      ['samseonggak', sharedFixedSeats],
+      ['muryangsujeon', new Map([
+        [2, { year: '김선하', name: '김도법' }],
+        [3, { year: '김선하', name: '최팔선' }],
+      ])],
     ]);
 
     function enableSeatNames(plan, seatLabel, memorial = false, fixedSeats) {
@@ -785,8 +795,7 @@
         plan.style.setProperty('--cushion-color', hall.color);
         openTempleHall(hall, interior);
         const memorial = hallId === 'muryangsujeon' || hallId === 'jijangjeon';
-        const fixedSeats = hallsWithFixedSeats.has(hallId) ? sharedFixedSeats : undefined;
-        enableSeatNames(plan, '좌복', memorial, fixedSeats);
+        enableSeatNames(plan, '좌복', memorial, fixedSeatsByHall.get(hallId));
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
