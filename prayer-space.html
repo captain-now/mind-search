@@ -96,8 +96,7 @@
         linear-gradient(135deg, #b98754, #7d4e2e);
     }
     .seating-plan {
-      --previous-aisle: 9%;
-      --aisle-width: calc(var(--previous-aisle) / 2);
+      --aisle-width: 18%;
       position: relative;
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -141,12 +140,8 @@
       transform: rotate(180deg) scaleX(1.48);
     }
     .temple-cushion, .chair-name-button {
-      --seat-count: calc(var(--seats-per-side) * 2);
-      --previous-column: calc((100cqw - 100cqw * 0.09) / var(--seat-count));
-      --previous-width: min(calc(0.78 * var(--previous-column)), calc(94px * 91 / 82), calc(110cqh * 91 / 82));
-      /* Each seat takes the extra column width and half of the previous gap. */
-      width: calc(100% - (var(--previous-column) - var(--previous-width)) / 2);
-      height: calc(var(--previous-width) / (1.45 * 91 / 82));
+      width: min(86%, 108px, 125cqh);
+      aspect-ratio: 1.6;
       box-sizing: border-box;
     }
     .temple-cushion[aria-pressed="true"], .chair-name-button[aria-pressed="true"] { outline: 3px solid #ffe19a; outline-offset: 2px; }
@@ -284,7 +279,7 @@
       최대 <span class="seat-capacity"></span>명까지 가능합니다.</p>
     <section class="seating" aria-label="좌석">
       <div class="seating-plan" role="group"></div>
-      <a class="home-return" href="./prayer.html?v=seat-fullscreen">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=seats16-wide-aisle">기도공간으로 돌아가기</a>
     </section>
   </main>
   <dialog class="cushion-dialog" aria-labelledby="cushion-title">
@@ -614,7 +609,7 @@
       let fallback;
       const origin = location.origin;
       const editorUrl = new URL(location.href);
-      editorUrl.search = '?seat-entry=1&v=seat-fullscreen';
+      editorUrl.search = '?seat-entry=1&v=seats16-wide-aisle';
       editorUrl.hash = '';
 
       function saveSeatName(button, number, { year, name }) {
@@ -691,8 +686,8 @@
       });
     }
 
-    const seatRows = 5;
-    const seatsPerSide = 3;
+    const seatRows = 4;
+    const seatsPerSide = 2;
     const chairImages = {
       church: './assets/church/chair.webp',
       cathedral: './assets/cathedral/leather-chair.webp',
@@ -769,7 +764,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=seat-fullscreen';
+        backLink.href = './temple.html?v=seats16-wide-aisle';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         enableSeatNames(plan, '좌석');
