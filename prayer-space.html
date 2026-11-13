@@ -187,6 +187,40 @@
       background: var(--cushion-color);
       box-shadow: inset 0 0 0 2px #e5b07966, inset 0 4px 12px #fff2, 0 2px 3px #41241480;
     }
+    .interior.with-chant:not([hidden]) {
+      grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+    .hall-chant {
+      min-width: 0;
+      padding: 6px 10px;
+      background: #f6efe2;
+      color: #30251b;
+      font: 600 14px/1.3 system-ui, sans-serif;
+      text-align: center;
+    }
+    .hall-chant strong { display: block; margin-bottom: 4px; }
+    .chant-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+    .chant-controls button {
+      min-height: 44px;
+      padding: 4px 10px;
+      border: 1px solid #355a48;
+      border-radius: 12px;
+      background: #fff9e9;
+      color: #274637;
+      font: inherit;
+      cursor: pointer;
+    }
+    .chant-controls button[aria-pressed="true"] { background: #355a48; color: #fff; }
+    .chant-controls button:focus-visible { outline: 2px solid #986538; outline-offset: 2px; }
+    .chant-status:not(:empty) { display: block; margin-top: 4px; }
+    @media (max-height: 600px) and (orientation: landscape) {
+      .interior.with-chant:not([hidden]) { grid-template-rows: minmax(0, 1fr) auto; }
+    }
   </style>
 </head>
 <body>
@@ -202,6 +236,12 @@
         <button type="button">일시정지</button>
       </div>
     </section>
+    <div class="hall-chant" role="group" aria-labelledby="chant-heading" hidden>
+      <strong id="chant-heading">NOW 마음챙김 · 정근</strong>
+      <div class="chant-controls"></div>
+      <span class="chant-status" role="status"></span>
+      <audio loop preload="none"></audio>
+    </div>
     <section class="seating" aria-label="좌석">
       <div class="seating-plan" role="img" aria-label="중앙 카펫 통로 양쪽에 의자 두 개씩, 다섯 줄로 배치된 좌석 20개">
         <div class="aisle" aria-hidden="true"></div>
@@ -306,6 +346,97 @@
       samseonggak: { name: '삼성각', alt: '왼쪽부터 산신·칠성·독성이 모셔진 삼성각', image: 'samseonggak.webp', color: '#714339' },
     };
 
+    const hallChants = {
+      "daejeokgwangjeon": [
+        [
+          "om-nam",
+          "옴남"
+        ]
+      ],
+      "daeungjeon": [
+        [
+          "shakyamuni",
+          "석가모니불"
+        ]
+      ],
+      "muryangsujeon": [
+        [
+          "amitabha",
+          "나무아미타불"
+        ]
+      ],
+      "gwaneumjeon": [
+        [
+          "avalokiteshvara",
+          "관세음보살"
+        ],
+        [
+          "mani",
+          "옴마니반메홈"
+        ]
+      ],
+      "samseonggak": [
+        [
+          "sansin",
+          "산왕대신"
+        ],
+        [
+          "chilseong",
+          "칠원성군"
+        ],
+        [
+          "dokseong",
+          "나반존자"
+        ]
+      ]
+    };
+
+    function addHallChants(interior, tracks) {
+      const panel = interior.querySelector('.hall-chant');
+      const controls = panel.querySelector('.chant-controls');
+      const status = panel.querySelector('.chant-status');
+      const audio = panel.querySelector('audio');
+      let selected = null;
+      let attempt = 0;
+      const buttons = tracks.map(([id, label]) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = '▶ ' + label;
+        button.setAttribute('aria-label', label + ' 정근 재생 또는 일시정지');
+        button.setAttribute('aria-pressed', 'false');
+        button.addEventListener('click', async () => {
+          const currentAttempt = ++attempt;
+          status.textContent = '';
+          if (selected === id && !audio.paused) {
+            audio.pause();
+            return;
+          }
+          if (selected !== id || audio.error) {
+            selected = id;
+            audio.src = './assets/temple/chant/' + id + '.mp3';
+          }
+          try {
+            await audio.play();
+          } catch {
+            if (currentAttempt === attempt) status.textContent = '음성을 재생할 수 없어요. 다시 눌러 주세요.';
+          }
+        });
+        return { id, label, button };
+      });
+      const updateButtons = () => {
+        for (const { id, label, button } of buttons) {
+          const playing = selected === id && !audio.paused && !audio.error;
+          button.textContent = (playing ? '⏸ ' : '▶ ') + label;
+          button.setAttribute('aria-pressed', String(playing));
+        }
+      };
+      for (const event of ['play', 'pause', 'error']) audio.addEventListener(event, updateButtons);
+      window.addEventListener('pagehide', () => audio.pause());
+      controls.replaceChildren(...buttons.map(({ button }) => button));
+      panel.hidden = false;
+      interior.classList.add('with-chant');
+    }
+
     function openTempleHall(hall, interior, seating) {
       seating.setAttribute('aria-label', '수행 공간');
       const plan = seating.querySelector('.seating-plan');
@@ -351,8 +482,10 @@
       seating.classList.add('furnished-seating', space + '-seating');
       if (hall) {
         openTempleHall(hall, interior, seating);
+        const tracks = hallChants[hallId];
+        if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=hallbanner';
+        backLink.href = './temple.html?v=hallchant';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
