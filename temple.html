@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>사찰 | Mind Search</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #30251b; background: #f6efe2; font-family: system-ui, sans-serif; }
+    main { width: min(100%, 620px); margin-inline: auto; padding: clamp(24px, 6vh, 64px) 18px; }
+    h1 { margin: 0 0 24px; text-align: center; }
+    .halls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .halls a {
+      display: grid; place-items: center; min-height: clamp(80px, 16vh, 130px);
+      padding: 10px 4px; border: 1px solid #cfb17d; border-radius: 12px;
+      background: #355a48; color: #fff9e9; text-align: center;
+      text-decoration: none; font-size: clamp(18px, 5vw, 25px); font-weight: 700;
+    }
+    a:focus-visible { outline: 3px solid #986538; outline-offset: 3px; }
+    .back { display: inline-block; margin-top: 24px; color: #355a48; }
+    #hall { text-align: center; }
+  </style>
+</head>
+<body>
+  <main id="chooser">
+    <h1>사찰</h1>
+    <nav class="halls" aria-label="전각 선택">
+      <a href="./temple.html?hall=daejeokgwangjeon" target="_blank" rel="noopener">대적광전</a>
+      <a href="./prayer-space.html?space=temple&amp;hall=daeungjeon&amp;v=templehalls" target="_blank" rel="noopener">대웅전</a>
+      <a href="./temple.html?hall=muryangsujeon" target="_blank" rel="noopener">무량수전</a>
+      <a href="./temple.html?hall=gwaneumjeon" target="_blank" rel="noopener">관음전</a>
+      <a href="./temple.html?hall=jijangjeon" target="_blank" rel="noopener">지장전</a>
+      <a href="./temple.html?hall=samseonggak" target="_blank" rel="noopener">삼성각</a>
+    </nav>
+    <a class="back" href="./prayer.html?v=templehalls">기도 공간으로 돌아가기</a>
+  </main>
+  <main id="hall" hidden>
+    <h1 id="hall-name"></h1>
+    <p>이 전각은 준비 중이에요.</p>
+    <a class="back" href="./temple.html">전각 선택으로 돌아가기</a>
+  </main>
+  <script>
+    const halls = new Map([["daejeokgwangjeon","대적광전"],["muryangsujeon","무량수전"],["gwaneumjeon","관음전"],["jijangjeon","지장전"],["samseonggak","삼성각"]]);
+    const name = halls.get(new URLSearchParams(location.search).get('hall'));
+    if (name) {
+      document.title = name + ' | Mind Search';
+      document.querySelector('#hall-name').textContent = name;
+      document.querySelector('#chooser').hidden = true;
+      document.querySelector('#hall').hidden = false;
+    }
+  </script>
+</body>
+</html>

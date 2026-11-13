@@ -288,7 +288,8 @@
 
     const spaces = new Map([['temple', '사찰'], ['church', '교회'], ['cathedral', '성당']]);
     const space = new URLSearchParams(location.search).get('space');
-    const name = spaces.get(space);
+    const hall = new URLSearchParams(location.search).get('hall');
+    const name = space === 'temple' && hall === 'daeungjeon' ? '대웅전' : spaces.get(space);
     if (name) {
       document.querySelector('#space-title').textContent = name;
       document.querySelector('#space-status').hidden = false;
