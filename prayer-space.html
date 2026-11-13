@@ -178,6 +178,9 @@
       width: min(84%, 88px);
       height: 90%;
     }
+    .temple-cushion[type="button"] { padding: 0; cursor: pointer; }
+    .temple-cushion[aria-pressed="true"] { outline: 3px solid #ffe19a; outline-offset: 2px; }
+    .temple-cushion:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
     .temple-cushion {
       width: min(78%, 94px, 110cqh);
       aspect-ratio: 1.45;
@@ -438,21 +441,33 @@
       interior.classList.add('with-chant');
     }
 
-    function openTempleHall(hall, interior, seating) {
+    function openTempleHall(hall, interior, seating, selectable) {
       seating.setAttribute('aria-label', '수행 공간');
       const plan = seating.querySelector('.seating-plan');
       plan.classList.add('paired-plan');
+      if (selectable) plan.setAttribute('role', 'group');
+      let selectedCushion = null;
       plan.style.setProperty('--cushion-color', hall.color);
       plan.setAttribute('aria-label', '중앙 통로 양쪽에 좌복 두 개씩, 네 줄로 배치된 수행 자리 16개');
       const aisle = document.createElement('div');
       aisle.className = 'paired-aisle';
       aisle.setAttribute('aria-hidden', 'true');
-      const rows = Array.from({ length: 4 }, () => {
+      const rows = Array.from({ length: 4 }, (_, rowIndex) => {
         const row = document.createElement('div');
         row.className = 'paired-row';
         for (let index = 0; index < 4; index++) {
-          const cushion = document.createElement('span');
+          const cushion = document.createElement(selectable ? 'button' : 'span');
           cushion.className = 'temple-cushion';
+          if (selectable) {
+            cushion.type = 'button';
+            cushion.setAttribute('aria-label', '좌복 ' + (rowIndex * 4 + index + 1) + '번');
+            cushion.setAttribute('aria-pressed', 'false');
+            cushion.addEventListener('click', () => {
+              selectedCushion?.setAttribute('aria-pressed', 'false');
+              selectedCushion = selectedCushion === cushion ? null : cushion;
+              selectedCushion?.setAttribute('aria-pressed', 'true');
+            });
+          }
           row.append(cushion);
         }
         return row;
@@ -482,11 +497,11 @@
       const seating = interior.querySelector('.seating');
       seating.classList.add('furnished-seating', space + '-seating');
       if (hall) {
-        openTempleHall(hall, interior, seating);
+        openTempleHall(hall, interior, seating, hallId === 'daejeokgwangjeon');
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=jijangchant';
+        backLink.href = './temple.html?v=cushiontap';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
