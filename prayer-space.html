@@ -329,7 +329,8 @@
       <span class="chant-status" role="status"></span>
       <audio loop preload="none"></audio>
     </div>
-    <p class="seat-guide"><span class="seat-guide-item">의자</span>를 선택하시고 기도하려는 분의 성함을 넣으세요. 최대 16분까지 가능합니다.</p>
+    <p class="seat-guide"><span class="seat-guide-item">의자</span>를 선택하시고 기도하시려는 분의 성함을 넣으세요.<br>
+      최대 16명까지 가능합니다.</p>
     <section class="seating" aria-label="좌석">
       <div class="seating-plan" role="img" aria-label="중앙 카펫 통로 양쪽에 의자 두 개씩, 다섯 줄로 배치된 좌석 20개">
         <div class="aisle" aria-hidden="true"></div>
@@ -339,7 +340,7 @@
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
       </div>
-      <a class="home-return" href="./prayer.html?v=seatguide">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=guide16people">기도공간으로 돌아가기</a>
     </section>
   </main>
     <template id="church-seating-template">
@@ -713,7 +714,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=seatguide';
+        backLink.href = './temple.html?v=guide16people';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
