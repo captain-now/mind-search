@@ -16,24 +16,34 @@
       background-size: 180px 180px;
     }
     .spaces {
+      --viewport-height: 100vh;
+      --vertical-padding: clamp(12px, 4vh, 32px);
+      --row-gap: clamp(8px, 2.5vh, 22px);
       display: grid;
       grid-template-columns: minmax(0, 1fr);
       justify-items: center;
-      row-gap: clamp(52px, 13svh, 116px);
+      align-content: center;
+      gap: var(--row-gap);
       width: min(100%, 560px);
+      min-height: var(--viewport-height);
       margin-inline: auto;
-      padding: clamp(64px, 20svh, 164px) clamp(24px, 8vw, 52px) 44px;
+      padding: var(--vertical-padding) clamp(24px, 8vw, 52px);
+    }
+    @supports (height: 100svh) {
+      .spaces {
+        --viewport-height: 100svh;
+        --vertical-padding: clamp(12px, 4svh, 32px);
+        --row-gap: clamp(8px, 2.5svh, 22px);
+      }
     }
     .space {
+      /* At 3:2, three card heights add up to twice one card width. */
+      width: min(100%, calc((var(--viewport-height) - 2 * var(--vertical-padding) - 2 * var(--row-gap)) / 2));
+      aspect-ratio: 3 / 2;
       display: block;
-      width: 84%;
-      aspect-ratio: 1.5;
       overflow: hidden;
       border-radius: 14px;
       box-shadow: 0 4px 16px #65384626;
-    }
-    .space--temple {
-      aspect-ratio: 1.58;
     }
     .space img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .space:focus-visible { outline: 3px solid #477866; outline-offset: 4px; }
