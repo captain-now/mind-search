@@ -141,7 +141,7 @@
           if (!frames[next].complete || !frames[next].naturalWidth) return;
           frames[index].replaceWith(frames[next]);
           index = next;
-        }, 3000);
+        }, 6000);
         toggle.textContent = '일시정지';
       };
       toggle.addEventListener('click', () => {
