@@ -349,6 +349,11 @@
         seating.querySelector('.seating-plan').replaceWith(template.content.cloneNode(true));
         startGallery(space);
       }
+      if (hall || space === 'church') {
+        const backLink = seating.querySelector('.home-return');
+        backLink.href = './prayer.html?v=prayerreturn';
+        backLink.textContent = '기도공간으로 돌아가기';
+      }
       interior.hidden = false;
     }
   </script>
