@@ -544,6 +544,11 @@
       interior.classList.add('with-chant');
     }
 
+    function formatMemorialName(value, suffix) {
+      const name = value.trim().replace(new RegExp('(?:\\s*' + suffix + ')+$'), '').trim();
+      return (name || '무명') + ' ' + suffix;
+    }
+
     function fitSeatName(label) {
       const { width, height } = label.getBoundingClientRect();
       const lines = Array.from(label.children);
@@ -611,7 +616,9 @@
         const year = yearInput.value.trim();
         const name = nameInput.value.trim();
         entries.set(seatNumber, { year, name });
-        const lines = [year ? (memorial ? year : year + '년생') : '무명', name || '무명'];
+        const lines = memorial
+          ? [formatMemorialName(year, '복위'), formatMemorialName(name, '영가')]
+          : [year ? year + '년생' : '무명', name || '무명'];
         const display = selectedButton.querySelector('.seat-name-label');
         display.replaceChildren(...lines.map((text) => {
           const line = document.createElement('span');
@@ -714,7 +721,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=guide16people';
+        backLink.href = './temple.html?v=memorialsuffix';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
