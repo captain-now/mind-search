@@ -351,6 +351,9 @@
       seating.classList.add('furnished-seating', space + '-seating');
       if (hall) {
         openTempleHall(hall, interior, seating);
+        const backLink = seating.querySelector('.home-return');
+        backLink.href = './temple.html?v=templelist';
+        backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
         seating.querySelector('.seating-plan').replaceWith(template.content.cloneNode(true));
