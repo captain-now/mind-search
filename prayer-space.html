@@ -59,15 +59,15 @@
       box-shadow: inset 0 0 0 2px #edc398, 0 2px 2px #75462f38;
     }
     .chair:nth-child(3) { grid-column: 4; }
-    .cathedral-gallery {
+    .space-gallery {
       position: relative;
       width: 100%;
       height: 100%;
       overflow: hidden;
       background: #2f2118;
     }
-    .cathedral-gallery img { display: block; width: 100%; height: 100%; object-fit: cover; }
-    .cathedral-gallery button {
+    .space-gallery img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .space-gallery button {
       position: absolute;
       right: 12px;
       bottom: 12px;
@@ -80,7 +80,7 @@
       font: inherit;
       cursor: pointer;
     }
-    .cathedral-gallery button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .space-gallery button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   </style>
 </head>
 <body>
@@ -92,7 +92,7 @@
   <main id="space-interior" class="interior" hidden>
     <section aria-label="전경">
       <h2 id="view-title">전경</h2>
-      <div class="cathedral-gallery" hidden>
+      <div class="space-gallery" hidden>
         <button type="button">일시정지</button>
       </div>
     </section>
@@ -108,8 +108,8 @@
     </section>
   </main>
   <script>
-    function startCathedralGallery() {
-      const captions = [
+    const galleryCaptions = {
+      cathedral: [
         '아침빛이 드는 중앙 통로와 제단',
         '십자가와 흰 돌 제단',
         '보석빛 스테인드글라스 장미창',
@@ -120,15 +120,31 @@
         '파이프오르간과 성가대석',
         '노을빛이 비치는 중앙 통로',
         '촛불로 밝혀진 저녁 제단',
-      ];
+      ],
+      church: [
+        '아침빛이 드는 교회 중앙 통로',
+        '나무 십자가와 강단',
+        '창가에서 바라본 예배당',
+        '강단에 펼쳐진 성경',
+        '피아노가 있는 예배당 앞자리',
+        '예배당 천장과 나무 들보',
+        '강단에서 바라본 예배당 좌석',
+        '빗방울 맺힌 창가의 성경',
+        '노을이 비치는 예배당 통로',
+        '저녁빛 아래의 십자가와 강단',
+      ],
+    };
+
+    function startGallery(space) {
+      const captions = galleryCaptions[space];
       const frames = captions.map((caption, index) => {
         const frame = new Image();
-        frame.src = './assets/cathedral/' + String(index + 1).padStart(2, '0') + '.webp';
+        frame.src = './assets/' + space + '/' + String(index + 1).padStart(2, '0') + '.webp';
         frame.alt = caption;
         return frame;
       });
       const title = document.querySelector('#view-title');
-      const gallery = document.querySelector('.cathedral-gallery');
+      const gallery = document.querySelector('.space-gallery');
       const toggle = gallery.querySelector('button');
       let index = 0;
       let timer = null;
@@ -168,7 +184,7 @@
         const interior = document.querySelector('#space-interior');
         interior.setAttribute('aria-label', name + ' 내부');
         interior.hidden = false;
-        if (space === 'cathedral') startCathedralGallery();
+        startGallery(space);
       }
     }
   </script>
