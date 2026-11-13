@@ -279,7 +279,7 @@
       최대 <span class="seat-capacity"></span>명까지 가능합니다.</p>
     <section class="seating" aria-label="좌석">
       <div class="seating-plan" role="group"></div>
-      <a class="home-return" href="./prayer.html?v=seats16-wide-aisle">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=blank-seat-names">기도공간으로 돌아가기</a>
     </section>
   </main>
   <dialog class="cushion-dialog" aria-labelledby="cushion-title">
@@ -468,7 +468,7 @@
 
     function formatMemorialName(value, suffix) {
       const name = value.trim().replace(new RegExp('(?:\\s*' + suffix + ')+$'), '').trim();
-      return (name || '무명') + ' ' + suffix;
+      return name ? name + ' ' + suffix : '';
     }
 
     function fitSeatName(label) {
@@ -609,14 +609,14 @@
       let fallback;
       const origin = location.origin;
       const editorUrl = new URL(location.href);
-      editorUrl.search = '?seat-entry=1&v=seats16-wide-aisle';
+      editorUrl.search = '?seat-entry=1&v=blank-seat-names';
       editorUrl.hash = '';
 
       function saveSeatName(button, number, { year, name }) {
         entries.set(number, { year, name });
-        const lines = memorial
+        const lines = (memorial
           ? [formatMemorialName(year, '복위'), formatMemorialName(name, '영가')]
-          : [year ? year + '년생' : '무명', name || '무명'];
+          : [year ? year + '년생' : '', name]).filter(Boolean);
         const display = button.querySelector('.seat-name-label');
         display.replaceChildren(...lines.map((text) => {
           const line = document.createElement('span');
@@ -624,15 +624,22 @@
           line.textContent = text;
           return line;
         }));
+        const label = seatLabel + ' ' + number + '번';
+        if (!lines.length) {
+          labelObserver.unobserve(display);
+          button.removeAttribute('title');
+          button.setAttribute('aria-label', label);
+          return;
+        }
         fitSeatName(display);
         labelObserver.observe(display);
-        document.fonts.load('16px OKGUNG', lines.join(' ')).then(
+        const summary = lines.join(' ');
+        document.fonts.load('16px OKGUNG', summary).then(
           () => fitSeatName(display),
           () => fitSeatName(display),
         );
-        const summary = lines.join(' ');
         button.title = summary;
-        button.setAttribute('aria-label', seatLabel + ' ' + number + '번, ' + summary);
+        button.setAttribute('aria-label', label + ', ' + summary);
       }
 
       let activeEditor;
@@ -764,7 +771,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=seats16-wide-aisle';
+        backLink.href = './temple.html?v=blank-seat-names';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         enableSeatNames(plan, '좌석');
