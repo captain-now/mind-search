@@ -225,29 +225,33 @@
       background: #261b15ed;
       color: #fff;
     }
+    .seat-entry-page { background: #fff9ed; }
     .cushion-dialog {
       box-sizing: border-box;
       position: fixed;
-      inset: calc(var(--form-viewport-top, 0px) + var(--form-viewport-height, 100dvh) / 2) 0 auto;
-      transform: translateY(-50%);
-      margin: 0 auto;
-      width: min(440px, calc(100% - 24px));
-      max-height: calc(var(--form-viewport-height, 100dvh) - 24px);
+      inset: var(--form-viewport-top, 0px) 0 auto;
+      margin: 0;
+      width: 100%;
+      max-width: none;
+      height: var(--form-viewport-height, 100dvh);
+      max-height: none;
       overflow-y: auto;
       overscroll-behavior: contain;
-      padding: clamp(12px, 4vw, 22px);
-      border: 1px solid #ccb48e;
-      border-radius: 16px;
+      padding: max(28px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right))
+        max(28px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+      border: 0;
       background: #fff9ed;
       color: #30251b;
     }
-    .cushion-dialog::backdrop { background: #251a14a8; }
-    .cushion-dialog h2 { margin: 0 0 12px; font-size: clamp(18px, 5vw, 24px); }
-    .cushion-dialog form { display: grid; gap: 8px; }
+    .cushion-dialog::backdrop { background: #fff9ed; }
+    .cushion-dialog h2, .cushion-dialog form, .seat-entry-status { max-width: 480px; margin-inline: auto; }
+    .cushion-dialog h2 { margin-block: 0 24px; font-size: clamp(24px, 6vw, 34px); }
+    .cushion-dialog form:not([hidden]) { display: grid; gap: 12px; }
     .cushion-dialog input {
-      box-sizing: border-box; width: 100%; min-height: 44px; padding: 8px 10px;
-      border: 1px solid #89715b; border-radius: 8px; font: inherit; font-size: 16px;
+      box-sizing: border-box; width: 100%; min-height: 52px; padding: 10px 12px;
+      border: 1px solid #89715b; border-radius: 8px; font: inherit; font-size: 18px;
     }
+    .seat-entry-status { margin-block: 16px 0; }
     .cushion-year-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
     .cushion-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
     .cushion-actions button {
@@ -280,16 +284,16 @@
       최대 <span class="seat-capacity"></span>명까지 가능합니다.</p>
     <section class="seating" aria-label="좌석">
       <div class="seating-plan" role="group"></div>
-      <a class="home-return" href="./prayer.html?v=aisle-half-gaps">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=seat-fullscreen">기도공간으로 돌아가기</a>
     </section>
   </main>
   <dialog class="cushion-dialog" aria-labelledby="cushion-title">
-    <h2 id="cushion-title">좌복 이름 입력</h2>
-    <form method="dialog">
+    <h2 id="cushion-title" tabindex="-1">좌복 이름 입력</h2>
+    <form method="dialog" hidden>
       <label for="cushion-year">출생연도</label>
       <div class="cushion-year-field">
         <input id="cushion-year" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}"
-          placeholder="1988" aria-describedby="cushion-year-suffix" autofocus>
+          placeholder="1988" aria-describedby="cushion-year-suffix">
         <span id="cushion-year-suffix">년생</span>
       </div>
       <label for="cushion-name">이름</label>
@@ -299,6 +303,7 @@
         <button type="submit" value="confirm">확인</button>
       </div>
     </form>
+    <p class="seat-entry-status" role="status"></p>
   </dialog>
   <script>
     const galleryCaptions = {
@@ -498,49 +503,126 @@
       }
     }
 
-    function enableSeatNames(plan, seatLabel, memorial = false) {
+    function seatNameForm(onSubmit, onCancel) {
       const dialog = document.querySelector('.cushion-dialog');
       const title = dialog.querySelector('h2');
-      const yearInput = dialog.querySelector('#cushion-year');
-      const nameInput = dialog.querySelector('#cushion-name');
-      const entries = new Map();
-      const labelObserver = new ResizeObserver(records => {
-        for (const { target } of records) fitSeatName(target);
-      });
-      let selectedButton = null;
-      let seatNumber;
+      const form = dialog.querySelector('form');
+      const yearInput = form.querySelector('#cushion-year');
+      const nameInput = form.querySelector('#cushion-name');
+      const submit = form.querySelector('button[type="submit"]');
+      const status = dialog.querySelector('.seat-entry-status');
       const viewport = window.visualViewport;
-      function fitDialogToViewport() {
+      let isMemorial = false;
+
+      function fitToViewport() {
         if (!dialog.open || !viewport) return;
         dialog.style.setProperty('--form-viewport-top', viewport.offsetTop + 'px');
         dialog.style.setProperty('--form-viewport-height', viewport.height + 'px');
       }
-      viewport?.addEventListener('resize', fitDialogToViewport);
-      viewport?.addEventListener('scroll', fitDialogToViewport);
-      if (memorial) {
-        dialog.querySelector('label[for="cushion-year"]').textContent = '복위';
-        dialog.querySelector('label[for="cushion-name"]').textContent = '영가';
-        dialog.querySelector('#cushion-year-suffix').hidden = true;
-        yearInput.removeAttribute('aria-describedby');
-        yearInput.removeAttribute('inputmode');
-        yearInput.removeAttribute('pattern');
-        yearInput.maxLength = 60;
-        yearInput.placeholder = '홍길동 복위';
-        nameInput.placeholder = '아버지 영가';
-        nameInput.removeAttribute('autocomplete');
-      }
+      viewport?.addEventListener('resize', fitToViewport);
+      viewport?.addEventListener('scroll', fitToViewport);
       yearInput.addEventListener('input', () => {
-        if (!memorial) yearInput.value = yearInput.value.replace(/[^0-9]/g, '').slice(0, 4);
+        if (!isMemorial) yearInput.value = yearInput.value.replace(/[^0-9]/g, '').slice(0, 4);
       });
-      dialog.querySelector('button[type="button"]').addEventListener('click', () => dialog.close());
-      dialog.querySelector('form').addEventListener('submit', () => {
-        const year = yearInput.value.trim();
-        const name = nameInput.value.trim();
-        entries.set(seatNumber, { year, name });
+      form.querySelector('button[type="button"]').addEventListener('click', onCancel);
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        onSubmit({ year: yearInput.value.trim(), name: nameInput.value.trim() });
+      });
+
+      return {
+        dialog, form, submit, status,
+        open() {
+          dialog.showModal();
+          title.focus();
+          dialog.scrollTop = 0;
+          fitToViewport();
+        },
+        load(label, memorial, entry) {
+          isMemorial = memorial;
+          title.textContent = label + (memorial ? ' 복위·영가 입력' : ' 이름 입력');
+          document.title = title.textContent + ' | Mind Search';
+          if (memorial) {
+            form.querySelector('label[for="cushion-year"]').textContent = '복위';
+            form.querySelector('label[for="cushion-name"]').textContent = '영가';
+            form.querySelector('#cushion-year-suffix').hidden = true;
+            yearInput.removeAttribute('aria-describedby');
+            yearInput.removeAttribute('inputmode');
+            yearInput.removeAttribute('pattern');
+            yearInput.maxLength = 60;
+            yearInput.placeholder = '홍길동 복위';
+            nameInput.placeholder = '아버지 영가';
+            nameInput.removeAttribute('autocomplete');
+          }
+          yearInput.value = entry?.year ?? '';
+          nameInput.value = entry?.name ?? '';
+          form.hidden = false;
+          status.textContent = '';
+        },
+      };
+    }
+
+    function openSeatEntryPage() {
+      const parent = window.opener;
+      const origin = location.origin;
+      const editor = seatNameForm(entry => {
+        editor.submit.disabled = true;
+        editor.status.textContent = '좌석에 반영 중…';
+        parent.postMessage({ type: 'prayer-seat-save', entry }, origin);
+        window.setTimeout(() => {
+          if (saved) return;
+          editor.submit.disabled = false;
+          editor.status.textContent = '좌석에 반영하지 못했습니다. 기도 공간 창이 열려 있는지 확인해 주세요.';
+        }, 2500);
+      }, () => window.close());
+      let saved = false;
+      document.querySelector('#space-intro').hidden = true;
+      document.body.classList.add('seat-entry-page');
+      editor.dialog.addEventListener('cancel', event => {
+        event.preventDefault();
+        window.close();
+      });
+      editor.open();
+      editor.status.textContent = '선택한 좌석을 불러오는 중…';
+      if (!parent) {
+        editor.status.textContent = '기도 공간에서 좌복이나 의자를 눌러 열어 주세요.';
+        return;
+      }
+      window.addEventListener('message', event => {
+        if (event.origin !== origin || event.source !== parent) return;
+        const data = event.data;
+        if (data?.type === 'prayer-seat-load') {
+          editor.load(data.label, data.memorial, data.entry);
+        } else if (data?.type === 'prayer-seat-saved') {
+          saved = true;
+          editor.status.textContent = '좌석에 반영했습니다. 이 창을 닫아 돌아갈 수 있습니다.';
+          window.close();
+        }
+      });
+      parent.postMessage({ type: 'prayer-seat-ready' }, origin);
+      window.setTimeout(() => {
+        if (editor.form.hidden) editor.status.textContent = '기도 공간에서 좌복이나 의자를 다시 눌러 주세요.';
+      }, 2500);
+    }
+
+    function enableSeatNames(plan, seatLabel, memorial = false) {
+      const entries = new Map();
+      const labelObserver = new ResizeObserver(records => {
+        for (const { target } of records) fitSeatName(target);
+      });
+      let selectedButton;
+      let fallback;
+      const origin = location.origin;
+      const editorUrl = new URL(location.href);
+      editorUrl.search = '?seat-entry=1&v=seat-fullscreen';
+      editorUrl.hash = '';
+
+      function saveSeatName(button, number, { year, name }) {
+        entries.set(number, { year, name });
         const lines = memorial
           ? [formatMemorialName(year, '복위'), formatMemorialName(name, '영가')]
           : [year ? year + '년생' : '무명', name || '무명'];
-        const display = selectedButton.querySelector('.seat-name-label');
+        const display = button.querySelector('.seat-name-label');
         display.replaceChildren(...lines.map((text) => {
           const line = document.createElement('span');
           line.className = 'seat-name-line';
@@ -554,14 +636,29 @@
           () => fitSeatName(display),
         );
         const summary = lines.join(' ');
-        selectedButton.title = summary;
-        selectedButton.setAttribute('aria-label', seatLabel + ' ' + seatNumber + '번, ' + summary);
+        button.title = summary;
+        button.setAttribute('aria-label', seatLabel + ' ' + number + '번, ' + summary);
+      }
+
+      let activeEditor;
+      window.addEventListener('message', event => {
+        if (event.origin !== origin || !activeEditor || event.source !== activeEditor.popup) return;
+        const data = event.data;
+        const { popup, button, number, label } = activeEditor;
+        if (data?.type === 'prayer-seat-ready') {
+          popup.postMessage({ type: 'prayer-seat-load', label, memorial, entry: entries.get(number) }, origin);
+        } else if (data?.type === 'prayer-seat-save' &&
+          typeof data.entry?.year === 'string' && typeof data.entry?.name === 'string') {
+          saveSeatName(button, number, data.entry);
+          popup.postMessage({ type: 'prayer-seat-saved' }, origin);
+        }
       });
+
       plan.querySelectorAll('.paired-row > button').forEach((button, index) => {
         const number = index + 1;
         const label = seatLabel + ' ' + number + '번';
         button.setAttribute('aria-label', label);
-        button.setAttribute('aria-haspopup', 'dialog');
+        button.setAttribute('aria-description', '이름 입력 화면을 새 창으로 열기');
         button.setAttribute('aria-pressed', 'false');
         const display = document.createElement('span');
         display.className = 'seat-name-label';
@@ -571,14 +668,25 @@
           selectedButton?.setAttribute('aria-pressed', 'false');
           selectedButton = button;
           button.setAttribute('aria-pressed', 'true');
-          seatNumber = number;
-          title.textContent = label + (memorial ? ' 복위·영가 입력' : ' 이름 입력');
-          const entry = entries.get(number);
-          yearInput.value = entry?.year ?? '';
-          nameInput.value = entry?.name ?? '';
-          dialog.showModal();
-          dialog.scrollTop = 0;
-          fitDialogToViewport();
+          activeEditor?.popup.close();
+          activeEditor = undefined;
+          const popup = window.open(editorUrl.href, '_blank');
+          if (popup && !popup.closed) {
+            activeEditor = { popup, button, number, label };
+            popup.focus();
+            return;
+          }
+
+          const pageTitle = document.title;
+          const editor = fallback ??= seatNameForm(entry => {
+            const seat = editor.seat;
+            saveSeatName(seat.button, seat.number, entry);
+            editor.dialog.close();
+          }, () => editor.dialog.close());
+          editor.seat = { button, number };
+          editor.dialog.addEventListener('close', () => { document.title = pageTitle; }, { once: true });
+          editor.load(label, memorial, entries.get(number));
+          editor.open();
         });
       });
     }
@@ -640,7 +748,9 @@
     const hall = space === 'temple' && Object.hasOwn(templeHalls, hallId) ? templeHalls[hallId] : null;
     const spaces = new Map([['church', '교회'], ['cathedral', '성당']]);
     const name = hall?.name ?? spaces.get(space);
-    if (name) {
+    if (params.get('seat-entry') === '1') {
+      openSeatEntryPage();
+    } else if (name) {
       document.title = name + ' | Mind Search';
       document.querySelector('#space-intro').hidden = true;
       const interior = document.querySelector('#space-interior');
@@ -659,7 +769,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=aisle-half-gaps';
+        backLink.href = './temple.html?v=seat-fullscreen';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         enableSeatNames(plan, '좌석');
