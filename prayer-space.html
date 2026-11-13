@@ -10,9 +10,10 @@
     a { color: #355a48; }
     .interior:not([hidden]) {
       display: grid;
-      grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
+      grid-template-rows: minmax(140px, 1fr) auto minmax(244px, 1fr);
       height: 100vh;
       height: 100dvh;
+      min-height: 540px;
       max-width: none;
       padding: 0;
     }
@@ -20,45 +21,6 @@
     .interior section + section { border-top: 1px solid #b8949f; }
     .interior h2 { margin: 0; font-size: clamp(24px, 6vw, 36px); }
     .interior .seating { min-height: 0; border-top: 1px solid #b8949f; background: #f5e8d5; }
-    .seating-plan {
-      position: relative;
-      display: grid;
-      grid-template-rows: repeat(5, minmax(0, 1fr));
-      gap: clamp(4px, 1.2vh, 12px);
-      width: min(100%, 460px);
-      height: 100%;
-      box-sizing: border-box;
-      padding: clamp(8px, 2vh, 22px) 6%;
-    }
-    .aisle {
-      position: absolute;
-      inset: 0 38%;
-      border-inline: 3px double #dcb979;
-      background:
-        repeating-linear-gradient(45deg, transparent 0 13px, #dcb97945 13px 14px, transparent 14px 26px),
-        repeating-linear-gradient(-45deg, transparent 0 13px, #dcb97945 13px 14px, transparent 14px 26px),
-        #85394d;
-      box-shadow: 0 0 0 2px #6d2638;
-    }
-    .seat-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 2.1fr 1fr 1fr;
-      gap: clamp(5px, 2vw, 14px);
-      align-items: center;
-      justify-items: center;
-      min-height: 0;
-    }
-    .chair {
-      width: min(100%, 52px);
-      height: min(100%, 36px);
-      box-sizing: border-box;
-      border: 2px solid #75462f;
-      border-top: 5px solid #75462f;
-      border-radius: 6px 6px 10px 10px;
-      background: linear-gradient(#ce9c70, #b97d53);
-      box-shadow: inset 0 0 0 2px #edc398, 0 2px 2px #75462f38;
-    }
-    .chair:nth-child(3) { grid-column: 4; }
     .space-gallery {
       position: relative;
       width: 100%;
@@ -103,20 +65,6 @@
     .interior .church-seating {
       background: #ecdbba url("./assets/church/marble-floor.webp") center / 360px 360px repeat;
     }
-    .furnished-seating .seating-plan {
-      grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.8fr) repeat(3, minmax(0, 1fr));
-      gap: clamp(3px, 1.1vw, 8px);
-      width: min(100%, 560px);
-      padding: clamp(6px, 1.3dvh, 12px) clamp(8px, 3vw, 22px);
-    }
-    .furnished-seating .aisle {
-      position: static;
-      grid-column: 4;
-      grid-row: 1 / -1;
-      background: none;
-      border: 0;
-      box-shadow: none;
-    }
     .interior .cathedral-seating {
       background: #ecdbba url("./assets/church/marble-floor.webp") center / 360px 360px repeat;
     }
@@ -124,7 +72,6 @@
       background: #641b29 url("./assets/cathedral/runner.webp") center / 100% 100% no-repeat;
       box-shadow: 0 1px 4px #37130e50;
     }
-    .furnished-seating .seat-row { display: contents; }
     .upholstered-chair {
       width: 100%;
       height: 100%;
@@ -132,11 +79,8 @@
       object-fit: contain;
       transform: rotate(180deg);
     }
-    .upholstered-chair:nth-child(4) { grid-column: 5; }
     @media (max-height: 600px) and (orientation: landscape) {
-      .interior:not([hidden]) { grid-template-rows: minmax(0, 1fr); }
-      .interior .seating,
-      .interior .seat-guide { display: none; }
+      .interior:not([hidden]) { min-height: 620px; }
     }
     .temple-view {
       width: 100%;
@@ -151,11 +95,15 @@
         repeating-linear-gradient(90deg, #52301c22 0 1px, transparent 1px 66px),
         linear-gradient(135deg, #b98754, #7d4e2e);
     }
-    .furnished-seating .paired-plan {
+    .seating-plan {
+      position: relative;
+      display: grid;
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: repeat(4, minmax(0, 1fr));
+      grid-template-rows: repeat(var(--seat-rows), minmax(0, 1fr));
       gap: clamp(4px, 1dvh, 10px);
-      width: min(100%, 440px);
+      width: min(100%, 520px);
+      height: 100%;
+      box-sizing: border-box;
       padding: clamp(8px, 1.8dvh, 16px) 0;
     }
     .paired-aisle {
@@ -168,17 +116,13 @@
     }
     .paired-row {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) 18% repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(var(--seats-per-side), minmax(0, 1fr)) 18% repeat(var(--seats-per-side), minmax(0, 1fr));
       width: 100%;
       place-items: center;
       min-height: 0;
       container-type: size;
     }
-    .paired-row > :nth-child(3) { grid-column: 4; }
-    .paired-row .upholstered-chair {
-      width: min(84%, 88px);
-      height: 90%;
-    }
+    .paired-row > .first-seat-right { grid-column: calc(var(--seats-per-side) + 2); }
     .temple-cushion[type="button"], .chair-name-button { padding: 0; cursor: pointer; }
     .chair-name-button {
       min-height: 0;
@@ -208,7 +152,7 @@
       box-shadow: inset 0 0 0 2px #e5b07966, inset 0 4px 12px #fff2, 0 2px 3px #41241480;
     }
     .interior.with-chant:not([hidden]) {
-      grid-template-rows: minmax(0, 1fr) auto auto minmax(0, 1fr);
+      grid-template-rows: minmax(140px, 1fr) auto auto minmax(244px, 1fr);
     }
     .seat-guide {
       margin: 0;
@@ -248,9 +192,6 @@
     .chant-controls button[aria-pressed="true"] { background: #355a48; color: #fff; }
     .chant-controls button:focus-visible { outline: 2px solid #986538; outline-offset: 2px; }
     .chant-status:not(:empty) { display: block; margin-top: 4px; }
-    @media (max-height: 600px) and (orientation: landscape) {
-      .interior.with-chant:not([hidden]) { grid-template-rows: minmax(0, 1fr) auto; }
-    }
     .temple-cushion[type="button"], .chair-name-button { position: relative; }
     /* 읏맨-궁서체 · OK금융그룹 */
     @font-face {
@@ -330,37 +271,12 @@
       <audio loop preload="none"></audio>
     </div>
     <p class="seat-guide"><span class="seat-guide-item">의자</span>를 선택하시고 기도하시려는 분의 성함을 넣으세요.<br>
-      최대 16명까지 가능합니다.</p>
+      최대 <span class="seat-capacity"></span>명까지 가능합니다.</p>
     <section class="seating" aria-label="좌석">
-      <div class="seating-plan" role="img" aria-label="중앙 카펫 통로 양쪽에 의자 두 개씩, 다섯 줄로 배치된 좌석 20개">
-        <div class="aisle" aria-hidden="true"></div>
-        <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
-        <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
-        <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
-        <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
-        <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
-      </div>
-      <a class="home-return" href="./prayer.html?v=guide16people">기도공간으로 돌아가기</a>
+      <div class="seating-plan" role="group"></div>
+      <a class="home-return" href="./prayer.html?v=seats30">기도공간으로 돌아가기</a>
     </section>
   </main>
-    <template id="church-seating-template">
-      <div class="seating-plan paired-plan" role="img" aria-label="중앙 통로 양쪽에 의자 두 개씩, 네 줄로 배치된 교회 좌석 16개">
-        <div class="paired-aisle" aria-hidden="true"></div>
-        <div class="paired-row"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
-        <div class="paired-row"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
-        <div class="paired-row"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
-        <div class="paired-row"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
-      </div>
-    </template>
-    <template id="cathedral-seating-template">
-      <div class="seating-plan paired-plan" role="img" aria-label="중앙 버건디 카펫 통로 양쪽에 원목 가죽 의자 두 개씩, 네 줄로 배치된 좌석 16개">
-        <div class="paired-aisle" aria-hidden="true"></div>
-        <div class="paired-row"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"></div>
-        <div class="paired-row"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"></div>
-        <div class="paired-row"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"></div>
-        <div class="paired-row"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"></div>
-      </div>
-    </template>
   <dialog class="cushion-dialog" aria-labelledby="cushion-title">
     <h2 id="cushion-title">좌복 이름 입력</h2>
     <form method="dialog">
@@ -595,7 +511,6 @@
       }
       viewport?.addEventListener('resize', fitDialogToViewport);
       viewport?.addEventListener('scroll', fitDialogToViewport);
-      plan.setAttribute('role', 'group');
       if (memorial) {
         dialog.querySelector('label[for="cushion-year"]').textContent = '복위';
         dialog.querySelector('label[for="cushion-name"]').textContent = '영가';
@@ -636,17 +551,12 @@
         selectedButton.title = summary;
         selectedButton.setAttribute('aria-label', seatLabel + ' ' + seatNumber + '번, ' + summary);
       });
-      plan.querySelectorAll('.paired-row > *').forEach((seat, index) => {
+      plan.querySelectorAll('.paired-row > button').forEach((button, index) => {
         const number = index + 1;
         const label = seatLabel + ' ' + number + '번';
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = seatLabel === '좌복' ? 'temple-cushion' : 'chair-name-button';
         button.setAttribute('aria-label', label);
         button.setAttribute('aria-haspopup', 'dialog');
         button.setAttribute('aria-pressed', 'false');
-        seat.replaceWith(button);
-        if (seatLabel === '좌석') button.append(seat);
         const display = document.createElement('span');
         display.className = 'seat-name-label';
         display.setAttribute('aria-hidden', 'true');
@@ -667,26 +577,47 @@
       });
     }
 
-    function openTempleHall(hall, interior, seating) {
-      seating.setAttribute('aria-label', '수행 공간');
-      const plan = seating.querySelector('.seating-plan');
-      plan.classList.add('paired-plan');
-      plan.style.setProperty('--cushion-color', hall.color);
-      plan.setAttribute('aria-label', '중앙 통로 양쪽에 좌복 두 개씩, 네 줄로 배치된 수행 자리 16개');
+    const seatRows = 5;
+    const seatsPerSide = 3;
+    const chairImages = {
+      church: './assets/church/chair.webp',
+      cathedral: './assets/cathedral/leather-chair.webp',
+    };
+
+    function buildSeating(plan, chairImage) {
+      const seatType = chairImage ? '의자' : '좌복';
+      const seatCount = seatRows * seatsPerSide * 2;
+      plan.style.setProperty('--seat-rows', seatRows);
+      plan.style.setProperty('--seats-per-side', seatsPerSide);
+      plan.setAttribute('aria-label',
+        `중앙 통로 양쪽에 ${seatType} ${seatsPerSide}개씩, ${seatRows}줄로 배치된 자리 ${seatCount}개`);
       const aisle = document.createElement('div');
       aisle.className = 'paired-aisle';
       aisle.setAttribute('aria-hidden', 'true');
-      const rows = Array.from({ length: 4 }, () => {
+      const rows = Array.from({ length: seatRows }, () => {
         const row = document.createElement('div');
         row.className = 'paired-row';
-        for (let index = 0; index < 4; index++) {
-          const cushion = document.createElement('span');
-          cushion.className = 'temple-cushion';
-          row.append(cushion);
+        for (let index = 0; index < seatsPerSide * 2; index++) {
+          const seat = document.createElement('button');
+          seat.type = 'button';
+          seat.className = chairImage ? 'chair-name-button' : 'temple-cushion';
+          if (index === seatsPerSide) seat.classList.add('first-seat-right');
+          if (chairImage) {
+            const chair = new Image(160, 160);
+            chair.src = chairImage;
+            chair.alt = '';
+            chair.className = 'upholstered-chair';
+            seat.append(chair);
+          }
+          row.append(seat);
         }
         return row;
       });
       plan.replaceChildren(aisle, ...rows);
+      return seatCount;
+    }
+
+    function openTempleHall(hall, interior) {
       const view = interior.querySelector('.space-gallery');
       const image = new Image();
       image.src = './assets/temple/' + hall.image;
@@ -700,7 +631,6 @@
     const params = new URLSearchParams(location.search);
     const space = params.get('space');
     const hallId = params.get('hall') || 'daeungjeon';
-    const namedHalls = new Set(['daejeokgwangjeon', 'daeungjeon', 'gwaneumjeon', 'samseonggak']);
     const hall = space === 'temple' && Object.hasOwn(templeHalls, hallId) ? templeHalls[hallId] : null;
     const spaces = new Map([['church', '교회'], ['cathedral', '성당']]);
     const name = hall?.name ?? spaces.get(space);
@@ -711,22 +641,22 @@
       interior.setAttribute('aria-label', name + ' 내부');
       const seating = interior.querySelector('.seating');
       seating.classList.add('furnished-seating', space + '-seating');
+      const plan = seating.querySelector('.seating-plan');
+      interior.querySelector('.seat-capacity').textContent = buildSeating(plan, chairImages[space]);
       if (hall) {
         interior.querySelector('.seat-guide-item').textContent = '좌복';
-        openTempleHall(hall, interior, seating);
+        seating.setAttribute('aria-label', '수행 공간');
+        plan.style.setProperty('--cushion-color', hall.color);
+        openTempleHall(hall, interior);
         const memorial = hallId === 'muryangsujeon' || hallId === 'jijangjeon';
-        if (memorial || namedHalls.has(hallId)) {
-          enableSeatNames(seating.querySelector('.seating-plan'), '좌복', memorial);
-        }
+        enableSeatNames(plan, '좌복', memorial);
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=memorialsuffix';
+        backLink.href = './temple.html?v=seats30';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
-        const template = document.getElementById(space + '-seating-template');
-        seating.querySelector('.seating-plan').replaceWith(template.content.cloneNode(true));
-        enableSeatNames(seating.querySelector('.seating-plan'), '좌석');
+        enableSeatNames(plan, '좌석');
         startGallery(space);
         if (space === 'church') {
           addHallChants(interior, [['maranatha', '마라나타']], './assets/church/chant/');
