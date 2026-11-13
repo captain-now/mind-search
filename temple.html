@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>사찰 | Mind Search</title>
+  <title>전각 | Mind Search</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&amp;family=Gowun+Batang:wght@700&amp;family=Gowun+Dodum&amp;family=Nanum+Myeongjo:wght@800&amp;family=Nanum+Pen+Script&amp;family=Noto+Sans+KR:wght@900&amp;display=swap&amp;text=%EB%8C%80%EC%A0%81%EA%B4%91%EC%A0%84%EC%9B%85%EB%AC%B4%EB%9F%89%EC%88%98%EA%B4%80%EC%9D%8C%EC%A7%80%EC%9E%A5%EC%82%BC%EC%84%B1%EA%B0%81">
   <style>
     * { box-sizing: border-box; }
@@ -59,39 +59,54 @@
     .samseonggak-statues img { height: 100%; min-height: 0; }
     a:focus-visible { outline: 3px solid #986538; outline-offset: 3px; }
     .back { display: inline-block; margin-top: 12px; color: #355a48; }
+    .back-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: #355a48;
+      color: #fff9e9;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 700;
+    }
     #hall { text-align: center; }
   </style>
 </head>
 <body>
   <main id="chooser">
-    <h1>사찰</h1>
+    <h1>전각</h1>
     <nav class="halls" aria-label="전각 선택">
-      <a href="./prayer-space.html?space=temple&amp;hall=daejeokgwangjeon&amp;v=templelist" target="_blank" rel="noopener">
+      <a href="./prayer-space.html?space=temple&amp;hall=daejeokgwangjeon&amp;v=hallbanner" target="_blank" rel="noopener">
         <img src="./assets/temple/hall-statue-1-left.webp" alt="" width="160" height="160">
         <span>대적광전</span>
         <img src="./assets/temple/hall-statue-1-right.webp" alt="" width="160" height="160">
       </a>
-      <a href="./prayer-space.html?space=temple&amp;hall=daeungjeon&amp;v=templelist" target="_blank" rel="noopener">
+      <a href="./prayer-space.html?space=temple&amp;hall=daeungjeon&amp;v=hallbanner" target="_blank" rel="noopener">
         <img src="./assets/temple/hall-statue-2-left.webp" alt="" width="160" height="160">
         <span>대웅전</span>
         <img src="./assets/temple/hall-statue-2-right.webp" alt="" width="160" height="160">
       </a>
-      <a href="./prayer-space.html?space=temple&amp;hall=muryangsujeon&amp;v=templelist" target="_blank" rel="noopener">
+      <a href="./prayer-space.html?space=temple&amp;hall=muryangsujeon&amp;v=hallbanner" target="_blank" rel="noopener">
         <img src="./assets/temple/hall-statue-3-left.webp" alt="" width="160" height="160">
         <span>무량수전</span>
         <img src="./assets/temple/hall-statue-3-right.webp" alt="" width="160" height="160">
       </a>
-      <a href="./prayer-space.html?space=temple&amp;hall=gwaneumjeon&amp;v=templelist" target="_blank" rel="noopener">
+      <a href="./prayer-space.html?space=temple&amp;hall=gwaneumjeon&amp;v=hallbanner" target="_blank" rel="noopener">
         <img src="./assets/temple/hall-statue-4-left.webp" alt="" width="160" height="160">
         <span>관음전</span>
         <img src="./assets/temple/hall-statue-4-right.webp" alt="" width="160" height="160">
       </a>
-      <a href="./prayer-space.html?space=temple&amp;hall=jijangjeon&amp;v=templelist" target="_blank" rel="noopener">
+      <a href="./prayer-space.html?space=temple&amp;hall=jijangjeon&amp;v=hallbanner" target="_blank" rel="noopener">
         <img src="./assets/temple/hall-statue-5-left.webp" alt="" width="160" height="160">
         <span>지장전</span>
         <img src="./assets/temple/hall-statue-5-right.webp" alt="" width="160" height="160">
       </a>
-      <a class="samseonggak" href="./prayer-space.html?space=temple&amp;hall=samseonggak&amp;v=templelist" target="_blank" rel="noopener" aria-labelledby="samseonggak-title">
+      <a class="samseonggak" href="./prayer-space.html?space=temple&amp;hall=samseonggak&amp;v=hallbanner" target="_blank" rel="noopener" aria-labelledby="samseonggak-title">
         <span id="samseonggak-title">삼성각</span>
         <span class="samseonggak-statues">
           <img src="./assets/temple/hall-statue-6-left.webp" alt="산신" width="160" height="160">
@@ -100,7 +115,7 @@
         </span>
       </a>
     </nav>
-    <a class="back" href="./prayer.html?v=templelist">기도 공간으로 돌아가기</a>
+    <a class="back-banner" href="./prayer.html?v=hallbanner"><span aria-hidden="true">←</span> 기도 공간으로 돌아가기</a>
   </main>
   <main id="hall" hidden>
     <h1 id="hall-name"></h1>
