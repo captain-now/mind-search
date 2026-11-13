@@ -4,20 +4,45 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>사찰 | Mind Search</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&amp;family=Gowun+Batang:wght@700&amp;family=Gowun+Dodum&amp;family=Nanum+Myeongjo:wght@800&amp;family=Nanum+Pen+Script&amp;family=Noto+Sans+KR:wght@900&amp;display=swap&amp;text=%EB%8C%80%EC%A0%81%EA%B4%91%EC%A0%84%EC%9B%85%EB%AC%B4%EB%9F%89%EC%88%98%EA%B4%80%EC%9D%8C%EC%A7%80%EC%9E%A5%EC%82%BC%EC%84%B1%EA%B0%81">
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; color: #30251b; background: #f6efe2; font-family: system-ui, sans-serif; }
-    main { width: min(100%, 620px); margin-inline: auto; padding: clamp(24px, 6vh, 64px) 18px; }
-    h1 { margin: 0 0 24px; text-align: center; }
-    .halls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    main { width: min(100%, 620px); margin-inline: auto; padding: clamp(12px, 2.5svh, 28px) 14px; }
+    h1 { margin: 0 0 10px; text-align: center; }
+    .halls { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(5px, 1.2svh, 10px); }
     .halls a {
-      display: grid; place-items: center; min-height: clamp(80px, 16vh, 130px);
-      padding: 10px 4px; border: 1px solid #cfb17d; border-radius: 12px;
-      background: #355a48; color: #fff9e9; text-align: center;
-      text-decoration: none; font-size: clamp(18px, 5vw, 25px); font-weight: 700;
+      --ink: #765323;
+      --paper: #f8eed8;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(max-content, 1.4fr) minmax(0, 1fr);
+      align-items: center;
+      height: clamp(56px, 10.5svh, 98px);
+      overflow: hidden;
+      padding-inline: 4px;
+      border: 1px solid color-mix(in srgb, var(--ink) 42%, #fff);
+      border-radius: 12px;
+      background: var(--paper);
+      color: var(--ink);
+      text-align: center;
+      text-decoration: none;
+      font-size: clamp(17px, 5vw, 28px);
     }
+    .halls img {
+      display: block;
+      width: 100%;
+      height: clamp(52px, 10svh, 92px);
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+    .halls a:nth-child(1) { font-family: "Nanum Myeongjo", Batang, serif; font-weight: 800; letter-spacing: .09em; }
+    .halls a:nth-child(2) { --ink: #852f2e; --paper: #f9e5dd; font-family: "Noto Sans KR", sans-serif; font-weight: 900; letter-spacing: -.06em; }
+    .halls a:nth-child(3) { --ink: #4a4477; --paper: #eee8fa; font-family: "Gowun Batang", Batang, serif; font-weight: 700; letter-spacing: .03em; }
+    .halls a:nth-child(4) { --ink: #286457; --paper: #e0f2e9; font-family: "Gowun Dodum", sans-serif; font-weight: 500; letter-spacing: .12em; }
+    .halls a:nth-child(5) { --ink: #495478; --paper: #e7edf8; font-family: "Black Han Sans", sans-serif; font-weight: 800; letter-spacing: .05em; }
+    .halls a:nth-child(6) { --ink: #6e4b38; --paper: #f4e7d9; font-family: "Nanum Pen Script", cursive; font-weight: 700; font-size: clamp(22px, 6vw, 36px); }
     a:focus-visible { outline: 3px solid #986538; outline-offset: 3px; }
-    .back { display: inline-block; margin-top: 24px; color: #355a48; }
+    .back { display: inline-block; margin-top: 12px; color: #355a48; }
     #hall { text-align: center; }
   </style>
 </head>
@@ -25,14 +50,38 @@
   <main id="chooser">
     <h1>사찰</h1>
     <nav class="halls" aria-label="전각 선택">
-      <a href="./temple.html?hall=daejeokgwangjeon" target="_blank" rel="noopener">대적광전</a>
-      <a href="./prayer-space.html?space=temple&amp;hall=daeungjeon&amp;v=templehalls" target="_blank" rel="noopener">대웅전</a>
-      <a href="./temple.html?hall=muryangsujeon" target="_blank" rel="noopener">무량수전</a>
-      <a href="./temple.html?hall=gwaneumjeon" target="_blank" rel="noopener">관음전</a>
-      <a href="./temple.html?hall=jijangjeon" target="_blank" rel="noopener">지장전</a>
-      <a href="./temple.html?hall=samseonggak" target="_blank" rel="noopener">삼성각</a>
+      <a href="./temple.html?hall=daejeokgwangjeon" target="_blank" rel="noopener">
+        <img src="./assets/temple/hall-statue-1-left.webp" alt="" width="160" height="160">
+        <span>대적광전</span>
+        <img src="./assets/temple/hall-statue-1-right.webp" alt="" width="160" height="160">
+      </a>
+      <a href="./prayer-space.html?space=temple&amp;hall=daeungjeon&amp;v=templehalls" target="_blank" rel="noopener">
+        <img src="./assets/temple/hall-statue-2-left.webp" alt="" width="160" height="160">
+        <span>대웅전</span>
+        <img src="./assets/temple/hall-statue-2-right.webp" alt="" width="160" height="160">
+      </a>
+      <a href="./temple.html?hall=muryangsujeon" target="_blank" rel="noopener">
+        <img src="./assets/temple/hall-statue-3-left.webp" alt="" width="160" height="160">
+        <span>무량수전</span>
+        <img src="./assets/temple/hall-statue-3-right.webp" alt="" width="160" height="160">
+      </a>
+      <a href="./temple.html?hall=gwaneumjeon" target="_blank" rel="noopener">
+        <img src="./assets/temple/hall-statue-4-left.webp" alt="" width="160" height="160">
+        <span>관음전</span>
+        <img src="./assets/temple/hall-statue-4-right.webp" alt="" width="160" height="160">
+      </a>
+      <a href="./temple.html?hall=jijangjeon" target="_blank" rel="noopener">
+        <img src="./assets/temple/hall-statue-5-left.webp" alt="" width="160" height="160">
+        <span>지장전</span>
+        <img src="./assets/temple/hall-statue-5-right.webp" alt="" width="160" height="160">
+      </a>
+      <a href="./temple.html?hall=samseonggak" target="_blank" rel="noopener">
+        <img src="./assets/temple/hall-statue-6-left.webp" alt="" width="160" height="160">
+        <span>삼성각</span>
+        <img src="./assets/temple/hall-statue-6-right.webp" alt="" width="160" height="160">
+      </a>
     </nav>
-    <a class="back" href="./prayer.html?v=templehalls">기도 공간으로 돌아가기</a>
+    <a class="back" href="./prayer.html?v=hallstatues">기도 공간으로 돌아가기</a>
   </main>
   <main id="hall" hidden>
     <h1 id="hall-name"></h1>
