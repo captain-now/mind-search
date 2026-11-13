@@ -242,22 +242,29 @@
     }
     .cushion-dialog {
       box-sizing: border-box;
-      width: min(420px, calc(100% - 32px));
-      padding: 22px;
+      position: fixed;
+      inset: calc(var(--form-viewport-top, 0px) + var(--form-viewport-height, 100dvh) / 2) 0 auto;
+      transform: translateY(-50%);
+      margin: 0 auto;
+      width: min(440px, calc(100% - 24px));
+      max-height: calc(var(--form-viewport-height, 100dvh) - 24px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: clamp(12px, 4vw, 22px);
       border: 1px solid #ccb48e;
       border-radius: 16px;
       background: #fff9ed;
       color: #30251b;
     }
     .cushion-dialog::backdrop { background: #251a14a8; }
-    .cushion-dialog h2 { margin: 0 0 14px; }
+    .cushion-dialog h2 { margin: 0 0 12px; font-size: clamp(18px, 5vw, 24px); }
     .cushion-dialog form { display: grid; gap: 8px; }
     .cushion-dialog input {
       box-sizing: border-box; width: 100%; min-height: 44px; padding: 8px 10px;
-      border: 1px solid #89715b; border-radius: 8px; font: inherit;
+      border: 1px solid #89715b; border-radius: 8px; font: inherit; font-size: 16px;
     }
     .cushion-year-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
-    .cushion-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+    .cushion-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
     .cushion-actions button {
       min-height: 44px; padding: 6px 12px; border: 1px solid #355a48;
       border-radius: 10px; background: #fff9ed; color: #355a48; font: inherit;
@@ -293,7 +300,7 @@
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
       </div>
-      <a class="home-return" href="./prayer.html?v=widechairs">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=mobileform">기도공간으로 돌아가기</a>
     </section>
   </main>
     <template id="church-seating-template">
@@ -505,6 +512,14 @@
       const entries = new Map();
       let selectedButton = null;
       let seatNumber;
+      const viewport = window.visualViewport;
+      function fitDialogToViewport() {
+        if (!dialog.open || !viewport) return;
+        dialog.style.setProperty('--form-viewport-top', viewport.offsetTop + 'px');
+        dialog.style.setProperty('--form-viewport-height', viewport.height + 'px');
+      }
+      viewport?.addEventListener('resize', fitDialogToViewport);
+      viewport?.addEventListener('scroll', fitDialogToViewport);
       plan.setAttribute('role', 'group');
       if (memorial) {
         dialog.querySelector('label[for="cushion-year"]').textContent = '복위';
@@ -564,6 +579,8 @@
           nameInput.value = entry?.name ?? '';
           nameInput.setCustomValidity('');
           dialog.showModal();
+          dialog.scrollTop = 0;
+          fitDialogToViewport();
         });
       });
     }
@@ -621,7 +638,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=jijangnames';
+        backLink.href = './temple.html?v=mobileform';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
