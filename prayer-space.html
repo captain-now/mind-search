@@ -81,6 +81,32 @@
       cursor: pointer;
     }
     .space-gallery button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .interior .church-seating {
+      background: repeating-linear-gradient(90deg, #eee1ce 0 1px, transparent 1px 72px),
+        linear-gradient(120deg, #f9efe1, #eadac3);
+    }
+    .church-seating .seating-plan {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.8fr) repeat(3, minmax(0, 1fr));
+      gap: clamp(3px, 1.1vw, 8px);
+      width: min(100%, 560px);
+      padding: clamp(6px, 1.3dvh, 12px) clamp(8px, 3vw, 22px);
+    }
+    .church-seating .aisle {
+      position: relative;
+      inset: auto;
+      grid-column: 4;
+      grid-row: 1 / -1;
+      margin-block: calc(-1 * clamp(6px, 1.3dvh, 12px));
+    }
+    .church-seating .seat-row { display: contents; }
+    .church-chair {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      object-fit: contain;
+      transform: rotate(180deg);
+    }
+    .church-chair:nth-child(4) { grid-column: 5; }
   </style>
 </head>
 <body>
@@ -107,6 +133,16 @@
       </div>
     </section>
   </main>
+    <template id="church-seating-template">
+      <div class="seating-plan" role="img" aria-label="중앙 카펫 통로 양쪽에 참나무 의자 세 개씩, 다섯 줄로 배치된 좌석 30개">
+        <div class="aisle" aria-hidden="true"></div>
+        <div class="seat-row"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
+        <div class="seat-row"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
+        <div class="seat-row"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
+        <div class="seat-row"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
+        <div class="seat-row"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
+      </div>
+    </template>
   <script>
     const galleryCaptions = {
       cathedral: [
@@ -184,6 +220,11 @@
         const interior = document.querySelector('#space-interior');
         interior.setAttribute('aria-label', name + ' 내부');
         interior.hidden = false;
+        if (space === 'church') {
+          const seating = interior.querySelector('.seating');
+          seating.classList.add('church-seating');
+          seating.replaceChildren(document.querySelector('#church-seating-template').content.cloneNode(true));
+        }
         startGallery(space);
       }
     }
