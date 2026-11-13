@@ -137,6 +137,33 @@
       .interior:not([hidden]) { grid-template-rows: minmax(0, 1fr); }
       .interior .seating { display: none; }
     }
+    .temple-view {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      background: #35231a;
+    }
+    .temple-view img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .interior .temple-seating {
+      background:
+        repeating-linear-gradient(90deg, #52301c22 0 1px, transparent 1px 66px),
+        linear-gradient(135deg, #b98754, #7d4e2e);
+    }
+    .temple-seating .aisle {
+      background: linear-gradient(90deg, #70421a26, #f6cf8833, #70421a26);
+      border-inline: 1px solid #69432255;
+    }
+    .temple-cushion {
+      width: min(88%, 64px);
+      height: min(72%, 38px);
+      box-sizing: border-box;
+      border: 1px solid #4d211c;
+      border-radius: 18%;
+      background: radial-gradient(ellipse at 45% 30%, #ab5440, #733125 75%);
+      box-shadow: inset 0 0 0 2px #e5b07955, 0 2px 3px #41241480;
+    }
+    .temple-cushion:nth-child(4) { grid-column: 5; }
   </style>
 </head>
 <body>
@@ -184,6 +211,16 @@
         <div class="seat-row"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"><img class="upholstered-chair" src="./assets/cathedral/leather-chair.webp" alt="" width="160" height="160"></div>
       </div>
     </template>
+  <template id="temple-seating-template">
+    <div class="seating-plan" role="img" aria-label="중앙 통로 양쪽에 방석 세 개씩, 다섯 줄로 배치된 수행 공간">
+      <div class="aisle" aria-hidden="true"></div>
+      <div class="seat-row"><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span></div>
+      <div class="seat-row"><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span></div>
+      <div class="seat-row"><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span></div>
+      <div class="seat-row"><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span></div>
+      <div class="seat-row"><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span><span class="temple-cushion"></span></div>
+    </div>
+  </template>
   <script>
     const galleryCaptions = {
       cathedral: [
@@ -256,15 +293,25 @@
       document.querySelector('#space-title').textContent = name;
       document.querySelector('#space-status').hidden = false;
       document.title = name + ' | Mind Search';
-      if (space === 'church' || space === 'cathedral') {
-        document.querySelector('#space-intro').hidden = true;
-        const interior = document.querySelector('#space-interior');
-        interior.setAttribute('aria-label', name + ' 내부');
-        interior.hidden = false;
-        const seating = interior.querySelector('.seating');
-        seating.classList.add('furnished-seating', space + '-seating');
-        const seatingTemplate = document.getElementById(space + '-seating-template');
-        seating.querySelector('.seating-plan').replaceWith(seatingTemplate.content.cloneNode(true));
+      document.querySelector('#space-intro').hidden = true;
+      const interior = document.querySelector('#space-interior');
+      interior.setAttribute('aria-label', name + ' 내부');
+      interior.hidden = false;
+      const seating = interior.querySelector('.seating');
+      seating.classList.add('furnished-seating', space + '-seating');
+      const seatingTemplate = document.getElementById(space + '-seating-template');
+      seating.querySelector('.seating-plan').replaceWith(seatingTemplate.content.cloneNode(true));
+      if (space === 'temple') {
+        seating.setAttribute('aria-label', '수행 공간');
+        const view = interior.querySelector('.space-gallery');
+        const image = new Image();
+        image.src = './assets/temple/hall.webp';
+        image.alt = '단청과 연등 사이로 금빛 석가모니불이 보이는 법당';
+        view.replaceWith(image);
+        const section = image.parentElement;
+        section.classList.add('temple-view');
+        section.querySelector('#view-title').hidden = true;
+      } else {
         startGallery(space);
       }
     }
