@@ -81,6 +81,25 @@
       cursor: pointer;
     }
     .space-gallery button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .interior .furnished-seating {
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+    .home-return {
+      justify-self: center;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      box-sizing: border-box;
+      margin: 6px 12px max(8px, env(safe-area-inset-bottom));
+      padding: 6px 14px;
+      border-radius: 22px;
+      background: #355a48;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .home-return:focus-visible { outline: 2px solid #263d36; outline-offset: 2px; }
     .interior .church-seating {
       background: #ecdbba url("./assets/church/marble-floor.webp") center / 360px 360px repeat;
     }
@@ -142,6 +161,7 @@
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
       </div>
+      <a class="home-return" href="./">홈페이지로 돌아가기</a>
     </section>
   </main>
     <template id="church-seating-template">
@@ -244,7 +264,7 @@
         const seating = interior.querySelector('.seating');
         seating.classList.add('furnished-seating', space + '-seating');
         const seatingTemplate = document.getElementById(space + '-seating-template');
-        seating.replaceChildren(seatingTemplate.content.cloneNode(true));
+        seating.querySelector('.seating-plan').replaceWith(seatingTemplate.content.cloneNode(true));
         startGallery(space);
       }
     }
