@@ -59,6 +59,28 @@
       box-shadow: inset 0 0 0 2px #edc398, 0 2px 2px #75462f38;
     }
     .chair:nth-child(3) { grid-column: 4; }
+    .cathedral-gallery {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #2f2118;
+    }
+    .cathedral-gallery img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .cathedral-gallery button {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      min-height: 44px;
+      padding: 8px 14px;
+      border: 1px solid #fff9;
+      border-radius: 22px;
+      background: #21160de0;
+      color: #fff;
+      font: inherit;
+      cursor: pointer;
+    }
+    .cathedral-gallery button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   </style>
 </head>
 <body>
@@ -68,8 +90,11 @@
     <a href="./prayer.html">공간 선택으로 돌아가기</a>
   </main>
   <main id="space-interior" class="interior" hidden>
-    <section aria-labelledby="view-title">
+    <section aria-label="전경">
       <h2 id="view-title">전경</h2>
+      <div class="cathedral-gallery" hidden>
+        <button type="button">일시정지</button>
+      </div>
     </section>
     <section class="seating" aria-label="좌석">
       <div class="seating-plan" role="img" aria-label="중앙 카펫 통로 양쪽에 의자 두 개씩, 다섯 줄로 배치된 좌석 20개">
@@ -83,6 +108,54 @@
     </section>
   </main>
   <script>
+    function startCathedralGallery() {
+      const captions = [
+        '아침빛이 드는 중앙 통로와 제단',
+        '십자가와 흰 돌 제단',
+        '보석빛 스테인드글라스 장미창',
+        '스테인드글라스 빛이 비치는 측랑',
+        '성모상과 촛불이 있는 소성당',
+        '측면에서 바라본 제단',
+        '고딕 천장 아치와 기둥',
+        '파이프오르간과 성가대석',
+        '노을빛이 비치는 중앙 통로',
+        '촛불로 밝혀진 저녁 제단',
+      ];
+      const frames = captions.map((caption, index) => {
+        const frame = new Image();
+        frame.src = './assets/cathedral/' + String(index + 1).padStart(2, '0') + '.webp';
+        frame.alt = caption;
+        return frame;
+      });
+      const title = document.querySelector('#view-title');
+      const gallery = document.querySelector('.cathedral-gallery');
+      const toggle = gallery.querySelector('button');
+      let index = 0;
+      let timer = null;
+      gallery.prepend(frames[index]);
+      gallery.hidden = false;
+      title.hidden = true;
+      const play = () => {
+        timer = window.setInterval(() => {
+          const next = (index + 1) % frames.length;
+          if (!frames[next].complete || !frames[next].naturalWidth) return;
+          frames[index].replaceWith(frames[next]);
+          index = next;
+        }, 3000);
+        toggle.textContent = '일시정지';
+      };
+      toggle.addEventListener('click', () => {
+        if (timer === null) {
+          play();
+        } else {
+          window.clearInterval(timer);
+          timer = null;
+          toggle.textContent = '재생';
+        }
+      });
+      play();
+    }
+
     const spaces = new Map([['temple', '사찰'], ['church', '교회'], ['cathedral', '성당']]);
     const space = new URLSearchParams(location.search).get('space');
     const name = spaces.get(space);
@@ -95,6 +168,7 @@
         const interior = document.querySelector('#space-interior');
         interior.setAttribute('aria-label', name + ' 내부');
         interior.hidden = false;
+        if (space === 'cathedral') startCathedralGallery();
       }
     }
   </script>
