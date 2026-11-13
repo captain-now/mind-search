@@ -211,7 +211,7 @@
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
       </div>
-      <a class="home-return" href="./">홈페이지로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=cathedralreturn">기도공간으로 돌아가기</a>
     </section>
   </main>
     <template id="church-seating-template">
@@ -355,11 +355,6 @@
         const template = document.getElementById(space + '-seating-template');
         seating.querySelector('.seating-plan').replaceWith(template.content.cloneNode(true));
         startGallery(space);
-      }
-      if (hall || space === 'church') {
-        const backLink = seating.querySelector('.home-return');
-        backLink.href = './prayer.html?v=seating16';
-        backLink.textContent = '기도공간으로 돌아가기';
       }
       interior.hidden = false;
     }
