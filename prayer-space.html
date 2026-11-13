@@ -82,8 +82,7 @@
     }
     .space-gallery button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
     .interior .church-seating {
-      background: repeating-linear-gradient(90deg, #eee1ce 0 1px, transparent 1px 72px),
-        linear-gradient(120deg, #f9efe1, #eadac3);
+      background: #ecdbba url("./assets/church/marble-floor.webp") center / 360px 360px repeat;
     }
     .church-seating .seating-plan {
       grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.8fr) repeat(3, minmax(0, 1fr));
@@ -92,14 +91,12 @@
       padding: clamp(6px, 1.3dvh, 12px) clamp(8px, 3vw, 22px);
     }
     .church-seating .aisle {
-      background: #b89973 url("./assets/church/01.webp") center bottom / auto 270% no-repeat;
-      border: 0;
-      box-shadow: 0 0 0 1px #98775245;
-      position: relative;
-      inset: auto;
+      position: static;
       grid-column: 4;
       grid-row: 1 / -1;
-      margin-block: calc(-1 * clamp(6px, 1.3dvh, 12px));
+      background: none;
+      border: 0;
+      box-shadow: none;
     }
     .church-seating .seat-row { display: contents; }
     .church-chair {
@@ -137,7 +134,7 @@
     </section>
   </main>
     <template id="church-seating-template">
-      <div class="seating-plan" role="img" aria-label="중앙 석재 통로 양쪽에 참나무 의자 세 개씩, 다섯 줄로 배치된 좌석 30개">
+      <div class="seating-plan" role="img" aria-label="중앙 대리석 통로 양쪽에 참나무 의자 세 개씩, 다섯 줄로 배치된 좌석 30개">
         <div class="aisle" aria-hidden="true"></div>
         <div class="seat-row"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
         <div class="seat-row"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"><img class="church-chair" src="./assets/church/chair.webp" alt="" width="160" height="160"></div>
