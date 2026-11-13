@@ -114,6 +114,10 @@
       transform: rotate(180deg);
     }
     .upholstered-chair:nth-child(4) { grid-column: 5; }
+    @media (max-width: 767px) and (orientation: portrait) {
+      .interior:not([hidden]) { grid-template-rows: minmax(0, 1fr); }
+      .interior .seating { display: none; }
+    }
   </style>
 </head>
 <body>
