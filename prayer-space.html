@@ -8,21 +8,47 @@
     body { margin: 0; background: #fcedf0; color: #263d36; font-family: system-ui, sans-serif; }
     main { max-width: 640px; margin: auto; padding: 40px 20px; }
     a { color: #355a48; }
+    .interior:not([hidden]) {
+      display: grid;
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      height: 100vh;
+      height: 100dvh;
+      max-width: none;
+      padding: 0;
+    }
+    .interior section { display: grid; place-items: center; }
+    .interior section + section { border-top: 1px solid #b8949f; }
+    .interior h2 { margin: 0; font-size: clamp(24px, 6vw, 36px); }
   </style>
 </head>
 <body>
-  <main>
+  <main id="space-intro">
     <h1 id="space-title">기도 공간</h1>
     <p id="space-status" hidden>이 공간은 준비 중이에요.</p>
     <a href="./prayer.html">공간 선택으로 돌아가기</a>
   </main>
+  <main id="space-interior" class="interior" hidden>
+    <section aria-labelledby="view-title">
+      <h2 id="view-title">전경</h2>
+    </section>
+    <section aria-labelledby="seats-title">
+      <h2 id="seats-title">좌석</h2>
+    </section>
+  </main>
   <script>
     const spaces = new Map([['temple', '사찰'], ['church', '교회'], ['cathedral', '성당']]);
-    const name = spaces.get(new URLSearchParams(location.search).get('space'));
+    const space = new URLSearchParams(location.search).get('space');
+    const name = spaces.get(space);
     if (name) {
       document.querySelector('#space-title').textContent = name;
       document.querySelector('#space-status').hidden = false;
       document.title = name + ' | Mind Search';
+      if (space === 'church' || space === 'cathedral') {
+        document.querySelector('#space-intro').hidden = true;
+        const interior = document.querySelector('#space-interior');
+        interior.setAttribute('aria-label', name + ' 내부');
+        interior.hidden = false;
+      }
     }
   </script>
 </body>
