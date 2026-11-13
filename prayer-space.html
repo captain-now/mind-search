@@ -10,7 +10,7 @@
     a { color: #355a48; }
     .interior:not([hidden]) {
       display: grid;
-      grid-template-rows: repeat(2, minmax(0, 1fr));
+      grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
       height: 100vh;
       height: 100dvh;
       max-width: none;
@@ -135,7 +135,8 @@
     .upholstered-chair:nth-child(4) { grid-column: 5; }
     @media (max-height: 600px) and (orientation: landscape) {
       .interior:not([hidden]) { grid-template-rows: minmax(0, 1fr); }
-      .interior .seating { display: none; }
+      .interior .seating,
+      .interior .seat-guide { display: none; }
     }
     .temple-view {
       width: 100%;
@@ -207,7 +208,17 @@
       box-shadow: inset 0 0 0 2px #e5b07966, inset 0 4px 12px #fff2, 0 2px 3px #41241480;
     }
     .interior.with-chant:not([hidden]) {
-      grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr) auto auto minmax(0, 1fr);
+    }
+    .seat-guide {
+      margin: 0;
+      padding: 8px 12px;
+      border-block: 1px solid #dbcdb7;
+      background: #fff9ed;
+      color: #30251b;
+      text-align: center;
+      font-size: clamp(12px, 3.5vw, 15px);
+      line-height: 1.4;
     }
     .hall-chant {
       min-width: 0;
@@ -318,6 +329,7 @@
       <span class="chant-status" role="status"></span>
       <audio loop preload="none"></audio>
     </div>
+    <p class="seat-guide"><span class="seat-guide-item">의자</span>를 선택하시고 기도하려는 분의 성함을 넣으세요. 최대 16분까지 가능합니다.</p>
     <section class="seating" aria-label="좌석">
       <div class="seating-plan" role="img" aria-label="중앙 카펫 통로 양쪽에 의자 두 개씩, 다섯 줄로 배치된 좌석 20개">
         <div class="aisle" aria-hidden="true"></div>
@@ -327,7 +339,7 @@
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
       </div>
-      <a class="home-return" href="./prayer.html?v=anonymousseat">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=seatguide">기도공간으로 돌아가기</a>
     </section>
   </main>
     <template id="church-seating-template">
@@ -692,6 +704,7 @@
       const seating = interior.querySelector('.seating');
       seating.classList.add('furnished-seating', space + '-seating');
       if (hall) {
+        interior.querySelector('.seat-guide-item').textContent = '좌복';
         openTempleHall(hall, interior, seating);
         const memorial = hallId === 'muryangsujeon' || hallId === 'jijangjeon';
         if (memorial || namedHalls.has(hallId)) {
@@ -700,7 +713,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=anonymousseat';
+        backLink.href = './temple.html?v=seatguide';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
