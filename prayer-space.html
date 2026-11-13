@@ -498,7 +498,7 @@
       ]
     };
 
-    function addHallChants(interior, tracks) {
+    function addHallChants(interior, tracks, audioDirectory = './assets/temple/chant/') {
       const panel = interior.querySelector('.hall-chant');
       const controls = panel.querySelector('.chant-controls');
       const status = panel.querySelector('.chant-status');
@@ -520,7 +520,7 @@
           }
           if (selected !== id || audio.error) {
             selected = id;
-            audio.src = './assets/temple/chant/' + id + '.mp3';
+            audio.src = audioDirectory + id + '.mp3';
           }
           try {
             await audio.play();
@@ -728,6 +728,9 @@
         seating.querySelector('.seating-plan').replaceWith(template.content.cloneNode(true));
         enableSeatNames(seating.querySelector('.seating-plan'), '좌석');
         startGallery(space);
+        if (space === 'church') {
+          addHallChants(interior, [['maranatha', '마라나타']], './assets/church/chant/');
+        }
       }
       interior.hidden = false;
     }
