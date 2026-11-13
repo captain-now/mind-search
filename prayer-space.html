@@ -375,6 +375,7 @@
           "옴마니반메홈"
         ]
       ],
+      "jijangjeon": [["jijang", "지장보살"]],
       "samseonggak": [
         [
           "sansin",
@@ -485,7 +486,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=hallchant';
+        backLink.href = './temple.html?v=jijangchant';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
