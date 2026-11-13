@@ -614,14 +614,14 @@
       seating.classList.add('furnished-seating', space + '-seating');
       if (hall) {
         openTempleHall(hall, interior, seating);
-        const memorial = hallId === 'muryangsujeon';
+        const memorial = hallId === 'muryangsujeon' || hallId === 'jijangjeon';
         if (memorial || namedHalls.has(hallId)) {
           enableSeatNames(seating.querySelector('.seating-plan'), '좌복', memorial);
         }
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=muryangnames';
+        backLink.href = './temple.html?v=jijangnames';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
