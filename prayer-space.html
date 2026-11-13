@@ -241,28 +241,36 @@
       .interior.with-chant:not([hidden]) { grid-template-rows: minmax(0, 1fr) auto; }
     }
     .temple-cushion[type="button"], .chair-name-button { position: relative; }
+    /* 읏맨-궁서체 · OK금융그룹 */
+    @font-face {
+      font-family: "OKGUNG";
+      src: url("./assets/fonts/OKGUNG.woff2") format("woff2");
+      font-display: swap;
+    }
     .seat-name-label {
       position: absolute;
-      inset: 0;
+      inset: 2px;
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       align-content: center;
       justify-items: center;
+      overflow: hidden;
       pointer-events: none;
-      padding: 2px;
-      font: 700 clamp(8px, 2.7vw, 13px)/1.12 system-ui, sans-serif;
+      font: 400 10px/1.08 "OKGUNG", Gungsuh, "궁서", serif;
     }
     .seat-name-line {
-      min-width: 0;
+      width: max-content;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      padding: 0 2px;
+      padding-inline: 2px;
       box-sizing: border-box;
       border-radius: 3px;
       background: #261b15ed;
       color: #fff;
     }
+    .seat-name-line:first-child { font-size: .72em; }
     .cushion-dialog {
       box-sizing: border-box;
       position: fixed;
@@ -323,7 +331,7 @@
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
       </div>
-      <a class="home-return" href="./prayer.html?v=seatlabel">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=gungsuh">기도공간으로 돌아가기</a>
     </section>
   </main>
     <template id="church-seating-template">
@@ -527,12 +535,31 @@
       interior.classList.add('with-chant');
     }
 
+    function fitSeatName(label) {
+      const { clientWidth: width, clientHeight: height, children } = label;
+      if (!width || !height || !children.length) return;
+      let low = 1;
+      let high = height;
+      while (high - low > 0.25) {
+        const size = (low + high) / 2;
+        label.style.fontSize = size + 'px';
+        const fits = [...children].every(line => line.scrollWidth <= line.clientWidth)
+          && [...children].reduce((total, line) => total + line.getBoundingClientRect().height, 0) <= height;
+        if (fits) low = size;
+        else high = size;
+      }
+      label.style.fontSize = low + 'px';
+    }
+
     function enableSeatNames(plan, seatLabel, memorial = false) {
       const dialog = document.querySelector('.cushion-dialog');
       const title = dialog.querySelector('h2');
       const yearInput = dialog.querySelector('#cushion-year');
       const nameInput = dialog.querySelector('#cushion-name');
       const entries = new Map();
+      const labelObserver = new ResizeObserver(records => {
+        for (const { target } of records) fitSeatName(target);
+      });
       let selectedButton = null;
       let seatNumber;
       const viewport = window.visualViewport;
@@ -586,6 +613,12 @@
           line.textContent = text;
           return line;
         }));
+        fitSeatName(display);
+        labelObserver.observe(display);
+        document.fonts.load('16px OKGUNG', lines.join(' ')).then(
+          () => fitSeatName(display),
+          () => fitSeatName(display),
+        );
         const summary = lines.join(' ');
         selectedButton.title = summary;
         selectedButton.setAttribute('aria-label', seatLabel + ' ' + seatNumber + '번, ' + summary);
@@ -676,7 +709,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=seatlabel';
+        backLink.href = './temple.html?v=gungsuh';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
