@@ -180,20 +180,27 @@
     }
     .temple-cushion[type="button"], .chair-name-button { padding: 0; cursor: pointer; }
     .chair-name-button {
-      width: min(84%, 88px);
-      height: 90%;
       min-height: 0;
       border: 0;
       border-radius: 8px;
       background: transparent;
     }
-    .paired-row .chair-name-button .upholstered-chair { display: block; width: 100%; height: 100%; }
-    .temple-cushion[aria-pressed="true"], .chair-name-button[aria-pressed="true"] { outline: 3px solid #ffe19a; outline-offset: 2px; }
-    .temple-cushion:focus-visible, .chair-name-button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-    .temple-cushion {
+    .paired-row .chair-name-button .upholstered-chair {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      /* Compensate for the transparent side margins in both chair images. */
+      transform: rotate(180deg) scaleX(1.48);
+    }
+    .temple-cushion, .chair-name-button {
       width: min(78%, 94px, 110cqh);
       aspect-ratio: 1.45;
       box-sizing: border-box;
+    }
+    .temple-cushion[aria-pressed="true"], .chair-name-button[aria-pressed="true"] { outline: 3px solid #ffe19a; outline-offset: 2px; }
+    .temple-cushion:focus-visible, .chair-name-button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+    .temple-cushion {
       border: 1px solid #40281c;
       border-radius: 18%;
       background: var(--cushion-color);
@@ -286,7 +293,7 @@
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
       </div>
-      <a class="home-return" href="./prayer.html?v=seatnames">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=widechairs">기도공간으로 돌아가기</a>
     </section>
   </main>
     <template id="church-seating-template">
