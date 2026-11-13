@@ -240,7 +240,7 @@
       box-sizing: border-box; width: 100%; min-height: 44px; padding: 8px 10px;
       border: 1px solid #89715b; border-radius: 8px; font: inherit;
     }
-    .cushion-dialog p { margin: 0; font-size: 14px; }
+    .cushion-year-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
     .cushion-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
     .cushion-actions button {
       min-height: 44px; padding: 6px 12px; border: 1px solid #355a48;
@@ -301,10 +301,14 @@
   <dialog class="cushion-dialog" aria-labelledby="cushion-title">
     <h2 id="cushion-title">좌복 이름 입력</h2>
     <form method="dialog">
-      <label for="cushion-name">출생연도와 이름</label>
-      <input id="cushion-name" type="text" placeholder="1988년생 대장금" aria-describedby="cushion-name-help"
-        maxlength="60" pattern="[0-9]{4}년생\s+.*\S.*" required autofocus>
-      <p id="cushion-name-help">예시 1988년생 대장금</p>
+      <label for="cushion-year">출생연도</label>
+      <div class="cushion-year-field">
+        <input id="cushion-year" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}"
+          placeholder="1988" aria-describedby="cushion-year-suffix" required autofocus>
+        <span id="cushion-year-suffix">년생</span>
+      </div>
+      <label for="cushion-name">이름</label>
+      <input id="cushion-name" type="text" placeholder="대장금" autocomplete="name" maxlength="60" required>
       <div class="cushion-actions">
         <button type="button">닫기</button>
         <button type="submit" value="confirm">확인</button>
@@ -487,17 +491,32 @@
       if (selectable) {
         const dialog = document.querySelector('.cushion-dialog');
         const title = dialog.querySelector('h2');
-        const input = dialog.querySelector('input');
+        const yearInput = dialog.querySelector('#cushion-year');
+        const nameInput = dialog.querySelector('#cushion-name');
+        yearInput.addEventListener('input', () => {
+          yearInput.value = yearInput.value.replace(/[^0-9]/g, '').slice(0, 4);
+        });
+        nameInput.addEventListener('input', () => nameInput.setCustomValidity(''));
         const entries = new Map();
         let cushionNumber;
         dialog.querySelector('button[type="button"]').addEventListener('click', () => dialog.close());
-        dialog.querySelector('form').addEventListener('submit', () => {
-          entries.set(cushionNumber, input.value.trim());
+        dialog.querySelector('form').addEventListener('submit', (event) => {
+          const name = nameInput.value.trim();
+          if (!name) {
+            event.preventDefault();
+            nameInput.setCustomValidity('이름을 입력해 주세요.');
+            nameInput.reportValidity();
+            return;
+          }
+          entries.set(cushionNumber, { year: yearInput.value, name });
         });
         openNameDialog = (number) => {
           cushionNumber = number;
           title.textContent = '좌복 ' + number + '번 이름 입력';
-          input.value = entries.get(number) ?? '';
+          const entry = entries.get(number);
+          yearInput.value = entry?.year ?? '';
+          nameInput.value = entry?.name ?? '';
+          nameInput.setCustomValidity('');
           dialog.showModal();
         };
       }
@@ -558,7 +577,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=cushionname';
+        backLink.href = './temple.html?v=cushionbirth';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
