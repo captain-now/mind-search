@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>기도 공간 | Mind Search</title>
+  <title>기도 공간 | NOW Mind Search</title>
   <style>
     body { margin: 0; background: #fcedf0; color: #263d36; font-family: system-ui, sans-serif; }
     main { max-width: 640px; margin: auto; padding: 40px 20px; }
@@ -537,7 +537,7 @@
         load(label, memorial, entry) {
           isMemorial = memorial;
           title.textContent = label + (memorial ? ' 복위·영가 입력' : ' 이름 입력');
-          document.title = title.textContent + ' | Mind Search';
+          document.title = title.textContent + ' | NOW Mind Search';
           if (memorial) {
             form.querySelector('label[for="cushion-year"]').textContent = '복위';
             form.querySelector('label[for="cushion-name"]').textContent = '영가';
@@ -785,7 +785,7 @@
     if (params.get('seat-entry') === '1') {
       openSeatEntryPage();
     } else if (name) {
-      document.title = name + ' | Mind Search';
+      document.title = name + ' | NOW Mind Search';
       document.querySelector('#space-intro').hidden = true;
       const interior = document.querySelector('#space-interior');
       interior.setAttribute('aria-label', name + ' 내부');

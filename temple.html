@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>전각 | Mind Search</title>
+  <title>전각 | NOW Mind Search</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&amp;family=Gowun+Batang:wght@700&amp;family=Gowun+Dodum&amp;family=Nanum+Myeongjo:wght@800&amp;family=Nanum+Pen+Script&amp;family=Noto+Sans+KR:wght@900&amp;display=swap&amp;text=%EB%8C%80%EC%A0%81%EA%B4%91%EC%A0%84%EC%9B%85%EB%AC%B4%EB%9F%89%EC%88%98%EA%B4%80%EC%9D%8C%EC%A7%80%EC%9E%A5%EC%82%BC%EC%84%B1%EA%B0%81">
   <style>
     * { box-sizing: border-box; }
@@ -126,7 +126,7 @@
     const halls = new Map([["daejeokgwangjeon","대적광전"],["muryangsujeon","무량수전"],["gwaneumjeon","관음전"],["jijangjeon","지장전"],["samseonggak","삼성각"]]);
     const name = halls.get(new URLSearchParams(location.search).get('hall'));
     if (name) {
-      document.title = name + ' | Mind Search';
+      document.title = name + ' | NOW Mind Search';
       document.querySelector('#hall-name').textContent = name;
       document.querySelector('#chooser').hidden = true;
       document.querySelector('#hall').hidden = false;
