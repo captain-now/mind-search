@@ -327,7 +327,7 @@
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
         <div class="seat-row"><span class="chair"></span><span class="chair"></span><span class="chair"></span><span class="chair"></span></div>
       </div>
-      <a class="home-return" href="./prayer.html?v=fullseattext">기도공간으로 돌아가기</a>
+      <a class="home-return" href="./prayer.html?v=anonymousseat">기도공간으로 돌아가기</a>
     </section>
   </main>
     <template id="church-seating-template">
@@ -354,11 +354,11 @@
       <label for="cushion-year">출생연도</label>
       <div class="cushion-year-field">
         <input id="cushion-year" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}"
-          placeholder="1988" aria-describedby="cushion-year-suffix" required autofocus>
+          placeholder="1988" aria-describedby="cushion-year-suffix" autofocus>
         <span id="cushion-year-suffix">년생</span>
       </div>
       <label for="cushion-name">이름</label>
-      <input id="cushion-name" type="text" placeholder="대장금" autocomplete="name" maxlength="60" required>
+      <input id="cushion-name" type="text" placeholder="대장금" autocomplete="name" maxlength="60">
       <div class="cushion-actions">
         <button type="button">닫기</button>
         <button type="submit" value="confirm">확인</button>
@@ -591,28 +591,14 @@
         nameInput.removeAttribute('autocomplete');
       }
       yearInput.addEventListener('input', () => {
-        yearInput.setCustomValidity('');
         if (!memorial) yearInput.value = yearInput.value.replace(/[^0-9]/g, '').slice(0, 4);
       });
-      nameInput.addEventListener('input', () => nameInput.setCustomValidity(''));
       dialog.querySelector('button[type="button"]').addEventListener('click', () => dialog.close());
-      dialog.querySelector('form').addEventListener('submit', (event) => {
+      dialog.querySelector('form').addEventListener('submit', () => {
         const year = yearInput.value.trim();
         const name = nameInput.value.trim();
-        if (memorial && !year) {
-          event.preventDefault();
-          yearInput.setCustomValidity('복위를 입력해 주세요.');
-          yearInput.reportValidity();
-          return;
-        }
-        if (!name) {
-          event.preventDefault();
-          nameInput.setCustomValidity(memorial ? '영가를 입력해 주세요.' : '이름을 입력해 주세요.');
-          nameInput.reportValidity();
-          return;
-        }
         entries.set(seatNumber, { year, name });
-        const lines = [memorial ? year : year + '년생', name];
+        const lines = [year ? (memorial ? year : year + '년생') : '무명', name || '무명'];
         const display = selectedButton.querySelector('.seat-name-label');
         display.replaceChildren(...lines.map((text) => {
           const line = document.createElement('span');
@@ -653,9 +639,7 @@
           title.textContent = label + (memorial ? ' 복위·영가 입력' : ' 이름 입력');
           const entry = entries.get(number);
           yearInput.value = entry?.year ?? '';
-          yearInput.setCustomValidity('');
           nameInput.value = entry?.name ?? '';
-          nameInput.setCustomValidity('');
           dialog.showModal();
           dialog.scrollTop = 0;
           fitDialogToViewport();
@@ -716,7 +700,7 @@
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks);
         const backLink = seating.querySelector('.home-return');
-        backLink.href = './temple.html?v=fullseattext';
+        backLink.href = './temple.html?v=anonymousseat';
         backLink.textContent = '각 전각으로 돌아가기';
       } else {
         const template = document.getElementById(space + '-seating-template');
