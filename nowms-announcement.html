@@ -10,10 +10,17 @@
 <style>
 :root{color-scheme:dark;--bg:#10182d;--surface:#19233c;--line:#34415d;--text:#faf5e9;--muted:#c4c9d7;--gold:#efd393;font:16px/1.65 system-ui,-apple-system,sans-serif}
 *{box-sizing:border-box}body{margin:0;color:var(--text);background:radial-gradient(ellipse at 85% 0,#2b2840 0,transparent 43rem),var(--bg)}a{color:inherit}button{font:inherit}a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:4px}.wrap{width:min(100% - 36px,900px);margin:auto}.top{padding:25px 0;border-bottom:1px solid var(--line)}.top a{color:var(--muted);text-decoration:none}.hero{display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px;padding:clamp(32px,8vw,84px) 0 36px}.hero img{width:clamp(72px,22vw,172px);height:auto;border-radius:50%;border:1px solid #d7ad5a;box-shadow:0 0 42px #ecc87419}.ticker{margin:0;color:var(--gold);font-weight:750;letter-spacing:.12em}h1,h2,h3,p{margin:0}h1{font-size:clamp(27px,5.4vw,55px);line-height:1.16;letter-spacing:-.055em;margin:5px 0 12px}h2{font-size:clamp(21px,4vw,29px);letter-spacing:-.035em;margin-bottom:14px}.hero p:last-child,.muted{color:var(--muted)}.panel{padding:clamp(16px,4vw,28px);border:1px solid var(--line);border-radius:18px;background:var(--surface);margin:0 0 20px}.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 20px}.facts div{border-top:1px solid var(--line);padding-top:10px}.facts dt{color:var(--muted);font-size:.88rem}.facts dd{margin:0;font-weight:750}.address{background:#10182a;border:1px solid var(--line);border-radius:12px;padding:14px}.address code{display:block;overflow-wrap:anywhere;user-select:all;color:var(--gold);margin:3px 0 12px}.actions{display:flex;gap:8px;flex-wrap:wrap}.action{padding:8px 12px;min-height:42px;border-radius:9px;text-decoration:none;background:transparent;color:var(--gold);border:1px solid #a78b56;cursor:pointer}.action:first-child{background:var(--gold);color:#222035}#copy-result:not(:empty){margin-top:8px}.allocation{display:flex;gap:12px 24px;flex-wrap:wrap;margin:16px 0 6px}.allocation strong{color:var(--gold)}.bar{display:flex;height:9px;background:#455474;border-radius:10px;overflow:hidden;margin-bottom:20px}.bar span{width:80%;background:var(--gold)}table{width:100%;table-layout:fixed;border-collapse:collapse;font-variant-numeric:tabular-nums}th,td{padding:10px 5px;text-align:right;border-bottom:1px solid var(--line);overflow-wrap:anywhere}th{color:var(--muted);font-size:.84rem}th:first-child,td:first-child{text-align:left;width:16%}.table-note{margin-top:12px;color:var(--muted);font-size:.92rem}.steps{padding-left:1.25em;margin:0}.steps li+li{margin-top:11px}.steps strong{color:var(--gold)}footer{padding:0 0 27px;color:var(--muted);font-size:.9rem}@media(max-width:420px){.wrap{width:calc(100% - 24px)}.hero{gap:12px}td,th{font-size:.80rem}.facts dd{font-size:.92rem}}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.language-select{background:var(--surface);color:var(--text);border:1px solid #a78b56;border-radius:9px;padding:8px;font:inherit}
+.video-link{display:inline-block;margin-top:14px}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a href="./#nowms">← Mind Search 홈</a></div></header>
+<header class="top"><div class="wrap"><a href="./#nowms">← Mind Search 홈</a>
+  <select id="languageToggle" class="language-select" aria-label="언어 선택" hidden>
+    <option value="ko">🇰🇷 한국어</option><option value="en">🇺🇸 English</option>
+    <option value="zh">🇨🇳 中文</option><option value="ja">🇯🇵 日本語</option>
+  </select></div></header>
 <main class="wrap">
   <header class="hero">
     <div><p class="ticker">NOWMS</p><h1>나우코인 발행 안내</h1><p>NOW Mind Search · 솔라나 메인넷 발행 완료</p></div>
@@ -37,6 +44,7 @@
       </div>
       <p id="copy-result" role="status"></p>
     </div>
+    <a class="action video-link" href="https://www.youtube.com/shorts/zF3LLcTomsE" target="_blank" rel="noopener noreferrer">발행 기념 쇼츠 보기 ↗</a>
   </section>
 
   <section class="panel" aria-labelledby="earn-title">
@@ -73,16 +81,114 @@
   </section>
 </main>
 <footer class="wrap"><a href="https://captain-now.github.io/NOW-Mindfulness-Web/">NOW 마음챙김 홈페이지</a></footer>
+<script src="./ui-language.js?v=1"></script>
 <script>
+const translations = new Map([
+  ["← Mind Search 홈",["← Mind Search Home","← Mind Search 首页","← Mind Search ホーム"]],
+  ["나우코인 발행 안내",["NOWMS Token Launch","NOWMS 代币发行公告","NOWMS トークン発行のお知らせ"]],
+  ["NOW Mind Search · 솔라나 메인넷 발행 완료",["NOW Mind Search · Issued on Solana Mainnet","NOW Mind Search · 已在 Solana 主网发行","NOW Mind Search · Solana メインネットで発行済み"]],
+  ["NOWMS 공식 로고",["Official NOWMS logo","NOWMS 官方标志","NOWMS 公式ロゴ"]],
+  ["발행 현황",["Issuance status","发行情况","発行状況"]],
+  ["발행일",["Issuance date","发行日期","発行日"]],
+  ["2026년 11월 14일 (한국시간)",["November 14, 2026 (Korea time)","2026年11月14日（韩国时间）","2026年11月14日（韓国時間）"]],
+  ["네트워크",["Network","网络","ネットワーク"]],
+  ["솔라나 메인넷",["Solana Mainnet","Solana 主网","Solana メインネット"]],
+  ["고정 발행량",["Fixed supply","固定发行量","固定発行量"]],
+  ["추가 발행 권한",["Mint authority","增发权限","追加発行権限"]],
+  ["영구 폐기 완료",["Permanently revoked","已永久撤销","永久に放棄済み"]],
+  ["공식 NOWMS 토큰 주소",["Official NOWMS token address","NOWMS 官方代币地址","NOWMS 公式トークンアドレス"]],
+  ["주소 복사",["Copy address","复制地址","アドレスをコピー"]],
+  ["솔라나 탐색기에서 확인 ↗",["View in Solana Explorer ↗","在 Solana Explorer 中查看 ↗","Solana Explorer で確認 ↗"]],
+  ["NOW 코인 적립",["Earning NOW coins","赚取 NOW 积分币","NOW コインを貯める"]],
+  ["NOW 마음챙김에서 수행과 일상 실천을 하면 적립 코인 NOW를 모을 수 있어요.",["Earn NOW reward coins through meditation and daily practices in NOW Mindfulness.","在 NOW 正念中完成冥想和日常练习，即可获得 NOW 积分币。","NOW マインドフルネスで瞑想や日々の実践を行うと、報酬コイン NOW が貯まります。"]],
+  ["Google 계정으로 로그인하면 적립 내역이 Firebase의 Cloud Firestore에 계정별로 자동 저장돼요.",["When you sign in with Google, your reward history is saved automatically to your account in Cloud Firestore for Firebase.","使用 Google 账号登录后，积分记录会按账号自动保存到 Firebase 的 Cloud Firestore。","Google アカウントでログインすると、獲得履歴が Firebase の Cloud Firestore にアカウントごとに自動保存されます。"]],
+  ["NOW 마음챙김 적립 코인 교환 계획",["Exchange plan for NOW Mindfulness rewards","NOW 正念积分币兑换计划","NOW マインドフルネスの報酬コイン交換計画"]],
+  ["마음챙김 활동으로 적립한 NOW를 향후 NOWMS로 교환하는 기능을 계획하고 있어요. 교환은 아직 시작되지 않았으며, 아래는 현재 계획안이에요.",["We plan to let users exchange NOW earned through mindfulness activities for NOWMS. Exchanges have yet to begin. The current proposal is below.","我们计划支持将通过正念活动获得的 NOW 兑换为 NOWMS。兑换尚未开始，以下为目前的计划草案。","マインドフルネスの活動で貯めた NOW を、将来 NOWMS に交換できるよう計画しています。交換はまだ始まっていません。以下は現時点の案です。"]],
+  ["8,000만 NOWMS",["80 million NOWMS","8,000 万 NOWMS","8,000 万 NOWMS"]],
+  ["교환용 (80%)",["for exchange (80%)","用于兑换（80%）","交換用（80%）"]],
+  ["2,000만 NOWMS",["20 million NOWMS","2,000 万 NOWMS","2,000 万 NOWMS"]],
+  ["운영자 배정 (20%)",["allocated to the operator (20%)","分配给运营方（20%）","運営者への配分（20%）"]],
+  ["교환 단계별 배정 계획",["Proposed allocation by exchange phase","各兑换阶段的计划分配","交換段階ごとの配分案"]],
+  ["단계",["Phase","阶段","段階"]],
+  ["교환용 배정",["Exchange allocation","兑换分配量","交換用配分"]],
+  ["1 NOWMS에 필요한",["Required for 1 NOWMS","兑换 1 NOWMS 所需","1 NOWMS に必要な"]],
+  ["적립 NOW",["earned NOW","已赚取的 NOW","獲得済み NOW"]],
+  ["1차",["Phase 1","第 1 阶段","第 1 段階"]],
+  ["2차",["Phase 2","第 2 阶段","第 2 段階"]],
+  ["3차",["Phase 3","第 3 阶段","第 3 段階"]],
+  ["4차",["Phase 4","第 4 阶段","第 4 段階"]],
+  ["5차",["Phase 5","第 5 阶段","第 5 段階"]],
+  ["1개",["1","1 枚","1 枚"]],
+  ["10개",["10","10 枚","10 枚"]],
+  ["100개",["100","100 枚","100 枚"]],
+  ["1,000개",["1,000","1,000 枚","1,000 枚"]],
+  ["10,000개",["10,000","10,000 枚","10,000 枚"]],
+  ["예를 들어 2차에는 적립 NOW 10개로 NOWMS 1개를 받는 계획이에요. 5차는 교환용 마지막 1,000만 NOWMS를 장기간에 걸쳐 배정하는 구간이에요.",["For example, Phase 2 proposes exchanging 10 earned NOW for 1 NOWMS. Phase 5 allocates the final 10 million NOWMS reserved for exchange over an extended period.","例如，计划在第 2 阶段用 10 枚已赚取的 NOW 兑换 1 枚 NOWMS。第 5 阶段将把兑换储备中最后的 1,000 万枚 NOWMS 分长期分配。","たとえば第 2 段階では、貯めた NOW 10 枚を NOWMS 1 枚に交換する計画です。第 5 段階では、交換用の最後の 1,000 万 NOWMS を長期にわたって配分します。"]],
+  ["앞으로의 일정",["What comes next","后续安排","今後の予定"]],
+  ["교환 연동 검토.",["Reviewing the exchange integration.","评估兑换功能对接。","交換連携の検討。"]],
+  ["운영 비용, 보안과 암호화, 관련 법률을 검토한 뒤 연동을 추진할 계획이에요.",["We plan to proceed with integration after reviewing operating costs, security, encryption, and applicable laws.","我们计划在评估运营成本、安全措施、加密及相关法律后推进对接。","運用コスト、セキュリティと暗号化、関連法令を確認したうえで、連携を進める予定です。"]],
+  ["교환 개시 공지.",["Announcing the exchange launch.","公布兑换启动安排。","交換開始の告知。"]],
+  ["시작일이 정해지면 단계별 교환 비율, 남은 수량, 교환 방법을 안내할 예정이에요.",["Once the start date is set, we’ll publish the exchange rates by phase, remaining quantities, and instructions.","启动日期确定后，我们将公布各阶段的兑换比例、剩余数量和兑换方法。","開始日が決まり次第、段階ごとの交換比率、残り数量、交換方法をご案内します。"]],
+  ["사용처와 거래소 상장.",["Uses and exchange listings.","使用场景与交易所上线。","利用先と取引所への上場。"]],
+  ["추후 결정되는 내용을 홈페이지에 안내할 예정이에요.",["We’ll share any decisions on the website as they are made.","后续决定将在官网公布。","今後決まった内容はウェブサイトでお知らせします。"]],
+  ["NOW 마음챙김 홈페이지",["NOW Mindfulness website","NOW 正念官网","NOW マインドフルネス公式サイト"]],
+  ["발행 기념 쇼츠 보기 ↗",["Watch the launch Short ↗","观看发行纪念短片 ↗","発行記念ショートを見る ↗"]],
+  ["주소를 복사했어요.",["Address copied.","地址已复制。","アドレスをコピーしました。"]],
+  ["주소를 길게 눌러 복사해 주세요.",["Press and hold the address to copy it.","请长按地址进行复制。","アドレスを長押ししてコピーしてください。"]],
+  ["NOW Mind Search(NOWMS)의 솔라나 메인넷 발행 현황과 NOW 마음챙김 적립 코인 교환 계획을 확인하세요.",["See NOWMS issuance on Solana Mainnet and the proposed exchange plan for NOW Mindfulness rewards.","查看 NOWMS 在 Solana 主网的发行情况，以及 NOW 正念积分币兑换计划。","Solana メインネットでの NOWMS 発行状況と、NOW マインドフルネスの報酬コイン交換計画をご確認ください。"]]
+]);
+const language = window.mindSearchLanguage;
+let lang = language?.read() ?? 'ko';
+const select = document.getElementById('languageToggle');
+const copyResult = document.getElementById('copy-result');
+let copyMessage = '';
+const roots = [document.head, document.querySelector('.top'), document.querySelector('main'), document.querySelector('footer')];
+const entries = [];
+for (const root of roots) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (node.parentElement.closest('style, script, select')) continue;
+    const key = node.nodeValue.trim();
+    if (translations.has(key)) {
+      const original = node.nodeValue;
+      entries.push(() => { node.nodeValue = original.replace(key, translate(key)); });
+    }
+  }
+  for (const element of root.querySelectorAll('[alt], table[aria-label], meta[name="description"]')) {
+    const attribute = element.hasAttribute('alt') ? 'alt' : element.matches('table') ? 'aria-label' : 'content';
+    const key = element.getAttribute(attribute);
+    entries.push(() => element.setAttribute(attribute, translate(key)));
+  }
+}
+function translate(key) {
+  const index = ['en', 'zh', 'ja'].indexOf(lang);
+  return translations.get(key)?.[index] ?? key;
+}
+function applyLanguage() {
+  document.documentElement.lang = lang;
+  select.value = lang;
+  select.setAttribute('aria-label', language?.labels[lang] ?? '언어 선택');
+  for (const update of entries) update();
+  document.title = translate('나우코인 발행 안내') + ' | NOW Mind Search';
+  copyResult.textContent = translate(copyMessage);
+}
+select.addEventListener('change', () => {
+  lang = select.value;
+  try { if (language) localStorage.setItem(language.key, lang); } catch {}
+  applyLanguage();
+});
+select.hidden = false;
+applyLanguage();
 const copy = document.getElementById('copy');
 copy.addEventListener('click', async () => {
-  const result = document.getElementById('copy-result');
   try {
     await navigator.clipboard.writeText(document.getElementById('mint').textContent.trim());
-    result.textContent = '주소를 복사했어요.';
+    copyMessage = '주소를 복사했어요.';
   } catch {
-    result.textContent = '주소를 길게 눌러 복사해 주세요.';
+    copyMessage = '주소를 길게 눌러 복사해 주세요.';
   }
+  copyResult.textContent = translate(copyMessage);
 });
 </script>
 </body>
