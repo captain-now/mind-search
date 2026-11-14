@@ -193,7 +193,15 @@ async function refresh(){
  const profileResult=await client.from('board_profiles').select('user_id,nickname');
  if(profileResult.error)throw profileResult.error;
  const verifiedNames=new Map(profileResult.data.map(p=>[p.user_id,p.nickname]));
- const displayName=item=>verifiedNames.get(item.author_id)===item.nickname?item.nickname+' · 고유 닉네임':item.nickname+' · 이전 기록(미인증)';
+ const metadata=item=>{
+  const line=el('small');
+  const badge=el('span',verifiedNames.get(item.author_id)===item.nickname?'고유 닉네임':'이전 기록(미인증)');
+  badge.className='board-nickname-badge';
+  const timestamp=el('time',new Date(item.created_at).toLocaleString());
+  timestamp.dateTime=item.created_at;
+  line.append(item.nickname+' · ',badge,' · ',timestamp);
+  return line;
+ };
  const hasMore=posts.data.length>POSTS_PER_PAGE;
  const pagePosts=posts.data.slice(0,POSTS_PER_PAGE);
  const ids=pagePosts.map(p=>p.id);
@@ -215,12 +223,12 @@ async function refresh(){
  postsEl.replaceChildren();
  for(const p of pagePosts){
  const article=el('article');article.className='board-post';
- article.append(el('small',displayName(p)+' · '+new Date(p.created_at).toLocaleString()),el('h3',p.title),el('p',p.body));
+ article.append(metadata(p),el('h3',p.title),el('p',p.body));
  addDelete(article,'board_posts',p);addReport(article,'board_posts',p);
  const replies=el('div');replies.className='board-comments';
  for(const c of commentsByPost.get(p.id)||[]){
  const line=el('div');line.className='board-comment';
- line.append(el('small',displayName(c)+' · '+new Date(c.created_at).toLocaleString()),el('p',c.body));
+ line.append(metadata(c),el('p',c.body));
  addDelete(line,'board_comments',c);addReport(line,'board_comments',c);replies.append(line);
  }
  const reply=el('form');reply.className='board-comment-form';
@@ -231,7 +239,7 @@ async function refresh(){
  }
  if(!pagePosts.length)postsEl.append(el('p',currentPage?'이 페이지에는 글이 없습니다. 최신 글로 돌아가 주세요.':'아직 글이 없습니다.'));
  postsEl.append(pageControls(hasMore));
- setStatus('공개 게시판 연결됨 · '+(currentPage+1)+'페이지 · 페이지당 최대 50개');
+ status.replaceChildren(el('span','공개 게시판 연결됨'),' · ',el('span',(currentPage+1)+'페이지'),' · ',el('span','페이지당 최대 50개'));
  }catch(e){setStatus('게시판 불러오기 실패: '+e.message)}finally{loading=false}
 }
 async function updateAdminReportBadge(){
