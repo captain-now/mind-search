@@ -77,18 +77,18 @@ async function setupLinkControls(){
   deletion.append(description);
   const nickBtn=el('button','고유 닉네임만 삭제');nickBtn.type='button';
   nickBtn.onclick=async()=>{
-   const typed=prompt('닉네임만 삭제합니다. 게시글과 댓글은 유지됩니다. 확인하려면 현재 고유 닉네임을 입력하세요: '+registeredNickname);
+   const typed=prompt((window.mindSearchCommunityText?.('닉네임만 삭제합니다. 게시글과 댓글은 유지됩니다. 확인하려면 현재 고유 닉네임을 입력하세요:') ?? '닉네임만 삭제합니다. 게시글과 댓글은 유지됩니다. 확인하려면 현재 고유 닉네임을 입력하세요:') + ' ' + registeredNickname);
    if(typed!==registeredNickname)return;
-   if(!confirm('고유 닉네임을 삭제하고 다른 기기와의 연결도 해제할까요?'))return;
+   if(!confirm(window.mindSearchCommunityText?.('고유 닉네임을 삭제하고 다른 기기와의 연결도 해제할까요?') ?? '고유 닉네임을 삭제하고 다른 기기와의 연결도 해제할까요?'))return;
    nickBtn.disabled=true;
    try{const r=await client.rpc('board_delete_nickname',{p_confirmation:typed});if(r.error)throw r.error;location.reload()}catch(e){setStatus('닉네임 삭제 실패: '+e.message);nickBtn.disabled=false}
   };
   const allBtn=el('button','관리자에게 계정 삭제 신청');allBtn.type='button';allBtn.style.cssText='margin-left:8px;background:#8d4d36;color:white';
   allBtn.onclick=async()=>{
    const expected='계정삭제 신청 '+registeredNickname;
-   const typed=prompt('관리자에게 계정 및 모든 기록 삭제를 신청합니다. 관리자가 승인하면 복구할 수 없습니다. 확인 문구: '+expected);
+   const typed=prompt((window.mindSearchCommunityText?.('관리자에게 계정 및 모든 기록 삭제를 신청합니다. 관리자가 승인하면 복구할 수 없습니다. 확인 문구:') ?? '관리자에게 계정 및 모든 기록 삭제를 신청합니다. 관리자가 승인하면 복구할 수 없습니다. 확인 문구:') + ' ' + expected);
    if(typed!==expected)return;
-   if(!confirm('계정 삭제 신청을 관리자에게 제출할까요? 제출 즉시 삭제되지는 않습니다.'))return;
+   if(!confirm(window.mindSearchCommunityText?.('계정 삭제 신청을 관리자에게 제출할까요? 제출 즉시 삭제되지는 않습니다.') ?? '계정 삭제 신청을 관리자에게 제출할까요? 제출 즉시 삭제되지는 않습니다.'))return;
    allBtn.disabled=true;
    try{const r=await client.rpc('board_request_account_deletion',{p_confirmation:typed});if(r.error)throw r.error;setStatus('계정 삭제 신청이 접수됐습니다. 관리자가 확인한 뒤 처리합니다.');allBtn.textContent='계정 삭제 신청 접수됨'}catch(e){setStatus('계정 삭제 신청 실패: '+e.message);allBtn.disabled=false}
   };
@@ -121,7 +121,7 @@ async function setupNickname(){
  };
 }
 
-async function remove(table,id){if(!confirm('정말 삭제할까요?'))return;const result=await client.from(table).delete().eq('id',id).eq('author_id',canonicalId);if(result.error)throw result.error;await refresh()}
+async function remove(table,id){if(!confirm(window.mindSearchCommunityText?.('정말 삭제할까요?') ?? '정말 삭제할까요?'))return;const result=await client.from(table).delete().eq('id',id).eq('author_id',canonicalId);if(result.error)throw result.error;await refresh()}
 function addDelete(container,table,item){if(item.author_id!==canonicalId)return;const btn=el('button','내 글 삭제');btn.type='button';btn.onclick=async()=>{try{await remove(table,item.id)}catch(e){setStatus('삭제 실패: '+e.message)}};container.append(btn)}
 let activeReportDialog=null;
 function reportItem(table,item,button){

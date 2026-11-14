@@ -256,6 +256,8 @@
     }
     .cushion-actions button[type="submit"] { background: #355a48; color: #fff; }
   </style>
+  <script src="./ui-language.js?v=1"></script>
+  <script src="./prayer-i18n.js?v=1"></script>
 </head>
 <body>
   <main id="space-intro">
@@ -302,6 +304,7 @@
     <p class="seat-entry-status" role="status"></p>
   </dialog>
   <script>
+    const { text: prayerText, choose: prayerCopy, title: prayerTitle } = prayerLanguage;
     const galleryCaptions = {
       cathedral: [
         '아침빛이 드는 중앙 통로와 제단',
@@ -334,7 +337,7 @@
       const frames = captions.map((caption, index) => {
         const frame = new Image();
         frame.src = './assets/' + space + '/' + String(index + 1).padStart(2, '0') + '.webp';
-        frame.alt = caption;
+        frame.alt = prayerText(caption);
         return frame;
       });
       const title = document.querySelector('#view-title');
@@ -352,7 +355,7 @@
           frames[index].replaceWith(frames[next]);
           index = next;
         }, 6000);
-        toggle.textContent = '일시정지';
+        toggle.textContent = prayerText('일시정지');
       };
       toggle.addEventListener('click', () => {
         if (timer === null) {
@@ -360,7 +363,7 @@
         } else {
           window.clearInterval(timer);
           timer = null;
-          toggle.textContent = '재생';
+          toggle.textContent = prayerText('재생');
         }
       });
       play();
@@ -431,8 +434,8 @@
       const buttons = tracks.map(([id, label]) => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.textContent = '▶ ' + label;
-        button.setAttribute('aria-label', label + ' 정근 재생 또는 일시정지');
+        button.textContent = '▶ ' + prayerText(label);
+        button.setAttribute('aria-label', prayerCopy(label + ' 정근 재생 또는 일시정지', 'Play or pause ' + prayerText(label), '播放或暂停' + prayerText(label), prayerText(label) + 'を再生・一時停止'));
         button.setAttribute('aria-pressed', 'false');
         button.addEventListener('click', async () => {
           const currentAttempt = ++attempt;
@@ -448,7 +451,7 @@
           try {
             await audio.play();
           } catch {
-            if (currentAttempt === attempt) status.textContent = '음성을 재생할 수 없어요. 다시 눌러 주세요.';
+            if (currentAttempt === attempt) status.textContent = prayerText('음성을 재생할 수 없어요. 다시 눌러 주세요.');
           }
         });
         return { id, label, button };
@@ -456,7 +459,7 @@
       const updateButtons = () => {
         for (const { id, label, button } of buttons) {
           const playing = selected === id && !audio.paused && !audio.error;
-          button.textContent = (playing ? '⏸ ' : '▶ ') + label;
+          button.textContent = (playing ? '⏸ ' : '▶ ') + prayerText(label);
           button.setAttribute('aria-pressed', String(playing));
         }
       };
@@ -469,7 +472,7 @@
 
     function formatMemorialName(value, suffix) {
       const name = value.trim().replace(new RegExp('(?:\\s*' + suffix + ')+$'), '').trim();
-      return name ? name + ' ' + suffix : '';
+      return name ? name + ' ' + prayerText(suffix) : '';
     }
 
     function fitSeatName(label) {
@@ -536,18 +539,18 @@
         },
         load(label, memorial, entry) {
           isMemorial = memorial;
-          title.textContent = label + (memorial ? ' 복위·영가 입력' : ' 이름 입력');
+          title.textContent = prayerCopy(label + (memorial ? ' 복위·영가 입력' : ' 이름 입력'), label + (memorial ? ' · Sponsor and departed names' : ' · Enter a name'), label + (memorial ? ' · 填写祈福人与亡者姓名' : ' · 填写姓名'), label + (memorial ? '・祈願者と故人の名前を入力' : '・名前を入力'));
           document.title = title.textContent + ' | NOW Mind Search';
           if (memorial) {
-            form.querySelector('label[for="cushion-year"]').textContent = '복위';
-            form.querySelector('label[for="cushion-name"]').textContent = '영가';
+            form.querySelector('label[for="cushion-year"]').textContent = prayerText('복위');
+            form.querySelector('label[for="cushion-name"]').textContent = prayerText('영가');
             form.querySelector('#cushion-year-suffix').hidden = true;
             yearInput.removeAttribute('aria-describedby');
             yearInput.removeAttribute('inputmode');
             yearInput.removeAttribute('pattern');
             yearInput.maxLength = 60;
-            yearInput.placeholder = '홍길동 복위';
-            nameInput.placeholder = '아버지 영가';
+            yearInput.placeholder = prayerText('홍길동 복위');
+            nameInput.placeholder = prayerText('아버지 영가');
             nameInput.removeAttribute('autocomplete');
           }
           yearInput.value = entry?.year ?? '';
@@ -563,12 +566,12 @@
       const origin = location.origin;
       const editor = seatNameForm(entry => {
         editor.submit.disabled = true;
-        editor.status.textContent = '좌석에 반영 중…';
+        editor.status.textContent = prayerText('좌석에 반영 중…');
         parent.postMessage({ type: 'prayer-seat-save', entry }, origin);
         window.setTimeout(() => {
           if (saved) return;
           editor.submit.disabled = false;
-          editor.status.textContent = '좌석에 반영하지 못했습니다. 기도 공간 창이 열려 있는지 확인해 주세요.';
+          editor.status.textContent = prayerText('좌석에 반영하지 못했습니다. 기도 공간 창이 열려 있는지 확인해 주세요.');
         }, 2500);
       }, () => window.close());
       let saved = false;
@@ -579,9 +582,9 @@
         window.close();
       });
       editor.open();
-      editor.status.textContent = '선택한 좌석을 불러오는 중…';
+      editor.status.textContent = prayerText('선택한 좌석을 불러오는 중…');
       if (!parent) {
-        editor.status.textContent = '기도 공간에서 좌복이나 의자를 눌러 열어 주세요.';
+        editor.status.textContent = prayerText('기도 공간에서 좌복이나 의자를 눌러 열어 주세요.');
         return;
       }
       window.addEventListener('message', event => {
@@ -591,13 +594,13 @@
           editor.load(data.label, data.memorial, data.entry);
         } else if (data?.type === 'prayer-seat-saved') {
           saved = true;
-          editor.status.textContent = '좌석에 반영했습니다. 이 창을 닫아 돌아갈 수 있습니다.';
+          editor.status.textContent = prayerText('좌석에 반영했습니다. 이 창을 닫아 돌아갈 수 있습니다.');
           window.close();
         }
       });
       parent.postMessage({ type: 'prayer-seat-ready' }, origin);
       window.setTimeout(() => {
-        if (editor.form.hidden) editor.status.textContent = '기도 공간에서 좌복이나 의자를 다시 눌러 주세요.';
+        if (editor.form.hidden) editor.status.textContent = prayerText('기도 공간에서 좌복이나 의자를 다시 눌러 주세요.');
       }, 2500);
     }
 
@@ -626,6 +629,11 @@
       ])],
     ]);
 
+    function numberedSeat(seatLabel, number) {
+      const label = prayerText(seatLabel);
+      return prayerCopy(label + ' ' + number + '번', label + ' ' + number, number + '号' + label, number + '番の' + label);
+    }
+
     function enableSeatNames(plan, seatLabel, memorial = false, fixedSeats) {
       const entries = new Map();
       const labelObserver = new ResizeObserver(records => {
@@ -642,7 +650,7 @@
         entries.set(number, { year, name });
         const lines = (memorial
           ? [formatMemorialName(year, '복위'), formatMemorialName(name, '영가')]
-          : [year ? year + '년생' : '', name]).filter(Boolean);
+          : [year ? prayerCopy(year + '년생', year, year + '年出生', year + '年生まれ') : '', name]).filter(Boolean);
         const display = button.querySelector('.seat-name-label');
         display.replaceChildren(...lines.map((text) => {
           const line = document.createElement('span');
@@ -650,7 +658,7 @@
           line.textContent = text;
           return line;
         }));
-        const label = seatLabel + ' ' + number + '번';
+        const label = numberedSeat(seatLabel, number);
         if (!lines.length) {
           labelObserver.unobserve(display);
           button.removeAttribute('title');
@@ -684,7 +692,7 @@
 
       plan.querySelectorAll('.paired-row > button').forEach((button, index) => {
         const number = index + 1;
-        const label = seatLabel + ' ' + number + '번';
+        const label = numberedSeat(seatLabel, number);
         button.setAttribute('aria-label', label);
         const display = document.createElement('span');
         display.className = 'seat-name-label';
@@ -694,10 +702,10 @@
         if (fixedEntry) {
           button.disabled = true;
           saveSeatName(button, number, fixedEntry);
-          button.setAttribute('aria-description', '이름이 고정된 ' + seatLabel);
+          button.setAttribute('aria-description', prayerCopy('이름이 고정된 ' + seatLabel, 'Seat with a fixed name', '姓名固定的座位', '名前が固定された座席'));
           return;
         }
-        button.setAttribute('aria-description', '이름 입력 화면을 새 창으로 열기');
+        button.setAttribute('aria-description', prayerText('이름 입력 화면을 새 창으로 열기'));
         button.setAttribute('aria-pressed', 'false');
         button.addEventListener('click', () => {
           selectedButton?.setAttribute('aria-pressed', 'false');
@@ -739,7 +747,11 @@
       plan.style.setProperty('--seat-rows', seatRows);
       plan.style.setProperty('--seats-per-side', seatsPerSide);
       plan.setAttribute('aria-label',
-        `중앙 통로 양쪽에 ${seatType} ${seatsPerSide}개씩, ${seatRows}줄로 배치된 자리 ${seatCount}개`);
+        prayerCopy(
+          `중앙 통로 양쪽에 ${seatType} ${seatsPerSide}개씩, ${seatRows}줄로 배치된 자리 ${seatCount}개`,
+          `${seatCount} seats in ${seatRows} rows, with ${seatsPerSide} seats on each side of the aisle per row`,
+          `共${seatCount}个座位，分为${seatRows}排，每排在中央通道两侧各有${seatsPerSide}个座位`,
+          `全${seatCount}席、${seatRows}列。各列の中央通路の左右に${seatsPerSide}席ずつあります`));
       const aisle = document.createElement('div');
       aisle.className = 'paired-aisle';
       aisle.setAttribute('aria-hidden', 'true');
@@ -770,7 +782,7 @@
       const view = interior.querySelector('.space-gallery');
       const image = new Image();
       image.src = './assets/temple/' + hall.image;
-      image.alt = hall.alt;
+      image.alt = prayerText(hall.alt);
       view.replaceWith(image);
       const section = image.parentElement;
       section.classList.add('temple-view');
@@ -786,16 +798,26 @@
     if (params.get('seat-entry') === '1') {
       openSeatEntryPage();
     } else if (name) {
-      document.title = name + ' | NOW Mind Search';
+      document.title = prayerTitle(name);
       document.querySelector('#space-intro').hidden = true;
       const interior = document.querySelector('#space-interior');
-      interior.setAttribute('aria-label', name + ' 내부');
+      interior.setAttribute('aria-label', prayerCopy(name + ' 내부', 'Inside ' + prayerText(name), prayerText(name) + '内部', prayerText(name) + 'の堂内'));
       const seating = interior.querySelector('.seating');
       seating.classList.add('furnished-seating', space + '-seating');
       const plan = seating.querySelector('.seating-plan');
-      interior.querySelector('.seat-capacity').textContent = buildSeating(plan, chairImages[space]);
+      const capacity = buildSeating(plan, chairImages[space]);
+      const seatKind = hall ? '좌복' : '의자';
+      const guide = interior.querySelector('.seat-guide');
+      guide.replaceChildren(
+        prayerCopy(
+          seatKind + '를 선택하시고 기도하시려는 분의 성함을 넣으세요.',
+          'Choose a ' + prayerText(seatKind).toLowerCase() + ' and enter the name of the person you are praying for.',
+          '请选择' + prayerText(seatKind) + '，然后填写您想为之祈祷的人的姓名。',
+          prayerText(seatKind) + 'を選び、祈りをささげる方のお名前を入力してください。'),
+        document.createElement('br'),
+        prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。'));
+
       if (hall) {
-        interior.querySelector('.seat-guide-item').textContent = '좌복';
         seating.setAttribute('aria-label', '수행 공간');
         plan.style.setProperty('--cushion-color', hall.color);
         openTempleHall(hall, interior);

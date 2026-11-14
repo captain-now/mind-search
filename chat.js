@@ -6,7 +6,7 @@ let user=null,canonicalId=null,nickname='',channel=null,lastSent=0,submitting=fa
 function element(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
 function draw(m){const box=element('div',undefined,'bubble'+(user&&m.user_id===canonicalId?' mine':''));box.dataset.id=m.id;
  const meta=element('div',m.nickname+' · '+new Date(m.created_at).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}),'meta');box.append(meta,element('div',m.body));
- if(user&&m.user_id===canonicalId){const b=element('button','삭제','danger');b.type='button';b.onclick=async()=>{if(!confirm('이 메시지를 삭제할까요?'))return;const r=await client.from('chat_messages').delete().eq('id',m.id).eq('user_id',canonicalId);if(r.error)status('삭제 실패: '+r.error.message);else box.remove()};box.append(b)}
+ if(user&&m.user_id===canonicalId){const b=element('button','삭제','danger');b.type='button';b.onclick=async()=>{if(!confirm(window.mindSearchCommunityText?.('이 메시지를 삭제할까요?') ?? '이 메시지를 삭제할까요?'))return;const r=await client.from('chat_messages').delete().eq('id',m.id).eq('user_id',canonicalId);if(r.error)status('삭제 실패: '+r.error.message);else box.remove()};box.append(b)}
  $('messages').append(box);$('messages').scrollTop=$('messages').scrollHeight;
 }
 async function refresh(){const r=await client.from('chat_messages').select('id,user_id,nickname,body,created_at').order('created_at',{ascending:false}).limit(100);if(r.error)throw r.error;$('messages').replaceChildren();r.data.reverse().forEach(draw)}
