@@ -297,7 +297,79 @@
     <a class="management-banner" href="./admin.html?v=guild-seven-tiers#guild-management">길드원 관리</a>
     <footer><a href="./">NOW Mind Search 홈</a></footer>
   </main>
+  <script src="./ui-language.js?v=2"></script>
   <script>
+    const guildFrench = {
+  "NOW길드": "Guilde NOW",
+  "길드 구성표": "Rangs de la guilde",
+  "NOW길드에 가입하시려면": "Pour rejoindre la guilde NOW, ",
+  "게시판에서 NOW길드 가입": "inscrivez-vous sur le forum",
+  "을 해주세요.": ".",
+  "1~6단계 길드 직책": "Rangs 1 à 6 de la guilde",
+  "7단계 길드원 명단": "Membres de rang 7",
+  "1단계": "Rang 1",
+  "2단계": "Rang 2",
+  "3단계": "Rang 3",
+  "4단계": "Rang 4",
+  "5단계": "Rang 5",
+  "6단계": "Rang 6",
+  "7단계": "Rang 7",
+  "1명": "1 personne",
+  "2명": "2 personnes",
+  "3명": "3 personnes",
+  "4명": "4 personnes",
+  "10명": "10 personnes",
+  "길드장": "Chef de guilde",
+  "부길드장": "Adjoint",
+  "장로": "Ancien",
+  "사신": "Quatre gardiens",
+  "청룡": "Dragon azur",
+  "백호": "Tigre blanc",
+  "주작": "Oiseau vermillon",
+  "현무": "Tortue noire",
+  "십대제자": "Dix disciples",
+  "십대명왕": "Dix rois",
+  "지혜제일": "Sagesse",
+  "신통제일": "Pouvoirs spirituels",
+  "두타제일": "Ascèse",
+  "천안제일": "Vision céleste",
+  "해공제일": "Compréhension de la vacuité",
+  "설법제일": "Enseignement du Dharma",
+  "논의제일": "Débat",
+  "지계제일": "Respect des préceptes",
+  "밀행제일": "Pratique discrète",
+  "다문제일": "Érudition",
+  "진광대왕": "Roi Jingwang",
+  "초강대왕": "Roi Chogang",
+  "송제대왕": "Roi Songje",
+  "오관대왕": "Roi Ogwan",
+  "염라대왕": "Roi Yeomna",
+  "변성대왕": "Roi Byeonseong",
+  "태산대왕": "Roi Taesan",
+  "평등대왕": "Roi Pyeongdeung",
+  "도시대왕": "Roi Dosi",
+  "오도전륜대왕": "Roi Odojeollyun",
+  "길드원": "Membres",
+  "길드원 명단을 불러오는 중이에요.": "Chargement des membres…",
+  "현재 7단계 길드원이 없어요.": "Aucun membre de rang 7 pour le moment.",
+  "길드원 명단을 불러오지 못했어요. 잠시 후 새로고침해 주세요.": "Impossible de charger les membres. Actualisez la page dans un instant.",
+  "길드원 관리": "Gérer les membres",
+  "NOW Mind Search 홈": "Accueil NOW Mind Search"
+};
+    const guildLanguage = window.mindSearchLanguage?.read();
+    const guildText = value => guildLanguage === 'fr' ? guildFrench[value] ?? value : value;
+    if (guildLanguage === 'fr') {
+      document.documentElement.lang = 'fr';
+      document.title = 'Guilde NOW | NOW Mind Search';
+      const walker = document.createTreeWalker(document.querySelector('main'), NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const source = node.nodeValue.trim();
+        if (!source) continue;
+        node.nodeValue = node.nodeValue.replace(source, guildText(source));
+      }
+      for (const item of document.querySelectorAll('main [aria-label]')) item.setAttribute('aria-label', guildText(item.getAttribute('aria-label')));
+    }
     async function loadGuildRoster() {
       const status = document.getElementById('roster-status');
       const list = document.getElementById('guild-roster');
@@ -328,13 +400,13 @@
           position.replaceChildren(title, member);
         }
         if (!list.children.length) {
-          status.textContent = '현재 7단계 길드원이 없어요.';
+          status.textContent = guildText('현재 7단계 길드원이 없어요.');
           return;
         }
         list.hidden = false;
         status.hidden = true;
       } catch {
-        status.textContent = '길드원 명단을 불러오지 못했어요. 잠시 후 새로고침해 주세요.';
+        status.textContent = guildText('길드원 명단을 불러오지 못했어요. 잠시 후 새로고침해 주세요.');
       }
     }
     loadGuildRoster();
