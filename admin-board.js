@@ -119,9 +119,112 @@ async function refreshDeletions(){
   article.append(approve,reject);holder.append(article);
  }
 }
+const guildMode=location.hash==='#guild-management';
+const guildForm=byId('guildManageForm'), guildMember=byId('guildMember'), guildPosition=byId('guildPosition');
+const guildStatus=byId('guildManageStatus'), guildAssign=byId('guildAssign'), guildRemove=byId('guildRemove');
+const guildRefresh=byId('guildRefresh');
+const titles=[
+ '길드장','부길드장 1','부길드장 2','장로 1','장로 2','장로 3',
+ '청룡','백호','주작','현무','지혜제일','신통제일','두타제일','천안제일',
+ '해공제일','설법제일','논의제일','지계제일','밀행제일','다문제일'
+];
+let guildMembers=[],guildBusy=false;
+const selectedGuildMember=()=>guildMembers.find(member=>member.id===guildMember.value);
+const guildRank=slot=>slot===null?'6단계 길드원':titles[slot-1];
+function guildOption(value,label){
+ const option=el('option',label);
+ option.value=value;
+ return option;
+}
+function renderGuildPositions(){
+ const member=selectedGuildMember();
+ if(!member)return;
+ byId('guildCurrentRank').textContent='현재 직책 · '+guildRank(member.slot);
+ const occupied=new Map(guildMembers.filter(item=>item.slot!==null).map(item=>[item.slot,item]));
+ guildPosition.replaceChildren(guildOption('','6단계 길드원'));
+ titles.forEach((title,index)=>{
+  const slot=index+1, holder=occupied.get(slot);
+  const isOccupied=holder&&holder.id!==member.id;
+  const option=guildOption(String(slot),isOccupied?title+' · '+holder.nickname:title);
+  option.disabled=Boolean(isOccupied);
+  guildPosition.append(option);
+ });
+ guildPosition.value=member.slot===null?'':String(member.slot);
+}
+function setGuildBusy(busy){
+ guildBusy=busy;
+ guildMember.disabled=busy;
+ guildPosition.disabled=busy;
+ guildAssign.disabled=busy;
+ guildRemove.disabled=busy;
+ guildRefresh.disabled=busy;
+}
+async function loadGuildMembers(keepId=guildMember.value){
+ const result=await client.rpc('now_guild_admin_members');
+ if(result.error)throw result.error;
+ guildMembers=result.data;
+ guildMember.replaceChildren(...guildMembers.map(member=>guildOption(member.id,member.nickname+' · '+guildRank(member.slot))));
+ if(guildMembers.some(member=>member.id===keepId))guildMember.value=keepId;
+ guildForm.hidden=!guildMembers.length;
+ renderGuildPositions();
+}
+async function refreshGuild(){
+ if(guildBusy)return;
+ setGuildBusy(true);
+ guildStatus.textContent='길드원 명단을 불러오는 중이에요.';
+ try{
+  await loadGuildMembers();
+  guildStatus.textContent=guildMembers.length?'길드원 '+guildMembers.length+'명':'아직 가입한 길드원이 없어요.';
+ }catch(err){
+  guildForm.hidden=true;
+  guildStatus.textContent='명단 조회 실패: '+err.message;
+ }finally{setGuildBusy(false)}
+}
+async function saveGuildMember(remove){
+ if(guildBusy)return;
+ const member=selectedGuildMember();
+ if(!member)return;
+ const slot=guildPosition.value===''?null:Number(guildPosition.value);
+ if(!remove&&slot===member.slot){guildStatus.textContent='변경할 직책을 선택해 주세요.';return}
+ if(remove&&!confirm(member.nickname+' 님을 길드에서 탈퇴 처리할까요? 게시판 닉네임과 게시글은 유지됩니다.'))return;
+ setGuildBusy(true);
+ let saved=false;
+ try{
+  const result=await client.rpc('now_guild_manage_member',{
+   p_member_id:member.id,p_joined_at:member.joined_at,p_expected_slot:member.slot,
+   p_new_slot:remove?null:slot,p_remove:remove
+  });
+  if(result.error)throw result.error;
+  saved=true;
+  const outcome=remove?member.nickname+' 님을 탈퇴 처리했어요.':member.nickname+' 님의 직책을 '+guildRank(slot)+'(으)로 변경했어요.';
+  await loadGuildMembers(member.id);
+  guildStatus.textContent=outcome;
+ }catch(err){
+  if(saved){
+   guildForm.hidden=true;
+   guildStatus.textContent='변경했어요. 최신 명단을 보려면 명단 새로고침을 눌러 주세요.';
+  }else{
+   guildStatus.textContent=err.code==='23505'?'이미 임명된 자리예요. 명단을 새로고침해 주세요.':'처리 실패: '+err.message;
+  }
+ }finally{setGuildBusy(false)}
+}
+if(guildMode){
+ document.title='NOW길드 | 길드원 관리';
+ byId('adminReturn').href='./now-guild.html';
+ byId('adminReturn').textContent='← 길드 구성표 돌아가기';
+ byId('adminTitle').textContent='NOW길드 관리실';
+ byId('adminIntro').textContent='운영자 코드 인증 후 길드원의 직책과 가입 상태를 관리할 수 있어요.';
+ byId('guild-management').hidden=false;
+ byId('board-admin-tools').hidden=true;
+ guildMember.onchange=renderGuildPositions;
+ guildRefresh.onclick=refreshGuild;
+ guildForm.onsubmit=event=>{event.preventDefault();void saveGuildMember(false)};
+ guildRemove.onclick=()=>saveGuildMember(true);
+}
+
 async function show(){
  try{const ok=await authorized();login.hidden=ok;dashboard.hidden=!ok;
- if(ok){msg('운영자 인증 완료');await refresh();await refreshDeletions()}
+ if(ok){msg('운영자 인증 완료');if(guildMode)await refreshGuild();else{await refresh();await refreshDeletions()}}
  else{msg('운영자 권한이 있는 계정으로 로그인해야 합니다.')}
  }catch(e){login.hidden=false;dashboard.hidden=true;msg('접근 확인 실패: '+e.message)}
 }
@@ -156,6 +259,6 @@ byId('changeCodeForm').addEventListener('submit',async e=>{
  finally{button.disabled=false}
 });
 byId('refresh').onclick=async()=>{try{await refresh();await refreshDeletions()}catch(e){msg('목록 조회 실패: '+e.message)}};
-byId('logout').onclick=async()=>{await client.rpc('board_admin_code_logout');await client.auth.signOut();reportsEl.replaceChildren();await show()};
+byId('logout').onclick=async()=>{await client.rpc('board_admin_code_logout');await client.auth.signOut();reportsEl.replaceChildren();guildMembers=[];guildMember.replaceChildren();guildForm.hidden=true;await show()};
 show();loadCaptcha();
 })();

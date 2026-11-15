@@ -151,6 +151,23 @@
     }
     .member-roster li::marker { color: #acc7bc; }
     .member-roster [hidden] { display: none; }
+    .slots .assigned { gap: 3px; white-space: normal; overflow-wrap: anywhere; }
+    .slots .rank-name { display: block; }
+    .slots .rank-member { color: #fff5e3; font-size: .9em; font-weight: 500; }
+    .management-banner {
+      display: grid;
+      min-height: 48px;
+      place-items: center;
+      margin: 16px clamp(10px, 3vw, 25px) 0;
+      border: 1px solid #ae874b;
+      border-radius: 6px;
+      background: #48341e;
+      color: #ffe4a2;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .management-banner:hover { background: #584127; }
+    .management-banner:focus-visible { outline: 2px solid #ffe4a2; outline-offset: 3px; }
     footer { text-align: center; }
     footer a {
       display: inline-grid;
@@ -227,6 +244,7 @@
       <ol id="guild-roster" aria-label="6단계 길드원 명단" hidden></ol>
     </div>
 
+    <a class="management-banner" href="./admin.html#guild-management">길드원 관리</a>
     <footer><a href="./">NOW Mind Search 홈</a></footer>
   </main>
   <script>
@@ -235,20 +253,33 @@
       const list = document.getElementById('guild-roster');
       try {
         const response = await fetch(
-          'https://iqohtsakhfnwtlbarjut.supabase.co/rest/v1/rpc/now_guild_roster',
+          'https://iqohtsakhfnwtlbarjut.supabase.co/rest/v1/rpc/now_guild_lineup',
           { headers: { apikey: 'sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w' } }
         );
         if (!response.ok) throw new Error('Guild roster request failed');
-        const nicknames = await response.json();
-        if (!Array.isArray(nicknames)) throw new Error('Invalid guild roster');
-        if (!nicknames.length) {
-          status.textContent = '아직 가입한 길드원이 없어요.';
-          return;
-        }
-        for (const nickname of nicknames) {
-          const member = document.createElement('li');
+        const members = await response.json();
+        if (!Array.isArray(members)) throw new Error('Invalid guild roster');
+        const slots = document.querySelectorAll('.slots > li');
+        for (const { nickname, slot } of members) {
+          if (slot === null) {
+            const member = document.createElement('li');
+            member.textContent = nickname;
+            list.append(member);
+            continue;
+          }
+          const position = slots[slot - 1];
+          const title = document.createElement('span');
+          title.className = 'rank-name';
+          title.textContent = position.textContent;
+          const member = document.createElement('span');
+          member.className = 'rank-member';
           member.textContent = nickname;
-          list.append(member);
+          position.classList.add('assigned');
+          position.replaceChildren(title, member);
+        }
+        if (!list.children.length) {
+          status.textContent = '현재 6단계 길드원이 없어요.';
+          return;
         }
         list.hidden = false;
         status.hidden = true;
