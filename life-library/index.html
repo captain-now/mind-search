@@ -50,6 +50,19 @@
 #question:invalid{color:#536057}
 .question-chevron{position:absolute;inset-inline-end:16px;top:50%;width:9px;height:9px;border-right:2px solid #715021;border-bottom:2px solid #715021;transform:translateY(-70%) rotate(45deg);pointer-events:none}
 .tag{overflow-wrap:anywhere}
+.shelf-controls{align-items:end}
+.shelf-search{display:grid;gap:4px;min-width:0;width:min(100%,19rem)}
+.shelf-search label,.shelf-filter>span{color:#20362b;font-size:.9rem;font-weight:700}
+#search-hint{color:#40534a;font-size:.84rem;word-break:keep-all}
+.shelf-search #search{width:100%;min-width:0;min-height:44px;border-color:#887b67;color:#20362b}
+.shelf-search #search::placeholder{color:#536057;opacity:1}
+.shelf-filter{display:grid;gap:4px}
+.shelf-filter select{min-height:44px}
+@media(max-width:760px){
+  .shelf-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+  .shelf-search{width:100%}
+  .shelf-filter{display:flex;align-items:center;gap:8px;justify-self:start}
+}
 </style>
 </head>
 <body>
@@ -65,7 +78,13 @@
     <p class="wrap">글이 도서관에 많이 쌓이면 <strong>《AI 허공장의 삶의 도서관》</strong>이라는 제목으로 한 권의 책을 발행하겠습니다.</p>
   </aside>
   <section class="wrap" id="stories">
-    <div class="section-heading"><h2>이야기 서가</h2><div class="controls"><label><span class="sr">이야기 검색</span><input id="search" type="search" placeholder="제목·내용·작성자명 검색"></label><label><span class="sr">주제</span><select id="filter"><option value="">모든 주제</option><option>다시 시작</option><option>관계</option><option>일상</option><option>기억</option><option>선택</option><option>실패</option><option>용기</option><option>놓아주기</option><option>고마움</option><option>변화</option></select></label></div></div>
+    <div class="section-heading"><h2>이야기 서가</h2><div class="controls shelf-controls">
+      <div class="shelf-search">
+        <label for="search">이야기 검색</label>
+        <p id="search-hint">제목·내용·작성자명으로 찾을 수 있어요.</p>
+        <input id="search" type="search" placeholder="검색어 입력" aria-describedby="search-hint">
+      </div>
+      <label class="shelf-filter"><span>주제</span><select id="filter"><option value="">모든 주제</option><option>다시 시작</option><option>관계</option><option>일상</option><option>기억</option><option>선택</option><option>실패</option><option>용기</option><option>놓아주기</option><option>고마움</option><option>변화</option></select></label></div></div>
     <div class="shelf" id="shelf"></div><p id="empty" hidden role="status">찾는 이야기가 없어요. 다른 말로 검색해 보세요.</p>
   </section>
   <section class="prompt" id="write"><div class="wrap">
