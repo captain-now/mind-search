@@ -52,13 +52,13 @@
     <p class="wrap">글이 도서관에 많이 쌓이면 <strong>《AI 허공장의 삶의 도서관》</strong>이라는 제목으로 한 권의 책을 발행하겠습니다.</p>
   </aside>
   <section class="wrap" id="stories">
-    <div class="section-heading"><h2>이야기 서가</h2><div class="controls"><label><span class="sr">이야기 검색</span><input id="search" type="search" placeholder="제목이나 내용으로 검색"></label><label><span class="sr">주제</span><select id="filter"><option value="">모든 주제</option><option>다시 시작</option><option>관계</option><option>일상</option></select></label></div></div>
+    <div class="section-heading"><h2>이야기 서가</h2><div class="controls"><label><span class="sr">이야기 검색</span><input id="search" type="search" placeholder="제목이나 내용으로 검색"></label><label><span class="sr">주제</span><select id="filter"><option value="">모든 주제</option><option>다시 시작</option><option>관계</option><option>일상</option><option>기억</option><option>선택</option><option>실패</option><option>용기</option><option>놓아주기</option><option>고마움</option><option>변화</option></select></label></div></div>
     <div class="shelf" id="shelf"></div><p id="empty" hidden role="status">찾는 이야기가 없어요. 다른 말로 검색해 보세요.</p>
   </section>
   <section class="prompt" id="write"><div class="wrap">
     <div><h2>나의 이야기 남기기</h2><p>질문 하나를 고르고, 떠오르는 장면부터 적어보세요.</p></div>
     <form id="story-form">
-      <label>물음<select id="question"><option value="다시 시작">지금 시작하기엔 늦었다고 느낀 적이 있나요?</option><option value="관계">누군가와의 관계에서 뒤늦게 배운 것은 무엇인가요?</option><option value="일상">평범한 하루를 다르게 보게 된 순간이 있나요?</option></select></label>
+      <label>물음<select id="question"><option value="다시 시작">지금 시작하기엔 늦었다고 느낀 적이 있나요?</option><option value="관계">누군가와의 관계에서 뒤늦게 배운 것은 무엇인가요?</option><option value="일상">평범한 하루를 다르게 보게 된 순간이 있나요?</option><option value="기억">오래 마음에 남아 있는 말 한마디가 있나요? 누가 언제 해 준 말인가요?</option><option value="선택">그때는 작은 선택이었지만, 돌아보니 삶의 방향을 바꾼 일이 있나요?</option><option value="실패">뜻대로 되지 않은 일에서 뒤늦게 무엇을 배웠나요?</option><option value="용기">두려웠지만 한 발 내디뎠던 날을 기억하나요? 무엇이 힘이 되었나요?</option><option value="놓아주기">오랫동안 붙들고 있다가 내려놓은 것이 있나요? 그 뒤로 무엇이 달라졌나요?</option><option value="고마움">그때 미처 고맙다고 말하지 못한 사람이 있나요? 지금이라면 어떤 말을 건네고 싶나요?</option><option value="변화">예전에는 당연하다고 여겼지만, 살아오면서 생각이 달라진 일이 있나요?</option></select></label>
       <label>제목<input id="entry-title" maxlength="80" required></label>
       <label>이야기<textarea id="entry-body" maxlength="6000" required></textarea></label>
       <p class="quiet">저장한 글은 이 브라우저의 서가에서만 볼 수 있어요.</p>
