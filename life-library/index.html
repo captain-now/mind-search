@@ -63,6 +63,9 @@
   .shelf-search{width:100%}
   .shelf-filter{display:flex;align-items:center;gap:8px;justify-self:start}
 }
+#entry-author[readonly]{background:#f5eddf}
+#author-hint a{text-decoration:underline;text-underline-offset:.17em}
+#author-hint[data-unavailable]::after{content:" 지금은 닉네임을 확인할 수 없어요."}
 </style>
 </head>
 <body>
@@ -101,8 +104,8 @@
         </div>
         <p class="quiet" id="question-hint">이 칸을 눌러 질문 10개 중 하나를 골라보세요.</p>
       </div>
-      <label for="entry-author">작성자명 <input id="entry-author" maxlength="40" placeholder="별명 또는 익명" aria-describedby="author-hint"></label>
-      <p class="quiet" id="author-hint">별명을 써도 돼요. 비워두면 익명으로 표시돼요.</p>
+      <label for="entry-author">작성자명 <input id="entry-author" value="익명" readonly aria-describedby="author-hint"></label>
+      <p class="quiet" id="author-hint">본인에게 등록된 <a href="https://captain-now.github.io/mind-search/board.html">게시판 닉네임</a>을 자동으로 불러와요. 등록된 닉네임이 없으면 익명으로 표시돼요.</p>
       <label>제목<input id="entry-title" maxlength="80" required></label>
       <label>이야기<textarea id="entry-body" maxlength="6000" required></textarea></label>
       <p class="quiet">저장한 글은 이 브라우저의 서가에서만 볼 수 있어요.</p>
@@ -116,6 +119,7 @@
   <h2 id="reader-title"></h2><div id="reader-content"></div>
   <div class="controls" id="reader-actions" hidden><button id="edit" class="button secondary" type="button">수정하기</button><button id="remove" class="button secondary" type="button">지우기</button></div>
 </dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.10/dist/umd/supabase.min.js" defer></script>
 <script>
 'use strict';
 const stories=[
@@ -129,7 +133,36 @@ const shelf=byId('shelf'), reader=byId('reader'), form=byId('story-form');
 const search=byId('search'), filter=byId('filter'), feedback=byId('feedback');
 const question=byId('question'), titleInput=byId('entry-title'), bodyInput=byId('entry-body');
 const authorInput=byId('entry-author');
-let drafts=[], active, editingId;
+const authorHint=byId('author-hint');
+const authorSetup=new Promise(resolve=>document.addEventListener('DOMContentLoaded',resolve,{once:true}));
+let drafts=[], active, editingId, boardClient, boardAuthor=null, authorLookup;
+async function resolveBoardAuthor() {
+  await authorSetup;
+  if(!window.supabase) throw new Error('Board connection unavailable');
+  boardClient??=window.supabase.createClient("https://iqohtsakhfnwtlbarjut.supabase.co","sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w");
+  const {data:sessionData,error:sessionError}=await boardClient.auth.getSession();
+  if(sessionError) throw sessionError;
+  if(!sessionData.session) return null;
+  const {data:identity,error:identityError}=await boardClient.auth.getUser();
+  if(identityError || !identity.user) throw identityError ?? new Error('Board session unavailable');
+  const {data:ownerId,error:ownerError}=await boardClient.rpc('board_canonical_user_id');
+  if(ownerError || !ownerId) throw ownerError ?? new Error('Board owner unavailable');
+  const {data:profile,error:profileError}=await boardClient.from('board_profiles').select('nickname').eq('user_id',ownerId).maybeSingle();
+  if(profileError) throw profileError;
+  return profile?.nickname ? {id:ownerId,name:profile.nickname} : null;
+}
+function showBoardAuthor(author, unavailable=false) {
+  boardAuthor=author;
+  authorInput.value=author?.name ?? '익명';
+  authorHint.toggleAttribute('data-unavailable',unavailable);
+  render();
+}
+function loadBoardAuthor() {
+  authorLookup??=resolveBoardAuthor()
+    .then(author=>showBoardAuthor(author),()=>showBoardAuthor(null,true))
+    .finally(()=>{authorLookup=null;});
+  return authorLookup;
+}
 try {
   const saved=JSON.parse(localStorage.getItem(key)||'[]');
   if(Array.isArray(saved)) drafts=saved.filter(entry=>entry&&typeof entry.id==='string'&&typeof entry.title==='string'&&typeof entry.body==='string'&&typeof entry.topic==='string');
@@ -147,7 +180,8 @@ function node(tag,text,style) {
   return element;
 }
 function authorName(entry) {
-  return (typeof entry.author==='string' && entry.author.trim()) || (entry.id?'익명':'AI 허공장');
+  if(!entry.id) return 'AI 허공장';
+  return boardAuthor && entry.authorId===boardAuthor.id ? boardAuthor.name : '익명';
 }
 function storyMeta(entry) {
   return entry.topic+' · '+(entry.id?'내 이야기':'예시 글')+' · 작성자 '+authorName(entry);
@@ -178,17 +212,27 @@ function read(entry) {
 }
 search.addEventListener('input',render);
 filter.addEventListener('change',render);
-form.addEventListener('submit',event=>{
+form.addEventListener('submit',async event=>{
   event.preventDefault();
   const title=titleInput.value.trim(),body=bodyInput.value.trim();
   if(!title||!body){feedback.textContent='제목과 이야기를 적어주세요.';return;}
-  const item={id:editingId||crypto.randomUUID(),topic:question.value,author:authorInput.value.trim(),title,body};
+  const submit=form.querySelector('[type=submit]');
+  if(submit.disabled) return;
+  const draftId=editingId;
+  const topic=question.value;
+  submit.disabled=true;
+  feedback.textContent='작성자명을 확인하고 있어요.';
+  await loadBoardAuthor();
+  submit.disabled=false;
+  if(draftId!==editingId || (draftId && !drafts.some(entry=>entry.id===draftId))) return;
+  const item={id:draftId||crypto.randomUUID(),topic,authorId:boardAuthor?.id??null,title,body};
   const next=editingId?drafts.map(entry=>entry.id===editingId?item:entry):[item,...drafts];
   if(!save(next))return;
   editingId=null;
   form.reset();
-  form.querySelector('[type=submit]').textContent='내 서가에 저장';
-  feedback.textContent='이야기를 내 서가에 저장했어요.';
+  authorInput.value=boardAuthor?.name ?? '익명';
+  submit.textContent='내 서가에 저장';
+  feedback.textContent=authorHint.hasAttribute('data-unavailable')?'닉네임을 확인할 수 없어 익명으로 저장했어요.':'이야기를 내 서가에 저장했어요.';
   search.value='';
   filter.value='';
   render();
@@ -196,7 +240,6 @@ form.addEventListener('submit',event=>{
 byId('edit').onclick=()=>{
   editingId=active.id;
   question.value=active.topic;
-  authorInput.value=typeof active.author==='string'?active.author:'';
   titleInput.value=active.title;
   bodyInput.value=active.body;
   form.querySelector('[type=submit]').textContent='수정 내용 저장';
@@ -207,12 +250,13 @@ byId('edit').onclick=()=>{
 byId('remove').onclick=()=>{
   if(!confirm('이 브라우저에서 이 이야기를 지울까요?'))return;
   if(!save(drafts.filter(entry=>entry.id!==active.id))){reader.close();feedback.scrollIntoView();return;}
-  if(editingId===active.id){editingId=null;form.reset();form.querySelector('[type=submit]').textContent='내 서가에 저장';}
+  if(editingId===active.id){editingId=null;form.reset();authorInput.value=boardAuthor?.name ?? '익명';form.querySelector('[type=submit]').textContent='내 서가에 저장';}
   reader.close();
   render();
   feedback.textContent='이야기를 지웠어요.';
 };
 render();
+loadBoardAuthor();
 </script>
 </body>
 </html>
