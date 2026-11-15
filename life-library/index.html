@@ -188,7 +188,8 @@ function authorName(entry) {
   return boardAuthor && entry.authorId===boardAuthor.id ? boardAuthor.name : '익명';
 }
 function storyMeta(entry) {
-  return entry.topic+' · '+(entry.id?'내 이야기':'예시 글')+' · 작성자 '+authorName(entry);
+  const author=authorName(entry);
+  return entry.id ? entry.topic+' · 내 이야기 · 작성자 '+author : author;
 }
 function render() {
   const term=search.value.trim().toLowerCase();
