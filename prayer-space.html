@@ -335,8 +335,8 @@
     }
     .cushion-actions button[type="submit"] { background: #355a48; color: #fff; }
   </style>
-  <script src="./ui-language.js?v=1"></script>
-  <script src="./prayer-i18n.js?v=1"></script>
+  <script src="./ui-language.js?v=2"></script>
+  <script src="./prayer-i18n.js?v=2"></script>
 </head>
 <body>
   <main id="space-intro">
@@ -528,8 +528,8 @@
       const dialog = document.querySelector('.chapter-dialog');
       const grid = dialog.querySelector('.chapter-grid');
       const status = dialog.querySelector('.chapter-status');
-      const name = prayerCopy('지장보살본원경 한글', 'Kṣitigarbha Sutra in Korean', '地藏菩萨本愿经韩文', '地蔵菩薩本願経 韓国語');
-      const action = prayerCopy('품 선택', 'Choose chapter', '选择品目', '品を選ぶ');
+      const name = prayerCopy('지장보살본원경 한글', 'Kṣitigarbha Sutra in Korean', '地藏菩萨本愿经韩文', '地蔵菩薩本願経 韓国語', 'Sūtra de Kṣitigarbha (coréen)');
+      const action = prayerCopy('품 선택', 'Choose chapter', '选择品目', '品を選ぶ', 'Choisir un chapitre');
       dialog.querySelector('h2').textContent = name;
       dialog.querySelector('[type=submit]').textContent = prayerCopy('닫기', 'Close', '关闭', '閉じる');
 
@@ -543,7 +543,7 @@
       for (let index = 1; index <= 10; index++) {
         const chapter = document.createElement('button');
         chapter.type = 'button';
-        const label = prayerCopy(index + '품', 'Chapter ' + index, '第' + index + '品', '第' + index + '品');
+        const label = prayerCopy(index + '품', 'Chapter ' + index, '第' + index + '品', '第' + index + '品', 'Chapitre ' + index);
         chapter.textContent = label;
         chapter.setAttribute('aria-pressed', 'false');
         chapter.addEventListener('click', () => {
@@ -622,13 +622,13 @@
             if (durationMs && currentAttempt === attempt) {
               active.timer = window.setTimeout(() => {
                 stopActive();
-                status.textContent = prayerCopy('재생이 끝났습니다.', 'Playback completed.', '播放已结束。', '再生が終了しました。');
+                status.textContent = prayerCopy('재생이 끝났습니다.', 'Playback completed.', '播放已结束。', '再生が終了しました。', 'Lecture terminée.');
               }, durationMs);
             }
           } catch {
             if (currentAttempt !== attempt) return;
             stopActive();
-            status.textContent = prayerCopy('재생할 수 없어요. 다시 눌러 주세요.', 'Unable to play. Tap to try again.', '无法播放，请重试。', '再生できません。もう一度お試しください。');
+            status.textContent = prayerCopy('재생할 수 없어요. 다시 눌러 주세요.', 'Unable to play. Tap to try again.', '无法播放，请重试。', '再生できません。もう一度お試しください。', 'Lecture impossible. Réessayez.');
           }
         });
         return button;
@@ -712,7 +712,7 @@
         },
         load(label, memorial, entry) {
           isMemorial = memorial;
-          title.textContent = prayerCopy(label + (memorial ? ' 복위·영가 입력' : ' 이름 입력'), label + (memorial ? ' · Sponsor and departed names' : ' · Enter a name'), label + (memorial ? ' · 填写祈福人与亡者姓名' : ' · 填写姓名'), label + (memorial ? '・祈願者と故人の名前を入力' : '・名前を入力'));
+          title.textContent = prayerCopy(label + (memorial ? ' 복위·영가 입력' : ' 이름 입력'), label + (memorial ? ' · Sponsor and departed names' : ' · Enter a name'), label + (memorial ? ' · 填写祈福人与亡者姓名' : ' · 填写姓名'), label + (memorial ? '・祈願者と故人の名前を入力' : '・名前を入力'), label + (memorial ? ' · Saisir les noms de la personne qui prie et du défunt' : ' · Saisir un nom'));
           document.title = title.textContent + ' | NOW Mind Search';
           if (memorial) {
             form.querySelector('label[for="cushion-year"]').textContent = prayerText('복위');
@@ -805,7 +805,7 @@
 
     function numberedSeat(seatLabel, number) {
       const label = prayerText(seatLabel);
-      return prayerCopy(label + ' ' + number + '번', label + ' ' + number, number + '号' + label, number + '番の' + label);
+      return prayerCopy(label + ' ' + number + '번', label + ' ' + number, number + '号' + label, number + '番の' + label, label + ' ' + number);
     }
 
     function enableSeatNames(plan, seatLabel, memorial = false, fixedSeats) {
@@ -824,7 +824,7 @@
         entries.set(number, { year, name });
         const lines = (memorial
           ? [formatMemorialName(year, '복위'), formatMemorialName(name, '영가')]
-          : [year ? prayerCopy(year + '년생', year, year + '年出生', year + '年生まれ') : '', name]).filter(Boolean);
+          : [year ? prayerCopy(year + '년생', year, year + '年出生', year + '年生まれ', year) : '', name]).filter(Boolean);
         const display = button.querySelector('.seat-name-label');
         display.replaceChildren(...lines.map((text) => {
           const line = document.createElement('span');
@@ -876,7 +876,7 @@
         if (fixedEntry) {
           button.disabled = true;
           saveSeatName(button, number, fixedEntry);
-          button.setAttribute('aria-description', prayerCopy('이름이 고정된 ' + seatLabel, 'Seat with a fixed name', '姓名固定的座位', '名前が固定された座席'));
+          button.setAttribute('aria-description', prayerCopy('이름이 고정된 ' + seatLabel, 'Seat with a fixed name', '姓名固定的座位', '名前が固定された座席', 'Place avec un nom fixe'));
           return;
         }
         button.setAttribute('aria-description', prayerText('이름 입력 화면을 새 창으로 열기'));
@@ -925,7 +925,8 @@
           `중앙 통로 양쪽에 ${seatType} ${seatsPerSide}개씩, ${seatRows}줄로 배치된 자리 ${seatCount}개`,
           `${seatCount} seats in ${seatRows} rows, with ${seatsPerSide} seats on each side of the aisle per row`,
           `共${seatCount}个座位，分为${seatRows}排，每排在中央通道两侧各有${seatsPerSide}个座位`,
-          `全${seatCount}席、${seatRows}列。各列の中央通路の左右に${seatsPerSide}席ずつあります`));
+          `全${seatCount}席、${seatRows}列。各列の中央通路の左右に${seatsPerSide}席ずつあります`,
+          `${seatCount} places sur ${seatRows} rangées, avec ${seatsPerSide} places de chaque côté de l’allée dans chaque rangée`));
       const aisle = document.createElement('div');
       aisle.className = 'paired-aisle';
       aisle.setAttribute('aria-hidden', 'true');
@@ -1000,7 +1001,7 @@
         } catch {
           if (video !== next) return;
           stop();
-          caption.textContent = prayerCopy('재생 다시 시도', 'Retry playback', '重试播放', '再生を再試行');
+          caption.textContent = prayerCopy('재생 다시 시도', 'Retry playback', '重试播放', '再生を再試行', 'Relancer la lecture');
         }
       });
 
@@ -1043,7 +1044,7 @@
       document.title = prayerTitle(name);
       document.querySelector('#space-intro').hidden = true;
       const interior = document.querySelector('#space-interior');
-      interior.setAttribute('aria-label', prayerCopy(name + ' 내부', 'Inside ' + prayerText(name), prayerText(name) + '内部', prayerText(name) + 'の堂内'));
+      interior.setAttribute('aria-label', prayerCopy(name + ' 내부', 'Inside ' + prayerText(name), prayerText(name) + '内部', prayerText(name) + 'の堂内', 'Intérieur · ' + prayerText(name)));
       const seating = interior.querySelector('.seating');
       seating.classList.add('furnished-seating', space + '-seating');
       const plan = seating.querySelector('.seating-plan');
@@ -1055,9 +1056,10 @@
           seatKind + '를 선택하시고 기도하시려는 분의 성함을 넣으세요.',
           'Choose a ' + prayerText(seatKind).toLowerCase() + ' and enter the name of the person you are praying for.',
           '请选择' + prayerText(seatKind) + '，然后填写您想为之祈祷的人的姓名。',
-          prayerText(seatKind) + 'を選び、祈りをささげる方のお名前を入力してください。'),
+          prayerText(seatKind) + 'を選び、祈りをささげる方のお名前を入力してください。',
+          'Choisissez une place et saisissez le nom de la personne pour laquelle vous priez.'),
         document.createElement('br'),
-        prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。'));
+        prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。', 'Jusqu’à ' + capacity + ' personnes.'));
 
       if (hall) {
         if (hallId === 'daeungjeon' || hallId === 'muryangsujeon' || hallId === 'gwaneumjeon') interior.classList.add(hallId);
