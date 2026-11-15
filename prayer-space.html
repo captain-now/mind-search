@@ -226,6 +226,7 @@
       line-height: 1.1;
       text-align: center;
       word-break: keep-all;
+      white-space: pre-line;
     }
     .chant-controls button[aria-pressed="true"] { background: #355a48; }
     .chant-status:not(:empty) {
@@ -473,6 +474,7 @@
       const buttons = tracks.map(([id, label, videoSource]) => {
         const button = document.createElement('button');
         const name = prayerText(label);
+        const labelBreak = name.length >= 4 ? '\n' : ' ';
         const available = Boolean(id || videoSource);
         const size = document.createElement('span');
         size.className = 'chant-button-size';
@@ -484,8 +486,8 @@
         const setPlaying = (playing) => {
           size.textContent = (available ? '▶ ' : '') + name;
           const action = playing
-            ? prayerCopy(name + ' 소리 끄기', 'Stop ' + name, '关闭' + name, name + 'の音声を停止')
-            : prayerCopy(name + ' 소리듣기', 'Listen to ' + name, '聆听' + name, name + 'の音声を聴く');
+            ? prayerCopy(name + labelBreak + '소리 끄기', 'Stop ' + name, '关闭' + name, name + 'の音声を停止')
+            : prayerCopy(name + labelBreak + '소리듣기', 'Listen to ' + name, '聆听' + name, name + 'の音声を聴く');
           caption.textContent = action;
           button.setAttribute('aria-pressed', String(playing));
         };
