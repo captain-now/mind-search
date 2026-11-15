@@ -50,10 +50,9 @@
       isolation: isolate;
       overflow: hidden;
       display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      justify-content: center;
-      gap: 4px 8px;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
       padding: 6px 8px;
       text-align: center;
       border-bottom: 1px solid #ae7732;
@@ -78,7 +77,6 @@
     }
     h2 { margin: 0; color: #633917; font-size: 13px; line-height: 1.2; font-weight: 600; }
     .join-guide {
-      flex: 0 0 100%;
       margin: 0;
       color: #573519;
       font-size: 13px;
@@ -223,7 +221,7 @@
   <main>
     <header>
       <h1>NOW길드</h1>
-      <h2>길드 구성표</h2>
+      <h2>NOW길드 구성표</h2>
       <p class="join-guide">NOW길드에 가입하시려면 <a href="./board.html#nickname-registration">게시판에서 NOW길드 가입</a>을 해주세요.</p>
     </header>
 
@@ -305,7 +303,7 @@
   <script>
     const guildFrench = {
   "NOW길드": "Guilde NOW",
-  "길드 구성표": "Rangs de la guilde",
+  "NOW길드 구성표": "Rangs de la guilde NOW",
   "NOW길드에 가입하시려면": "Pour rejoindre la guilde NOW, ",
   "게시판에서 NOW길드 가입": "inscrivez-vous sur le forum",
   "을 해주세요.": ".",
