@@ -90,6 +90,33 @@
       background: #35231a;
     }
     .temple-view img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .temple-motion {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .temple-motion::before {
+      content: '';
+      position: absolute;
+      inset: -16px;
+      z-index: -1;
+      background: center / cover no-repeat var(--temple-poster);
+      filter: blur(12px) brightness(.58);
+    }
+    .temple-motion :is(img, video) {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    @media (max-width: 600px) and (orientation: portrait) {
+      .temple-motion :is(img, video) { object-fit: cover; }
+    }
     .interior .temple-seating {
       background:
         repeating-linear-gradient(90deg, #52301c22 0 1px, transparent 1px 66px),
@@ -372,7 +399,7 @@
     const templeHalls = {
       daejeokgwangjeon: { name: '대적광전', alt: '금빛 비로자나불과 푸른 단청이 보이는 대적광전', image: 'daejeokgwangjeon.webp', color: '#316661' },
       daeungjeon: { name: '대웅전', alt: '단청과 연등 사이로 금빛 석가모니불이 보이는 대웅전', image: 'hall.webp', color: '#893d31' },
-      muryangsujeon: { name: '무량수전', alt: '아미타불과 따뜻한 목조 기둥이 보이는 무량수전', image: 'muryangsujeon.webp', color: '#98612a' },
+      muryangsujeon: { name: '무량수전', alt: '아미타불과 따뜻한 목조 기둥이 보이는 무량수전', image: 'muryangsujeon-incense-poster.webp', video: 'muryangsujeon-incense.mp4', color: '#98612a' },
       gwaneumjeon: { name: '관음전', alt: '흰 옷을 입은 관세음보살이 보이는 관음전', image: 'gwaneumjeon.webp', color: '#507968' },
       jijangjeon: { name: '지장전', alt: '보주와 석장을 지닌 지장보살이 보이는 지장전', image: 'jijangjeon.webp', color: '#48496e' },
       samseonggak: { name: '삼성각', alt: '왼쪽부터 산신·칠성·독성이 모셔진 삼성각', image: 'samseonggak.webp', color: '#714339' },
@@ -389,12 +416,6 @@
         [
           "shakyamuni",
           "석가모니불"
-        ]
-      ],
-      "muryangsujeon": [
-        [
-          "amitabha",
-          "나무아미타불"
         ]
       ],
       "gwaneumjeon": [
@@ -784,8 +805,29 @@
       const image = new Image();
       image.src = './assets/temple/' + hall.image;
       image.alt = prayerText(hall.alt);
-      view.replaceWith(image);
-      const section = image.parentElement;
+      const section = view.parentElement;
+      if (hall.video) {
+        const scene = document.createElement('div');
+        scene.className = 'temple-motion';
+        scene.style.setProperty('--temple-poster', `url("${image.src}")`);
+        scene.append(image);
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          const video = document.createElement('video');
+          video.setAttribute('aria-hidden', 'true');
+          video.poster = image.src;
+          video.autoplay = true;
+          video.loop = true;
+          video.defaultMuted = true;
+          video.muted = true;
+          video.playsInline = true;
+          video.addEventListener('error', () => video.remove(), { once: true });
+          video.src = './assets/temple/' + hall.video;
+          scene.append(video);
+        }
+        view.replaceWith(scene);
+      } else {
+        view.replaceWith(image);
+      }
       section.classList.add('temple-view');
       section.querySelector('#view-title').hidden = true;
     }
