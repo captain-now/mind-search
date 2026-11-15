@@ -67,6 +67,20 @@
 .author-register{display:inline-flex;align-items:center;justify-self:start;gap:7px;min-height:44px;padding:6px 13px;border:1px solid #a77d42;border-radius:5px;background:#f8efdb;color:#20362b;font-size:.9rem;font-weight:700}
 .author-register:hover{text-decoration:underline;text-underline-offset:.17em}
 #author-hint[data-unavailable]::after{content:" 지금은 닉네임을 확인할 수 없어요."}
+@media(max-width:760px){
+  main #write{padding-block:8px 24px}
+  #write .wrap{grid-template-columns:minmax(0,1fr);gap:10px}
+  #write h2{margin:0 0 4px}
+  #write .wrap > div > p{font-size:.9rem;line-height:1.4;word-break:keep-all}
+  #story-form{gap:6px;line-height:1.35}
+  #story-form label{grid-template-columns:minmax(0,1fr);gap:3px;font-size:.9375rem}
+  #story-form .question-field{gap:3px}
+  #story-form :is(input,select,textarea){width:100%;min-width:0;min-height:44px;padding-block:6px;font-size:1rem}
+  #story-form textarea{min-height:72px;height:clamp(72px,14svh,128px)}
+  #story-form .quiet{font-size:.8125rem;line-height:1.4;word-break:keep-all}
+  #story-form button[type=submit]{min-height:44px}
+  #write .status:empty{min-height:0}
+}
 </style>
 </head>
 <body>
