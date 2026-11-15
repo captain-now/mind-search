@@ -413,7 +413,7 @@
     const templeHalls = {
       daejeokgwangjeon: { name: '대적광전', alt: '금빛 비로자나불과 푸른 단청이 보이는 대적광전', image: 'daejeokgwangjeon.webp', color: '#316661' },
       daeungjeon: { name: '대웅전', alt: '단청과 연등 사이로 금빛 석가모니불이 보이는 대웅전', image: 'hall.webp', color: '#893d31' },
-      muryangsujeon: { name: '무량수전', alt: '아미타불과 따뜻한 목조 기둥이 보이는 무량수전', image: 'muryangsujeon-incense-poster.webp', video: 'muryangsujeon-incense.mp4', audio: './assets/temple/chant/amitabha.mp3', color: '#98612a' },
+      muryangsujeon: { name: '무량수전', alt: '아미타불과 따뜻한 목조 기둥이 보이는 무량수전', image: 'muryangsujeon.webp', video: 'muryangsujeon-incense.mp4', audio: './assets/temple/chant/amitabha.mp3', color: '#98612a' },
       gwaneumjeon: { name: '관음전', alt: '흰 옷을 입은 관세음보살이 보이는 관음전', image: 'gwaneumjeon.webp', color: '#507968' },
       jijangjeon: { name: '지장전', alt: '보주와 석장을 지닌 지장보살이 보이는 지장전', image: 'jijangjeon.webp', color: '#48496e' },
       samseonggak: { name: '삼성각', alt: '왼쪽부터 산신·칠성·독성이 모셔진 삼성각', image: 'samseonggak.webp', color: '#714339' },
@@ -476,6 +476,13 @@
       button.setAttribute('aria-pressed', String(playing));
     }
 
+    function stopVideo(video) {
+      video.pause();
+      video.remove();
+      video.removeAttribute('src');
+      video.load();
+    }
+
     function addHallChants(interior, tracks, audioDirectory = './assets/temple/chant/') {
       const panel = interior.querySelector('.hall-chant');
       const controls = panel.querySelector('.chant-controls');
@@ -483,12 +490,6 @@
       const audio = panel.querySelector('audio');
       let active = null;
       let attempt = 0;
-
-      function stopVideo(video) {
-        video.remove();
-        video.removeAttribute('src');
-        video.load();
-      }
 
       const buttons = tracks.map(([id, label, videoSource]) => {
         const button = document.createElement('button');
@@ -863,11 +864,11 @@
       return seatCount;
     }
 
-    function addTempleSound(scene, source) {
+    function addTempleSound(scene, hall, image) {
       const audio = document.createElement('audio');
       audio.preload = 'none';
       audio.loop = true;
-      audio.src = source;
+      audio.src = hall.audio;
 
       const button = document.createElement('button');
       button.type = 'button';
@@ -875,26 +876,50 @@
       const name = prayerCopy('나무아미타불', 'Amitabha chant', '南无阿弥陀佛', '南無阿弥陀仏');
       const sizeLabel = prayerCopy('나무아미타불 소리 켜기', 'Amitabha chant sound on', '南无阿弥陀佛声音 开启', '南無阿弥陀仏の音声 オン');
       const caption = addSoundCaption(button, sizeLabel);
-      const update = () => setSoundCaption(button, caption, name, !audio.paused && !audio.error);
-      for (const event of ['playing', 'pause', 'error']) audio.addEventListener(event, update);
+      let video = null;
+
+      function stop() {
+        const playing = video;
+        video = null;
+        if (playing) stopVideo(playing);
+        audio.pause();
+        setSoundCaption(button, caption, name, false);
+      }
+
+      audio.addEventListener('pause', () => {
+        if (video && audio.paused) stop();
+      });
+
       button.addEventListener('click', async () => {
-        if (!audio.paused) {
-          audio.pause();
+        if (video) {
+          stop();
           return;
         }
+
+        const next = document.createElement('video');
+        next.setAttribute('aria-hidden', 'true');
+        next.poster = image.src;
+        next.loop = true;
+        next.defaultMuted = true;
+        next.muted = true;
+        next.playsInline = true;
+        next.src = './assets/temple/' + hall.video;
+        video = next;
+        scene.insertBefore(next, audio);
+        setSoundCaption(button, caption, name, true);
         if (audio.error) audio.load();
-        const video = scene.querySelector('video');
-        audio.currentTime = video?.currentTime ?? 0;
+        audio.currentTime = 0;
         try {
-          await audio.play();
-        } catch (error) {
-          if (error.name !== 'AbortError') {
-            caption.textContent = prayerCopy('소리 다시 시도', 'Retry sound', '重试声音', '音声を再試行');
-          }
+          await Promise.all([audio.play(), next.play()]);
+        } catch {
+          if (video !== next) return;
+          stop();
+          caption.textContent = prayerCopy('재생 다시 시도', 'Retry playback', '重试播放', '再生を再試行');
         }
       });
-      window.addEventListener('pagehide', () => audio.pause());
-      update();
+
+      window.addEventListener('pagehide', stop);
+      setSoundCaption(button, caption, name, false);
       scene.append(audio, button);
     }
 
@@ -908,20 +933,7 @@
         const scene = document.createElement('div');
         scene.className = 'temple-motion';
         scene.append(image);
-        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          const video = document.createElement('video');
-          video.setAttribute('aria-hidden', 'true');
-          video.poster = image.src;
-          video.autoplay = true;
-          video.loop = true;
-          video.defaultMuted = true;
-          video.muted = true;
-          video.playsInline = true;
-          video.addEventListener('error', () => video.remove(), { once: true });
-          video.src = './assets/temple/' + hall.video;
-          scene.append(video);
-        }
-        if (hall.audio) addTempleSound(scene, hall.audio);
+        addTempleSound(scene, hall, image);
         view.replaceWith(scene);
       } else {
         view.replaceWith(image);
