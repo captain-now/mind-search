@@ -149,6 +149,8 @@
       --tier-width: 79%; --columns: 4;
       --accent: #bae4db; --edge: #567e77; --fill: #233e41;
     }
+    .tier-kings { --accent: #ffe0b5; --edge: #9b6351; --fill: #4a2824; }
+    .tier-kings .slots li { white-space: normal; word-break: keep-all; overflow-wrap: anywhere; }
     .members {
       display: flex;
       align-items: center;
@@ -265,6 +267,21 @@
           <li>다문제일</li>
         </ul>
       </li>
+      <li class="tier tier-kings">
+        <h3>5단계 <span>·</span> 십대명왕 <span>·</span> 10명</h3>
+        <ul class="slots">
+          <li>진광대왕</li>
+          <li>초강대왕</li>
+          <li>송제대왕</li>
+          <li>오관대왕</li>
+          <li>염라대왕</li>
+          <li>변성대왕</li>
+          <li>태산대왕</li>
+          <li>평등대왕</li>
+          <li>도시대왕</li>
+          <li>오도전륜대왕</li>
+        </ul>
+      </li>
     </ol>
 
     <div class="members">
@@ -277,7 +294,7 @@
       <ol id="guild-roster" aria-label="6단계 길드원 명단" hidden></ol>
     </div>
 
-    <a class="management-banner" href="./admin.html#guild-management">길드원 관리</a>
+    <a class="management-banner" href="./admin.html?v=ten-kings#guild-management">길드원 관리</a>
     <footer><a href="./">NOW Mind Search 홈</a></footer>
   </main>
   <script>

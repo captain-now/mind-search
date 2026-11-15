@@ -160,7 +160,9 @@ const guildRefresh=byId('guildRefresh');
 const titles=[
  '길드장','부길드장 1','부길드장 2','장로 1','장로 2','장로 3',
  '청룡','백호','주작','현무','지혜제일','신통제일','두타제일','천안제일',
- '해공제일','설법제일','논의제일','지계제일','밀행제일','다문제일'
+ '해공제일','설법제일','논의제일','지계제일','밀행제일','다문제일',
+ '진광대왕','초강대왕','송제대왕','오관대왕','염라대왕',
+ '변성대왕','태산대왕','평등대왕','도시대왕','오도전륜대왕'
 ];
 let guildMembers=[],guildBusy=false;
 const selectedGuildMember=()=>guildMembers.find(member=>member.id===guildMember.value);
@@ -244,7 +246,7 @@ async function saveGuildMember(remove){
 }
 if(guildMode){
  document.title='NOW길드 | 길드원 관리';
- byId('adminReturn').href='./now-guild.html';
+ byId('adminReturn').href='./now-guild.html?v=ten-kings';
  byId('adminReturn').textContent='← 길드 구성표 돌아가기';
  byId('adminTitle').textContent='NOW길드 관리실';
  byId('adminIntro').textContent='운영자 코드 인증 후 길드원의 직책과 가입 상태를 관리할 수 있어요.';
