@@ -156,6 +156,11 @@ const french={
   "가입 안 함": "Passer",
   "고유 닉네임 등록 및 NOW길드 가입 완료:": "Pseudo inscrit et adhésion à la guilde NOW confirmée :"
 };
+Object.assign(french, {
+  '고유 닉네임 등록 (2~30자)': 'Inscrire un pseudo unique (2 à 30 caractères)',
+  '이 게시글 신고': 'Signaler cette publication',
+  '이 댓글 신고': 'Signaler ce commentaire'
+});
 const origins=new Map(Object.entries(french).map(([ko,fr])=>[fr,ko]));for(const [ko,en] of pairs){origins.set(en,ko);const v=extra[ko];if(v){origins.set(v[0],ko);origins.set(v[1],ko)}}
 const language=mindSearchLanguage;
 let lang=language.read();
@@ -165,12 +170,13 @@ const header=document.querySelector('.head,.top .container');if(header)header.ap
 function protectedNode(n){const e=n.parentElement;if(!e)return true;
 if(e.closest('#boardPosts small'))return !e.matches('.board-nickname-badge');return !!e.closest('script,style,textarea,option,#messages .bubble .meta,#messages .bubble > div:not(.meta),#boardPosts .board-post h3,#boardPosts .board-post > p,#boardPosts .board-comment > p,#boardName,#nicknameNotice input,.board-nickname-register input:not([placeholder])')}
 function translateText(value){const m=value.match(/^(\s*)([\s\S]*?)(\s*)$/);if(!m)return value;let core=m[2];if(!core)return value;
+if(lang==='fr'){const admin=core.match(/^운영자 관리실, 대기 중인 신고 (\d+)건$/);if(admin)return m[1]+'Administration · Signalements en attente : '+admin[1]+m[3];}
 const exact=origins.get(core)||core;
 const target=ko=>lang==='ko'?ko:lang==='fr'?(french[ko]||map.get(ko)||ko):lang==='en'?(map.get(ko)||ko):((extra[ko]||[])[lang==='zh'?0:1]||map.get(ko)||ko);
 if(map.has(exact)||extra[exact]||origins.has(core))return m[1]+target(exact)+m[3];
 const joined=core.match(/^(?:게시판 닉네임 (.+)으로 입장했습니다\.|Joined with board nickname (.+)\.|已使用论坛昵称「(.+)」进入。|掲示板のニックネーム「(.+)」で入室しました。)$/);
 if(joined){const nickname=joined.slice(1).find(value=>value!==undefined);return m[1]+({ko:`게시판 닉네임 ${nickname}으로 입장했습니다.`,en:`Joined with board nickname ${nickname}.`,zh:`已使用论坛昵称「${nickname}」进入。`,ja:`掲示板のニックネーム「${nickname}」で入室しました。`,fr:`Vous avez rejoint le chat avec le pseudo « ${nickname} ».`})[lang]+m[3]}
-if(/^\d+(페이지| Page|页|ページ)$/.test(core)){const n=core.match(/^\d+/)[0];return m[1]+n+({ko:'페이지',en:' Page',zh:'页',ja:'ページ',fr:' · page'})[lang]+m[3]}
+if(/^\d+(페이지| Page|页|ページ)$/.test(core)){const n=core.match(/^\d+/)[0];if(lang==='fr')return m[1]+'Page '+n+m[3];return m[1]+n+({ko:'페이지',en:' Page',zh:'页',ja:'ページ'})[lang]+m[3]}
 for(const [ko,en] of pairs){if(!ko.endsWith(':'))continue;for(const candidate of [ko,en,...(extra[ko]||[])]){if(candidate&&core.startsWith(candidate))return m[1]+target(ko)+core.slice(candidate.length)+m[3]}}
 return m[1]+core+m[3]}
 const translateFromSource=language.sourceText(translateText);
