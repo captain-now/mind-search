@@ -236,6 +236,36 @@
       white-space: pre-line;
     }
     .chant-controls button[aria-pressed="true"] { background: #355a48; }
+    .chapter-dialog {
+      box-sizing: border-box;
+      width: min(420px, calc(100% - 24px));
+      padding: 18px;
+      border: 1px solid #a67a48;
+      border-radius: 16px;
+      background: #fff8e8;
+      color: #352319;
+    }
+    .chapter-dialog::backdrop { background: #21160db8; }
+    .chapter-dialog h2 { margin: 0 0 16px; font-size: 20px; }
+    .chapter-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+    .chapter-dialog button {
+      min-height: 44px;
+      padding: 4px;
+      border: 1px solid #a67a48;
+      border-radius: 8px;
+      background: #fff1d3;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+    }
+    .chapter-dialog button[aria-pressed="true"], .chapter-dialog form button {
+      background: #482f20;
+      color: #fff1d3;
+    }
+    .chapter-dialog button:focus-visible { outline: 2px solid #6c492e; outline-offset: 2px; }
+    .chapter-dialog form { display: flex; justify-content: flex-end; }
+    .chapter-dialog form button { min-width: 64px; }
+    .chapter-status { min-height: 1.4em; margin: 12px 0; }
     .chant-status:not(:empty) {
       display: inline-block;
       margin-top: 4px;
@@ -333,6 +363,12 @@
       <a class="home-return" href="./prayer.html?v=shared-fixed-seats">기도공간으로 돌아가기</a>
     </section>
   </main>
+  <dialog class="chapter-dialog" aria-labelledby="chapter-title">
+    <h2 id="chapter-title"></h2>
+    <div class="chapter-grid"></div>
+    <p class="chapter-status" role="status"></p>
+    <form method="dialog"><button type="submit"></button></form>
+  </dialog>
   <dialog class="cushion-dialog" aria-labelledby="cushion-title">
     <h2 id="cushion-title" tabindex="-1">좌복 이름 입력</h2>
     <form method="dialog" hidden>
@@ -485,6 +521,40 @@
         : prayerCopy('소리 켜기', 'Sound on', '开启声音', '音声オン');
       caption.textContent = name + '\n' + action;
       button.setAttribute('aria-pressed', String(playing));
+    }
+
+    function addJijangChapterPicker(interior) {
+      const controls = interior.querySelector('.chant-controls');
+      const dialog = document.querySelector('.chapter-dialog');
+      const grid = dialog.querySelector('.chapter-grid');
+      const status = dialog.querySelector('.chapter-status');
+      const name = prayerCopy('지장보살본원경 한글', 'Kṣitigarbha Sutra in Korean', '地藏菩萨本愿经韩文', '地蔵菩薩本願経 韓国語');
+      const action = prayerCopy('품 선택', 'Choose chapter', '选择品目', '品を選ぶ');
+      dialog.querySelector('h2').textContent = name;
+      dialog.querySelector('[type=submit]').textContent = prayerCopy('닫기', 'Close', '关闭', '閉じる');
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-haspopup', 'dialog');
+      addSoundCaption(button, name).textContent = name + '\n' + action;
+      controls.append(button);
+
+      let selected;
+      for (let index = 1; index <= 10; index++) {
+        const chapter = document.createElement('button');
+        chapter.type = 'button';
+        const label = prayerCopy(index + '품', 'Chapter ' + index, '第' + index + '品', '第' + index + '品');
+        chapter.textContent = label;
+        chapter.setAttribute('aria-pressed', 'false');
+        chapter.addEventListener('click', () => {
+          selected?.setAttribute('aria-pressed', 'false');
+          selected = chapter;
+          chapter.setAttribute('aria-pressed', 'true');
+          status.textContent = label + ' · ' + prayerCopy('준비중입니다', 'Coming soon', '准备中', '準備中です');
+        });
+        grid.append(chapter);
+      }
+      button.addEventListener('click', () => dialog.showModal());
     }
 
     function stopVideo(video) {
@@ -992,6 +1062,7 @@
         enableSeatNames(plan, '좌복', memorial, fixedSeatsByHall.get(hallId));
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks, { middleButton });
+        if (hallId === 'jijangjeon') addJijangChapterPicker(interior);
         const backLink = seating.querySelector('.home-return');
         backLink.href = './temple.html?v=centered-sound-v2';
         backLink.textContent = '각 전각으로 돌아가기';
