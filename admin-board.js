@@ -119,6 +119,40 @@ async function refreshDeletions(){
   article.append(approve,reject);holder.append(article);
  }
 }
+async function refreshNicknameRequests(){
+ const holder=byId('nicknameChangeRequests');
+ try{
+  const result=await client.rpc('board_admin_nickname_change_requests');
+  if(result.error)throw result.error;
+  holder.replaceChildren();
+  if(!result.data.length){holder.append(el('p','대기 중인 고유이름 변경 신청이 없습니다.'));return}
+  for(const item of result.data){
+   const article=el('article');
+   article.append(el('strong',item.old_nickname+' → '+item.new_nickname),
+    el('small','신청일: '+new Date(item.created_at).toLocaleString('ko-KR')));
+   const approve=el('button','변경 승인');
+   const reject=el('button','신청 거절');
+   const review=async accepted=>{
+    if(!confirm(accepted?item.old_nickname+' 님의 고유이름을 '+item.new_nickname+'(으)로 변경할까요?':'이 고유이름 변경 신청을 거절할까요?'))return;
+    approve.disabled=true;reject.disabled=true;
+    try{
+     const response=await client.rpc('board_admin_review_nickname_change',{p_id:item.id,p_approve:accepted});
+     if(response.error)throw response.error;
+     msg(accepted?'고유이름을 변경했습니다.':'고유이름 변경 신청을 거절했습니다.');
+     await refreshNicknameRequests();
+    }catch(error){
+     msg('고유이름 변경 처리 실패: '+error.message);
+     approve.disabled=false;reject.disabled=false;
+    }
+   };
+   approve.onclick=()=>review(true);reject.onclick=()=>review(false);
+   article.append(approve,reject);holder.append(article);
+  }
+ }catch(error){
+  holder.replaceChildren(el('p','고유이름 변경 신청을 불러오지 못했습니다. '+error.message));
+ }
+}
+
 const guildMode=location.hash==='#guild-management';
 const guildForm=byId('guildManageForm'), guildMember=byId('guildMember'), guildPosition=byId('guildPosition');
 const guildStatus=byId('guildManageStatus'), guildAssign=byId('guildAssign'), guildRemove=byId('guildRemove');
@@ -224,7 +258,7 @@ if(guildMode){
 
 async function show(){
  try{const ok=await authorized();login.hidden=ok;dashboard.hidden=!ok;
- if(ok){msg('운영자 인증 완료');if(guildMode)await refreshGuild();else{await refresh();await refreshDeletions()}}
+ if(ok){msg('운영자 인증 완료');if(guildMode)await refreshGuild();else{await Promise.all([refresh(),refreshDeletions(),refreshNicknameRequests()])}}
  else{msg('운영자 권한이 있는 계정으로 로그인해야 합니다.')}
  }catch(e){login.hidden=false;dashboard.hidden=true;msg('접근 확인 실패: '+e.message)}
 }
@@ -258,7 +292,7 @@ byId('changeCodeForm').addEventListener('submit',async e=>{
  }catch(err){showResult('비밀번호 변경 실패: '+err.message)}
  finally{button.disabled=false}
 });
-byId('refresh').onclick=async()=>{try{await refresh();await refreshDeletions()}catch(e){msg('목록 조회 실패: '+e.message)}};
-byId('logout').onclick=async()=>{await client.rpc('board_admin_code_logout');await client.auth.signOut();reportsEl.replaceChildren();guildMembers=[];guildMember.replaceChildren();guildForm.hidden=true;await show()};
+byId('refresh').onclick=async()=>{try{await Promise.all([refresh(),refreshDeletions(),refreshNicknameRequests()])}catch(e){msg('목록 조회 실패: '+e.message)}};
+byId('logout').onclick=async()=>{await client.rpc('board_admin_code_logout');await client.auth.signOut();reportsEl.replaceChildren();byId('nicknameChangeRequests').replaceChildren();guildMembers=[];guildMember.replaceChildren();guildForm.hidden=true;await show()};
 show();loadCaptcha();
 })();

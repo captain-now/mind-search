@@ -77,7 +77,7 @@ async function setupLinkControls(){
  if(registeredNickname){
   const deletion=el('details');deletion.style.cssText='margin-top:16px;border-top:1px solid #cbd9cf;padding-top:12px';
   const summary=el('summary','고유 닉네임 / 계정 삭제');summary.style.cursor='pointer';deletion.append(summary);
-  const description=el('p','닉네임만 삭제하면 기존 게시글·댓글·채팅은 남고 이름을 다시 등록할 수 있습니다. 계정 전체 삭제는 관리자에게 신청하며, 관리자가 승인하면 게시글·댓글·채팅과 익명 계정까지 영구 삭제됩니다. 원래 닉네임을 만든 앱에서만 삭제할 수 있습니다.');
+  const description=el('p','닉네임만 삭제하면 기존 게시글·댓글·채팅은 남습니다. 삭제 후 새 이름을 등록하려면 관리자 승인이 필요합니다. 계정 전체 삭제는 관리자에게 신청하며, 관리자가 승인하면 게시글·댓글·채팅과 익명 계정까지 영구 삭제됩니다. 원래 닉네임을 만든 앱에서만 삭제할 수 있습니다.');
   deletion.append(description);
   const nickBtn=el('button','고유 닉네임만 삭제');nickBtn.type='button';
   nickBtn.onclick=async()=>{
@@ -142,14 +142,65 @@ function showGuildMembership(knownMembership){
  if(knownMembership===undefined)void checkMembership();
  else renderMembership(knownMembership);
 }
+function showNicknameChange(request, removedNickname){
+ const panel=el('section');panel.className='board-nickname-register';
+ const heading=el('h2','고유이름 변경 신청');
+ heading.id='board-nickname-change-title';
+ panel.setAttribute('aria-labelledby',heading.id);
+ const message=el('p');message.setAttribute('role','status');
+ const current=registeredNickname||removedNickname;
+ const description=el('p',removedNickname?'이전 고유이름: '+current+' · 관리자 승인 후 새 이름을 사용할 수 있어요.':'현재 고유이름: '+current+' · 관리자 승인 후 새 이름으로 바뀝니다.');
+ const changes=el('form');
+ const label=el('label','새 고유이름 (2~30자)');label.htmlFor='board-new-nickname';
+ const field=el('input');field.id=label.htmlFor;field.className='field';field.minLength=2;field.maxLength=30;field.required=true;
+ const send=el('button','변경 신청');send.type='submit';
+ changes.append(label,field,send);
+ panel.append(heading,description,message,changes);
+ root.insertBefore(panel,form);
+ if(removedNickname)showNicknameRegistration(panel);
+ function display(result){
+  const messages={
+   pending:'승인 대기 중',
+   approved:'승인 완료',
+   rejected:'변경 신청이 거절됐어요'
+  };
+  message.textContent=result?messages[result.status]+' · '+result.new_nickname:'';
+  changes.hidden=result?.status==='pending';
+ }
+ display(request);
+ changes.onsubmit=async event=>{
+  event.preventDefault();
+  const nickname=field.value.trim();
+  if(send.disabled||nickname.length<2||nickname.length>30)return;
+  send.disabled=true;
+  try{
+   const response=await client.rpc('board_request_nickname_change',{p_nickname:nickname});
+   if(response.error)throw response.error;
+   display({status:'pending',new_nickname:nickname});
+   changes.reset();
+  }catch(error){
+   message.textContent='변경 신청 실패: '+error.message;
+  }finally{send.disabled=false}
+ };
+}
+
 async function setupNickname(){
- const found=await client.from('board_profiles').select('nickname').eq('user_id',canonicalId).maybeSingle();
+ const [found,change]=await Promise.all([
+  client.from('board_profiles').select('nickname').eq('user_id',canonicalId).maybeSingle(),
+  client.rpc('board_nickname_change_status')
+ ]);
  if(found.error)throw found.error;
- if(found.data){registeredNickname=found.data.nickname;nameInput.value=registeredNickname;nameInput.readOnly=true;await setupLinkControls();showGuildMembership();return;}
+ const request=change.data?.request;
+ if(found.data){
+  registeredNickname=found.data.nickname;nameInput.value=registeredNickname;nameInput.readOnly=true;
+  showNicknameChange(request);
+  await setupLinkControls();showGuildMembership();return;
+ }
  form.hidden=true;
  await setupLinkControls();
+ if(change.data?.removed_nickname){showNicknameChange(request,change.data.removed_nickname);return;}
  const wrapper=el('div');wrapper.className='board-nickname-register';
- const label=el('label','고유 닉네임 등록 (2~30자 · 변경 및 복구 불가)');label.htmlFor='board-register-nickname';
+ const label=el('label','고유 닉네임 등록 (2~30자)');label.htmlFor='board-register-nickname';
  const field=el('input');field.id='board-register-nickname';field.className='field';field.minLength=2;field.maxLength=30;field.required=true;field.placeholder='사용할 고유 닉네임';
  const register=el('button','닉네임 등록');register.type='submit';
  const guildChoice=el('fieldset');guildChoice.className='board-guild-choice';
@@ -176,7 +227,7 @@ async function setupNickname(){
    registeredNickname=nickname;nameInput.value=nickname;nameInput.readOnly=true;wrapper.remove();form.hidden=false;
    const completion=wantsGuild?'고유 닉네임 등록 및 NOW길드 가입 완료: ':'고유 닉네임 등록 완료: ';
    const confirmation=el('p',completion+nickname);confirmation.setAttribute('role','status');
-   root.insertBefore(confirmation,form);showGuildMembership(wantsGuild);await refresh();
+   root.insertBefore(confirmation,form);showNicknameChange(null);showGuildMembership(wantsGuild);await refresh();
   }catch(err){setStatus(err.code==='23505'?'이미 사용 중인 닉네임입니다. 다른 이름을 선택해 주세요.':'닉네임 등록 실패: '+err.message)}
   finally{register.disabled=false;guildChoice.disabled=false}
  };
