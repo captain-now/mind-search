@@ -11,6 +11,9 @@ const status=document.createElement('p');status.setAttribute('role','status');st
 root.prepend(status);
 const postsEl=document.getElementById('boardPosts');
 const form=document.getElementById('boardForm');
+function showNicknameRegistration(target){
+ if(location.hash==='#nickname-registration')target.scrollIntoView({block:'start'});
+}
 const nameInput=document.getElementById('boardName'),titleInput=document.getElementById('boardTitle'),bodyInput=document.getElementById('boardBody');
 const localNotice=root.querySelector('.disclaimer');if(localNotice)localNotice.textContent='공개 게시판 · 별명은 공개되지만 작성자 삭제 권한은 익명 계정으로 확인합니다. 브라우저의 로그인 정보가 삭제되면 기존 글을 삭제하지 못할 수 있습니다.';
 function el(tag,txt){const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;return n}
@@ -40,6 +43,7 @@ async function prepareCaptcha(){
    'error-callback':()=>{captchaToken=null;setStatus('보안 인증에 실패했습니다. 다시 시도해 주세요.');}
   });
   setStatus('게시판 이용을 위해 보안 인증을 완료해 주세요.');
+  showNicknameRegistration(holder);
  });
 }
 async function ensureUser(){
@@ -103,12 +107,13 @@ async function setupNickname(){
  form.hidden=true;
  await setupLinkControls();
  const wrapper=el('div');wrapper.className='board-nickname-register';
- const label=el('label','고유 닉네임 등록 (2~30자 · 변경 및 복구 불가)');
- const field=el('input');field.className='field';field.minLength=2;field.maxLength=30;field.required=true;field.placeholder='사용할 고유 닉네임';
+ const label=el('label','고유 닉네임 등록 (2~30자 · 변경 및 복구 불가)');label.htmlFor='board-register-nickname';
+ const field=el('input');field.id='board-register-nickname';field.className='field';field.minLength=2;field.maxLength=30;field.required=true;field.placeholder='사용할 고유 닉네임';
  const register=el('button','닉네임 등록');register.type='submit';
  const registration=el('form');registration.append(label,field,register);wrapper.append(registration);root.insertBefore(wrapper,form);
  const warning=el('p','가입 없는 익명 계정입니다. 브라우저 데이터를 삭제하거나 기기를 바꾸면 이 닉네임을 복구할 수 없습니다. 기존 게시글의 별명과는 별개로 새로 등록됩니다.');
  wrapper.append(warning);
+ showNicknameRegistration(wrapper);
  registration.onsubmit=async e=>{
   e.preventDefault();const nickname=field.value.trim();if(nickname.length<2||nickname.length>30)return;
   register.disabled=true;
@@ -265,6 +270,7 @@ async function init(){
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateAdminReportBadge()});
  // Enable posting only after remote authentication succeeds.
  form.hidden=!registeredNickname;
+ if(registeredNickname)showNicknameRegistration(nameInput);
  form.onsubmit=async e=>{e.preventDefault();const nickname=registeredNickname,title=titleInput.value.trim(),body=bodyInput.value.trim();if(!nickname||!title||!body)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const r=await client.from('board_posts').insert({author_id:canonicalId,nickname,title,body});if(r.error)throw r.error;titleInput.value='';bodyInput.value='';currentPage=0;await refresh()}catch(err){setStatus('글 작성 실패: '+err.message)}finally{submit.disabled=false}};
  await refresh();
  }catch(e){setStatus('공개 게시판 연결 실패: '+e.message+' · 새로고침 후 다시 시도해 주세요.')}
