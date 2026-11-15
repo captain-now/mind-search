@@ -1,8 +1,8 @@
 /* Shared language preference for the public Mind Search pages. */
 window.mindSearchLanguage = (() => {
   const key = 'mindsearch-ui-language';
-  const locales = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' };
-  const labels = { ko: '언어 선택', en: 'Language', zh: '选择语言', ja: '言語を選択' };
+  const locales = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP', fr: 'fr-FR' };
+  const labels = { ko: '언어 선택', en: 'Language', zh: '选择语言', ja: '言語を選択', fr: 'Langue' };
   function read() {
     try {
       const code = localStorage.getItem(key);
