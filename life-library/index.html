@@ -64,7 +64,8 @@
   .shelf-filter{display:flex;align-items:center;gap:8px;justify-self:start}
 }
 #entry-author[readonly]{background:#f5eddf}
-#author-hint a{text-decoration:underline;text-underline-offset:.17em}
+.author-register{display:inline-flex;align-items:center;justify-self:start;gap:7px;min-height:44px;padding:6px 13px;border:1px solid #a77d42;border-radius:5px;background:#f8efdb;color:#20362b;font-size:.9rem;font-weight:700}
+.author-register:hover{text-decoration:underline;text-underline-offset:.17em}
 #author-hint[data-unavailable]::after{content:" 지금은 닉네임을 확인할 수 없어요."}
 </style>
 </head>
@@ -105,7 +106,10 @@
         <p class="quiet" id="question-hint">이 칸을 눌러 질문 10개 중 하나를 골라보세요.</p>
       </div>
       <label for="entry-author">작성자명 <input id="entry-author" value="익명" readonly aria-describedby="author-hint"></label>
-      <p class="quiet" id="author-hint">본인에게 등록된 <a href="https://captain-now.github.io/mind-search/board.html">게시판 닉네임</a>을 자동으로 불러와요. 등록된 닉네임이 없으면 익명으로 표시돼요.</p>
+      <p class="quiet" id="author-hint">작성자명을 쓰려면 게시판에서 닉네임을 등록해 주세요. 등록한 닉네임은 자동으로 불러오며, 등록 전에는 익명으로 표시돼요.</p>
+      <a class="author-register" href="https://captain-now.github.io/mind-search/board.html#nickname-registration" target="_blank" rel="noopener">
+        <span aria-hidden="true">✎</span> 게시판 닉네임 등록 <span aria-hidden="true">↗</span>
+      </a>
       <label>제목<input id="entry-title" maxlength="80" required></label>
       <label>이야기<textarea id="entry-body" maxlength="6000" required></textarea></label>
       <p class="quiet">저장한 글은 이 브라우저의 서가에서만 볼 수 있어요.</p>
@@ -257,6 +261,7 @@ byId('remove').onclick=()=>{
 };
 render();
 loadBoardAuthor();
+window.addEventListener('focus',loadBoardAuthor);
 </script>
 </body>
 </html>
