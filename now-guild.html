@@ -12,18 +12,38 @@
       margin: 0;
       min-height: 100svh;
       padding: clamp(12px, 4vw, 36px);
-      background: radial-gradient(ellipse at 50% 10%, #263c3d, transparent 65%), #0d1519;
-      color: #f6edda;
+      background: radial-gradient(ellipse at 50% 8%, #fff5c9, transparent 70%), #d2a449;
+      color: #4b281a;
       font-family: system-ui, -apple-system, 'Noto Sans KR', sans-serif;
     }
     main {
+      position: relative;
+      --phoenix: url("./assets/guild-phoenix.webp");
       max-width: 760px;
       margin-inline: auto;
+      padding: 24px;
       overflow: hidden;
-      border: 1px solid #6e5a3e;
+      border: 1px solid #8f5824;
       border-radius: 16px;
-      background: linear-gradient(160deg, #202d31, #141e23 58%);
-      box-shadow: 0 18px 48px #0006, inset 0 0 0 3px #10191d;
+      background: linear-gradient(145deg, #ffedaa, #e3b651 50%, #f6d983);
+      box-shadow: 0 18px 42px #794f2840, inset 0 0 0 3px #fff1b45e;
+    }
+    main::before, main::after {
+      position: absolute;
+      content: '';
+      pointer-events: none;
+      background-image: var(--phoenix), var(--phoenix);
+      background-size: 22px 20px;
+    }
+    main::before {
+      inset: 3px 9px;
+      background-position: center top, center bottom;
+      background-repeat: space no-repeat;
+    }
+    main::after {
+      inset: 25px 1px;
+      background-position: left center, right center;
+      background-repeat: no-repeat space;
     }
     header {
       position: relative;
@@ -33,8 +53,8 @@
       justify-items: center;
       padding: 22px 12px 18px;
       text-align: center;
-      border-bottom: 1px solid #665238;
-      background: radial-gradient(ellipse at 50% 0%, #4a3a23, transparent 75%), #182124;
+      border-bottom: 1px solid #ae7732;
+      background: radial-gradient(ellipse at 50% 0%, #fff4c5, transparent 78%), #e8bc67;
     }
     header::before {
       position: absolute;
@@ -49,11 +69,11 @@
     }
     h1 {
       margin: 0;
-      color: #ffe6a7;
+      color: #572a14;
       font-size: clamp(28px, 6vw, 40px);
       line-height: 1.15;
     }
-    h2 { margin: 6px 0 0; color: #ded0ae; font-size: 14px; font-weight: 600; }
+    h2 { margin: 6px 0 0; color: #633917; font-size: 14px; font-weight: 600; }
     .pyramid {
       display: grid;
       justify-items: center;
@@ -73,7 +93,7 @@
     }
     .tier h3 {
       margin: 0 0 4px;
-      color: var(--accent);
+      color: #573519;
       font-size: 11px;
       font-weight: 650;
     }
@@ -123,15 +143,15 @@
       gap: 12px;
       margin: 0 clamp(10px, 3vw, 25px);
       padding: 10px 12px;
-      border: 1px solid #485c60;
+      border: 1px solid #ad7432;
       border-radius: 5px;
-      background: #222f34;
+      background: #f8df9b;
     }
-    .members span { color: #c1cdcd; font-size: 11px; }
+    .members span { color: #73491f; font-size: 11px; }
     .members strong { font-size: 15px; }
     .member-roster {
       margin: 8px clamp(10px, 3vw, 25px) 0;
-      color: #dfe9e6;
+      color: #593218;
       font-size: 14px;
     }
     .member-roster p { margin: 10px 0; padding-inline: 12px; }
@@ -144,12 +164,12 @@
     }
     .member-roster li {
       padding: 8px 12px;
-      border: 1px solid #34484b;
+      border: 1px solid #b77f37;
       border-radius: 5px;
-      background: #1c292d;
+      background: #fbe6ae;
       overflow-wrap: anywhere;
     }
-    .member-roster li::marker { color: #acc7bc; }
+    .member-roster li::marker { color: #7b471e; }
     .member-roster [hidden] { display: none; }
     .slots .assigned { gap: 3px; white-space: normal; overflow-wrap: anywhere; }
     .slots .rank-name { display: block; }
@@ -174,11 +194,11 @@
       min-height: 44px;
       place-items: center;
       padding-inline: 10px;
-      color: #d9ccb2;
+      color: #5f3719;
       font-size: 13px;
       text-underline-offset: 4px;
     }
-    footer a:focus-visible { outline: 2px solid #ffe4a2; outline-offset: -3px; }
+    footer a:focus-visible { outline: 2px solid #6f3e1b; outline-offset: -3px; }
   </style>
 </head>
 <body>
