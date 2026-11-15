@@ -487,7 +487,7 @@
           size.textContent = (available ? '▶ ' : '') + name;
           const action = playing
             ? prayerCopy(name + labelBreak + '소리 끄기', 'Stop ' + name, '关闭' + name, name + 'の音声を停止')
-            : prayerCopy(name + labelBreak + '소리듣기', 'Listen to ' + name, '聆听' + name, name + 'の音声を聴く');
+            : prayerCopy(name + labelBreak + '소리 켜기', 'Turn on ' + name, '开启' + name, name + 'の音声をオン');
           caption.textContent = action;
           button.setAttribute('aria-pressed', String(playing));
         };
