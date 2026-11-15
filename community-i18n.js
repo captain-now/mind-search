@@ -165,7 +165,7 @@ const origins=new Map(Object.entries(french).map(([ko,fr])=>[fr,ko]));for(const 
 const language=mindSearchLanguage;
 let lang=language.read();
 const button=document.createElement('select');button.id='languageToggle';button.setAttribute('aria-label','언어 선택');button.style.cssText='border:1px solid #cbdacf;background:#fff;color:#355a48;border-radius:24px;padding:9px 8px;font-weight:750;cursor:pointer;max-width:125px';
-for(const [code,label] of [['ko','🇰🇷 한국어'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français']]){const o=document.createElement('option');o.value=code;o.textContent=label;button.append(o)}
+for(const [code,label] of [['ko','🇰🇷 Korean'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français']]){const o=document.createElement('option');o.value=code;o.textContent=label;button.append(o)}
 const header=document.querySelector('.head,.top .container');if(header)header.append(button);else document.body.prepend(button);
 function protectedNode(n){const e=n.parentElement;if(!e)return true;
 if(e.closest('#boardPosts small'))return !e.matches('.board-nickname-badge');return !!e.closest('script,style,textarea,option,#messages .bubble .meta,#messages .bubble > div:not(.meta),#boardPosts .board-post h3,#boardPosts .board-post > p,#boardPosts .board-comment > p,#boardName,#nicknameNotice input,.board-nickname-register input:not([placeholder])')}
