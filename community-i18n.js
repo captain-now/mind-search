@@ -4,6 +4,13 @@ const pairs=[["게시판에 고유 닉네임이 없는 분만 먼저 등록해 �
 pairs.push(
  ["NOW길드에 가입하시겠어요?","Would you like to join NOW Guild?"],
  ["가입하기","Join guild"],
+ ["NOW길드 가입 상태","NOW Guild membership"],
+ ["가입 상태를 확인하는 중이에요.","Checking your membership…"],
+ ["이미 NOW길드에 가입했어요.","You are already a NOW Guild member."],
+ ["가입하면 고유 닉네임이 공개 길드원 명단에 표시됩니다.","Your unique nickname will appear on the public guild roster if you join."],
+ ["길드 구성표 보기","View guild ranks"],
+ ["길드 가입 상태를 확인하지 못했어요. 잠시 후 새로고침해 주세요.","Could not check membership. Refresh the page to try again."],
+ ["길드 가입을 완료하지 못했어요. 다시 시도해 주세요.","Could not join the guild. Please try again."],
  ["가입 안 함","Skip joining"],
  ["고유 닉네임 등록 및 NOW길드 가입 완료:","Nickname registered and NOW Guild joined:"]
 );
