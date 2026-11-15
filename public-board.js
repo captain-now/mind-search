@@ -110,19 +110,33 @@ async function setupNickname(){
  const label=el('label','고유 닉네임 등록 (2~30자 · 변경 및 복구 불가)');label.htmlFor='board-register-nickname';
  const field=el('input');field.id='board-register-nickname';field.className='field';field.minLength=2;field.maxLength=30;field.required=true;field.placeholder='사용할 고유 닉네임';
  const register=el('button','닉네임 등록');register.type='submit';
- const registration=el('form');registration.append(label,field,register);wrapper.append(registration);root.insertBefore(wrapper,form);
+ const guildChoice=el('fieldset');guildChoice.className='board-guild-choice';
+ guildChoice.append(el('legend','NOW길드에 가입하시겠어요?'));
+ const joinGuild=el('input');joinGuild.type='radio';joinGuild.name='now-guild';joinGuild.value='join';
+ const skipGuild=el('input');skipGuild.type='radio';skipGuild.name=joinGuild.name;skipGuild.value='skip';skipGuild.checked=true;
+ const joinLabel=el('label');joinLabel.append(joinGuild,el('span','가입하기'));
+ const skipLabel=el('label');skipLabel.append(skipGuild,el('span','가입 안 함'));
+ guildChoice.append(joinLabel,skipLabel);
+ const registration=el('form');registration.append(label,field,guildChoice,register);wrapper.append(registration);root.insertBefore(wrapper,form);
  const warning=el('p','가입 없는 익명 계정입니다. 브라우저 데이터를 삭제하거나 기기를 바꾸면 이 닉네임을 복구할 수 없습니다. 기존 게시글의 별명과는 별개로 새로 등록됩니다.');
  wrapper.append(warning);
  showNicknameRegistration(wrapper);
  registration.onsubmit=async e=>{
-  e.preventDefault();const nickname=field.value.trim();if(nickname.length<2||nickname.length>30)return;
+  e.preventDefault();const nickname=field.value.trim();if(register.disabled||nickname.length<2||nickname.length>30)return;
+  const wantsGuild=joinGuild.checked;
   register.disabled=true;
+  guildChoice.disabled=true;
   try{
-   const result=await client.from('board_profiles').insert({user_id:user.id,nickname});
+   const result=wantsGuild
+    ? await client.rpc('board_register_nickname_and_join_guild',{p_nickname:nickname})
+    : await client.from('board_profiles').insert({user_id:user.id,nickname});
    if(result.error)throw result.error;
-   registeredNickname=nickname;nameInput.value=nickname;nameInput.readOnly=true;wrapper.remove();form.hidden=false;setStatus('고유 닉네임 등록 완료: '+nickname);await refresh();
+   registeredNickname=nickname;nameInput.value=nickname;nameInput.readOnly=true;wrapper.remove();form.hidden=false;
+   const completion=wantsGuild?'고유 닉네임 등록 및 NOW길드 가입 완료: ':'고유 닉네임 등록 완료: ';
+   const confirmation=el('p',completion+nickname);confirmation.setAttribute('role','status');
+   root.insertBefore(confirmation,form);await refresh();
   }catch(err){setStatus(err.code==='23505'?'이미 사용 중인 닉네임입니다. 다른 이름을 선택해 주세요.':'닉네임 등록 실패: '+err.message)}
-  finally{register.disabled=false}
+  finally{register.disabled=false;guildChoice.disabled=false}
  };
 }
 
