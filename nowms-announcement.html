@@ -26,6 +26,10 @@
 .fee-population,.fee-sources{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap}
 .fee-population{margin-top:12px}
 .fee-sources a{color:var(--gold)}
+.round-capacity{margin-top:20px;overflow-wrap:anywhere}
+.round-capacity h3{margin:0;color:var(--gold);font-size:1rem}
+.round-capacity-table th:first-child{width:16%}
+.round-capacity-table th,.round-capacity-table td{padding-inline:4px;font-size:clamp(.73rem,2.8vw,.88rem)}
 </style>
 </head>
 <body>
@@ -82,6 +86,21 @@
       </tbody>
     </table>
     <p class="table-note">예를 들어 2차에는 적립 NOW 10개로 NOWMS 1개를 받는 계획이에요. 5차는 교환용 마지막 1,000만 NOWMS를 장기간에 걸쳐 배정하는 구간이에요.</p>
+    <div class="round-capacity">
+      <h3>연 120,000 NOW 기준 교환 가능 인원</h3>
+      <p class="table-note">1인당 연간 적립 NOW 120,000개를 각 차수의 교환 비율로 전부 교환한다고 가정한 예시입니다.</p>
+      <table class="round-capacity-table" aria-label="연 120,000 NOW 기준 교환 가능 인원">
+        <thead><tr><th scope="col">단계</th><th scope="col">1인당 교환량<br>(NOWMS)</th><th scope="col">교환 가능 인원</th><th scope="col">남는 물량<br>(NOWMS)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">1차</th><td>120,000</td><td>166</td><td>80,000</td></tr>
+          <tr><th scope="row">2차</th><td>12,000</td><td>1,666</td><td>8,000</td></tr>
+          <tr><th scope="row">3차</th><td>1,200</td><td>12,500</td><td>0</td></tr>
+          <tr><th scope="row">4차</th><td>120</td><td>125,000</td><td>0</td></tr>
+          <tr><th scope="row">5차</th><td>12</td><td>833,333</td><td>4</td></tr>
+        </tbody>
+      </table>
+      <p class="table-note">1차에서는 166명이 120,000 NOWMS씩 교환하면 19,920,000 NOWMS를 사용하고 80,000 NOWMS가 남습니다.</p>
+    </div>
   </section>
 
   <section class="panel fee-panel" aria-labelledby="fees-title">
@@ -135,6 +154,12 @@
 <script src="./ui-language.js?v=1"></script>
 <script>
 const translations = new Map([
+  ["연 120,000 NOW 기준 교환 가능 인원",["Estimated capacity at 120,000 NOW per person per year","按每人每年 120,000 NOW 估算可兑换人数","1人あたり年間120,000 NOWを基準とした交換可能人数"]],
+  ["1인당 연간 적립 NOW 120,000개를 각 차수의 교환 비율로 전부 교환한다고 가정한 예시입니다.",["This estimate assumes each person exchanges all 120,000 NOW earned in a year at the rate for that round.","假设每人按各轮兑换比例，将一年获得的 120,000 NOW 全部兑换。","各回の交換比率で、1人が年間に獲得した120,000 NOWをすべて交換する場合の試算です。"]],
+  ["1인당 교환량",["Per person","每人兑换量","1人あたり"]],
+  ["교환 가능 인원",["Estimated recipients","可兑换人数","交換可能人数"]],
+  ["남는 물량",["Remaining supply","剩余数量","残りの割当量"]],
+  ["1차에서는 166명이 120,000 NOWMS씩 교환하면 19,920,000 NOWMS를 사용하고 80,000 NOWMS가 남습니다.",["In round 1, 166 people exchanging for 120,000 NOWMS each would use 19,920,000 NOWMS, leaving 80,000 NOWMS.","第一轮中，166 人各兑换 120,000 NOWMS，共使用 19,920,000 NOWMS，剩余 80,000 NOWMS。","第1回では、166人がそれぞれ120,000 NOWMSを交換すると、19,920,000 NOWMSを使用し、80,000 NOWMSが残ります。"]],
   ["교환 수수료와 계정 보증금",["Exchange fees and account deposits","兑换手续费与账户押金","交換手数料と口座保証金"]],
   ["아래는 NOWMS를 지급할 때 드는 솔라나 비용의 예시입니다. 이용자에게 부과할 교환 수수료와 비용 부담 주체는 아직 정해지지 않았습니다.",["These are estimated Solana costs for distributing NOWMS. User fees and who will cover the costs are still undecided.","以下是发放 NOWMS 的 Solana 费用估算。用户手续费和费用承担方尚未确定。","以下は NOWMS 配布時の Solana 費用の試算です。利用者の手数料と費用負担者は未定です。"]],
   ["기본 전송 수수료는 한 건당 0.000005 SOL입니다. 1명당 한 건, 서명 1개, 우선순위 수수료 0 SOL로 계산했습니다.",["The base fee is 0.000005 SOL per transfer, assuming one transfer per recipient, one signature, and no priority fee.","每笔基本转账费为 0.000005 SOL，按每人一笔、一次签名且无优先费计算。","基本送金手数料は1件0.000005 SOLです。1人1件、署名1つ、優先手数料なしで計算しています。"]],
