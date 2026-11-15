@@ -10,15 +10,12 @@
     a { color: #355a48; }
     .interior:not([hidden]) {
       display: grid;
-      grid-template-rows: minmax(140px, 1fr) auto minmax(244px, 1fr);
+      grid-template-rows: 60% auto minmax(0, 1fr);
       height: 100vh;
       height: 100dvh;
       min-height: 540px;
       max-width: none;
       padding: 0;
-    }
-    .interior.muryangsujeon:not([hidden]) {
-      grid-template-rows: 60% auto minmax(0, 1fr);
     }
     .interior section { display: grid; place-items: center; }
     .interior section + section { border-top: 1px solid #b8949f; }
@@ -189,7 +186,8 @@
       box-shadow: inset 0 0 0 2px #e5b07966, inset 0 4px 12px #fff2, 0 2px 3px #41241480;
     }
     .interior.with-chant:not([hidden]) {
-      grid-template-rows: minmax(140px, 1fr) auto auto minmax(244px, 1fr);
+      grid-template-rows: 60% auto auto minmax(0, 1fr);
+      min-height: 720px;
     }
     .seat-guide {
       margin: 0;
@@ -909,7 +907,6 @@
         prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。'));
 
       if (hall) {
-        if (hallId === 'muryangsujeon') interior.classList.add('muryangsujeon');
         seating.setAttribute('aria-label', '수행 공간');
         plan.style.setProperty('--cushion-color', hall.color);
         openTempleHall(hall, interior);
