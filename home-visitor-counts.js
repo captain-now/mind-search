@@ -14,8 +14,10 @@
     const words = labels[lang] || labels.ko;
     const format = new Intl.NumberFormat(labels[lang] ? lang : 'ko');
     values.forEach((value, index) => {
-      value.previousElementSibling.textContent = words[index];
-      value.textContent = counts ? format.format(counts[value.dataset.count]) : '—';
+      const label = value.previousElementSibling;
+      const number = counts ? format.format(counts[value.dataset.count]) : '—';
+      if (label.textContent !== words[index]) label.textContent = words[index];
+      if (value.textContent !== number) value.textContent = number;
     });
   }
 
