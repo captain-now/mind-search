@@ -215,6 +215,9 @@
       justify-content: center;
       gap: 6px;
     }
+    .daeungjeon .chant-controls { flex-wrap: nowrap; }
+    .daeungjeon .chant-controls button { min-width: 0; }
+    .daeungjeon .chant-button-size { white-space: nowrap; }
     .chant-controls button { position: relative; }
     .chant-button-size { visibility: hidden; }
     .chant-button-label {
@@ -425,10 +428,9 @@
         [null, "이뭣고"]
       ],
       "daeungjeon": [
-        [
-          "shakyamuni",
-          "석가모니불"
-        ]
+        [null, "금강경 한문"],
+        ["shakyamuni", "석가모니불"],
+        [null, "금강경 한글"]
       ],
       "gwaneumjeon": [
         [
@@ -971,6 +973,7 @@
         prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。'));
 
       if (hall) {
+        if (hallId === 'daeungjeon') interior.classList.add('daeungjeon');
         seating.setAttribute('aria-label', '수행 공간');
         plan.style.setProperty('--cushion-color', hall.color);
         openTempleHall(hall, interior);
