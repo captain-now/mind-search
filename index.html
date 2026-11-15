@@ -229,15 +229,27 @@ function showRecordFromHash() {
 showRecordFromHash();
 window.addEventListener('hashchange', showRecordFromHash);
 const taskNames=['감사하기','친절 베풀기','독서하기','걷기·운동','청소·정리','환경 보호','가족·이웃 돌보기','나눔·봉사','좋은 말하기','하루 돌아보기'];const uiLocale=()=>mindSearchLanguage.locales[document.documentElement.lang]||'ko-KR';
-function localizedHomeText(ko,en,zh,ja){return ({ko,en,zh,ja,fr:en})[document.documentElement.lang]||ko}
-const today=()=>new Date().toLocaleDateString('en-CA');function render(){const t=today();const completed=data.tasks[t]||[];$('tasks').replaceChildren();taskNames.forEach((name,i)=>{let b=document.createElement('button');b.className='task'+(completed.includes(i)?' done':'');b.textContent=(completed.includes(i)?'✓ ':'○ ')+name;b.onclick=()=>{let a=data.tasks[t]||[];data.tasks[t]=a.includes(i)?a.filter(x=>x!==i):[...a,i];if(!persist())data.tasks[t]=a;render()};$('tasks').append(b)});$('entries').replaceChildren();data.entries.slice().reverse().forEach((entry)=>{let div=document.createElement('div');div.className='entry';let time=document.createElement('small');time.textContent=new Date(entry.time).toLocaleString(uiLocale());let p=document.createElement('div');p.textContent=entry.text;div.append(time,p);$('entries').append(div)});}$('save').onclick=()=>{let v=$('journalArea').value.trim();if(!v)return notice('내용을 입력해 주세요.');data.entries.push({time:new Date().toISOString(),text:v});if(!persist()){data.entries.pop();return}$('journalArea').value='';render();notice('이 기기에 일지를 저장했습니다.')};$('export').onclick=()=>{let text=data.entries.map(e=>new Date(e.time).toLocaleString(uiLocale())+'\n'+e.text).join('\n\n---\n\n');let url=URL.createObjectURL(new Blob([text||localizedHomeText('아직 기록이 없습니다.','No journal entries yet.','暂无日记记录。','日記の記録はまだありません。')],{type:'text/plain;charset=utf-8'}));let a=document.createElement('a');a.href=url;a.download='mind-search-journal.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)};
-function downloadBackup(){const payload={format:'mind-search-backup',version:1,exportedAt:new Date().toISOString(),data};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='mind-search-backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);notice('전체 기록 백업 파일을 만들었습니다. 안전한 곳에 보관하세요.')}function validBackup(v){if(!v||v.format!=='mind-search-backup'||v.version!==1||!v.data)return false;const d=v.data;if(!Array.isArray(d.sessions)||!Array.isArray(d.entries)||!d.tasks||typeof d.tasks!=='object'||Array.isArray(d.tasks))return false;if(d.sessions.length>100000||d.entries.length>100000||Object.keys(d.tasks).length>100000)return false;if(!d.sessions.every(x=>typeof x==='string'&&!Number.isNaN(Date.parse(x))))return false;if(!d.entries.every(x=>x&&typeof x.time==='string'&&!Number.isNaN(Date.parse(x.time))&&typeof x.text==='string'&&x.text.length<=5000))return false;return Object.entries(d.tasks).every(([k,v])=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&Array.isArray(v)&&v.every(x=>Number.isInteger(x)&&x>=0&&x<10))}$('backup').onclick=downloadBackup;$('restore').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=async e=>{const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;if(file.size>10*1024*1024)return notice('백업 파일은 10MB 이하만 복원할 수 있습니다.');let parsed;try{parsed=JSON.parse(await file.text())}catch(err){return notice('JSON 백업 파일을 읽을 수 없습니다.')}if(!validBackup(parsed))return notice('지원하지 않거나 손상된 백업 파일입니다.');if(!window.confirm(localizedHomeText('현재 기기의 일지·수행·실천 기록을 백업 파일로 교체합니다. 계속할까요?','Replace the journal, meditation, and daily practice records on this device with this backup?','要用此备份替换此设备上的日记、冥想和每日练习记录吗？','この端末の日記・瞑想・毎日の実践の記録を、このバックアップで置き換えますか？')))return;const previous=data;data=parsed.data;if(!persist()){data=previous;return}render();notice('전체 기록을 복원했습니다.')};
+function localizedHomeText(ko,en,zh,ja,fr){return ({ko,en,zh,ja,fr})[document.documentElement.lang]||ko}
+const today=()=>new Date().toLocaleDateString('en-CA');function render(){const t=today();const completed=data.tasks[t]||[];$('tasks').replaceChildren();taskNames.forEach((name,i)=>{let b=document.createElement('button');b.className='task'+(completed.includes(i)?' done':'');b.textContent=(completed.includes(i)?'✓ ':'○ ')+name;b.onclick=()=>{let a=data.tasks[t]||[];data.tasks[t]=a.includes(i)?a.filter(x=>x!==i):[...a,i];if(!persist())data.tasks[t]=a;render()};$('tasks').append(b)});$('entries').replaceChildren();data.entries.slice().reverse().forEach((entry)=>{let div=document.createElement('div');div.className='entry';let time=document.createElement('small');time.textContent=new Date(entry.time).toLocaleString(uiLocale());let p=document.createElement('div');p.textContent=entry.text;div.append(time,p);$('entries').append(div)});}$('save').onclick=()=>{let v=$('journalArea').value.trim();if(!v)return notice('내용을 입력해 주세요.');data.entries.push({time:new Date().toISOString(),text:v});if(!persist()){data.entries.pop();return}$('journalArea').value='';render();notice('이 기기에 일지를 저장했습니다.')};$('export').onclick=()=>{let text=data.entries.map(e=>new Date(e.time).toLocaleString(uiLocale())+'\n'+e.text).join('\n\n---\n\n');let url=URL.createObjectURL(new Blob([text||localizedHomeText('아직 기록이 없습니다.','No journal entries yet.','暂无日记记录。','日記の記録はまだありません。','Le journal ne contient encore aucune note.')],{type:'text/plain;charset=utf-8'}));let a=document.createElement('a');a.href=url;a.download='mind-search-journal.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)};
+function downloadBackup(){const payload={format:'mind-search-backup',version:1,exportedAt:new Date().toISOString(),data};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='mind-search-backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);notice('전체 기록 백업 파일을 만들었습니다. 안전한 곳에 보관하세요.')}function validBackup(v){if(!v||v.format!=='mind-search-backup'||v.version!==1||!v.data)return false;const d=v.data;if(!Array.isArray(d.sessions)||!Array.isArray(d.entries)||!d.tasks||typeof d.tasks!=='object'||Array.isArray(d.tasks))return false;if(d.sessions.length>100000||d.entries.length>100000||Object.keys(d.tasks).length>100000)return false;if(!d.sessions.every(x=>typeof x==='string'&&!Number.isNaN(Date.parse(x))))return false;if(!d.entries.every(x=>x&&typeof x.time==='string'&&!Number.isNaN(Date.parse(x.time))&&typeof x.text==='string'&&x.text.length<=5000))return false;return Object.entries(d.tasks).every(([k,v])=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&Array.isArray(v)&&v.every(x=>Number.isInteger(x)&&x>=0&&x<10))}$('backup').onclick=downloadBackup;$('restore').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=async e=>{const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;if(file.size>10*1024*1024)return notice('백업 파일은 10MB 이하만 복원할 수 있습니다.');let parsed;try{parsed=JSON.parse(await file.text())}catch(err){return notice('JSON 백업 파일을 읽을 수 없습니다.')}if(!validBackup(parsed))return notice('지원하지 않거나 손상된 백업 파일입니다.');if(!window.confirm(localizedHomeText('현재 기기의 일지·수행·실천 기록을 백업 파일로 교체합니다. 계속할까요?','Replace the journal, meditation, and daily practice records on this device with this backup?','要用此备份替换此设备上的日记、冥想和每日练习记录吗？','この端末の日記・瞑想・毎日の実践の記録を、このバックアップで置き換えますか？','Remplacer les notes du journal et les historiques de méditation et de pratiques quotidiennes de cet appareil par cette sauvegarde ?')))return;const previous=data;data=parsed.data;if(!persist()){data=previous;return}render();notice('전체 기록을 복원했습니다.')};
 render();if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
 </script><script src="./extra-languages.js?v=3"></script><script>
 /* REBIRTH bilingual UI. Never translate user-generated journal entries or stored data. */
 (function(){
 'use strict';
 const pairs=[
+["오늘 방문자","Visitors today"],
+["누적 방문자","Total visitors"],
+["NOW길드","NOW Guild"],
+["NOW길드 새 창으로 열기","Open NOW Guild in a new tab"],
+["전통 사찰 전각","Traditional Buddhist temple hall"],
+["경매봉과 미술품 액자","Auction gavel and framed artwork"],
+["코레일 고속열차","KORAIL high-speed train"],
+["시외버스 그림","Intercity bus illustration"],
+["네이버 블로그 새 창으로 열기","Open Naver Blog in a new tab"],
+["NOW 마음챙김 홈페이지 새 창으로 열기","Open NOW Mindfulness in a new tab"],
+["NOW Mind Search 실시간 채팅방 새 창으로 열기","Open NOW Mind Search live chat in a new tab"],
+["주요 메뉴","Main navigation"],
 ["나우코인 발행","NOWMS Token Launch"],
 ["삶의 도서관","Life Library"],
 ["살면서 배운 것을 한 편씩.","Lessons from life, one story at a time."],
@@ -316,10 +328,22 @@ const pairs=[
 ];
 const koToEn=new Map(pairs);
 const extras={...window.MIND_SEARCH_EXTRA_LANG,
+"오늘 방문자":["今日访客","今日の訪問者"],
+"누적 방문자":["累计访客","累計訪問者"],
+"NOW길드":["NOW 公会","NOWギルド"],
+"NOW길드 새 창으로 열기":["在新标签页打开 NOW 公会","NOWギルドを新しいタブで開く"],
+"전통 사찰 전각":["传统佛寺殿堂","伝統的な寺院の堂宇"],
+"경매봉과 미술품 액자":["拍卖槌与装裱的艺术品","競売用の木槌と額装された美術品"],
+"코레일 고속열차":["韩国铁路高速列车","韓国鉄道の高速列車"],
+"시외버스 그림":["城际巴士插图","都市間バスのイラスト"],
 "염불":["念佛","念仏"],"참선":["参禅","参禅"],"명상":["冥想","瞑想"],
 
 "삶의 도서관":["人生图书馆","人生の図書館"],"살면서 배운 것을 한 편씩.":["把人生所学写成一个个故事。","人生で学んだことを、一編ずつ。"],"나우코인 발행":["NOWMS 代币发行","NOWMS トークン発行"]};
 const french = {
+  "전통 사찰 전각": "Pavillon traditionnel d’un temple bouddhiste",
+  "경매봉과 미술품 액자": "Marteau de commissaire-priseur et œuvre encadrée",
+  "코레일 고속열차": "Train à grande vitesse de KORAIL",
+  "시외버스 그림": "Illustration d’un bus interurbain",
   "나우코인 발행": "Lancement du jeton NOWMS",
   "삶의 도서관": "Bibliothèque de la vie",
   "살면서 배운 것을 한 편씩.": "Les leçons de la vie, une histoire à la fois.",
@@ -458,7 +482,7 @@ function translate(value){
  let core=match[2],prefix='';if(!core)return value;
  const task=core.match(/^([✓○] )(.*)$/);if(task){prefix=task[1];core=task[2]}
  let ko=allReverse.get(core)||core;
- const count=ko.match(/^(\d+)(회|개|次|回|篇|件| sessions?| entr(?:y|ies))$/);if(count){const kind=['회','次','回',' session',' sessions'].includes(count[2])?'sessions':'entries';const suffix=lang==='ko'?(kind==='sessions'?'회':'개'):lang==='en'?(kind==='sessions'?(count[1]==='1'?' session':' sessions'):(count[1]==='1'?' entry':' entries')):lang==='zh'?(kind==='sessions'?'次':'篇'):(kind==='sessions'?'回':'件');return match[1]+count[1]+suffix+match[3];}
+ const count=ko.match(/^(\d+)(회|개|次|回|篇|件| sessions?| entr(?:y|ies))$/);if(count){const kind=['회','次','回',' session',' sessions'].includes(count[2])?'sessions':'entries';const suffix=lang==='ko'?(kind==='sessions'?'회':'개'):lang==='en'?(kind==='sessions'?(count[1]==='1'?' session':' sessions'):(count[1]==='1'?' entry':' entries')):lang==='fr'?(kind==='sessions'?(count[1]==='1'?' séance':' séances'):(count[1]==='1'?' note':' notes')):lang==='zh'?(kind==='sessions'?'次':'篇'):(kind==='sessions'?'回':'件');return match[1]+count[1]+suffix+match[3];}
  if(lang==='ko')return match[1]+prefix+ko+match[3];
  const translated=lang==='fr'?french[ko]:lang==='en'?koToEn.get(ko):(extras[ko]||[])[lang==='zh'?0:1];
  return match[1]+prefix+(translated||koToEn.get(ko)||core)+match[3];
@@ -471,9 +495,7 @@ function apply(){
  const nodes=[];while(walker.nextNode()){const n=walker.currentNode;if(n.parentElement&&!n.parentElement.closest('script,style,select,option,#entries,#journalArea,#homeVisitorCounts dd'))nodes.push(n)}
  for(const n of nodes){const next=translateFromSource(n,"text",n.nodeValue);if(next!==n.nodeValue)n.nodeValue=next}
  btn.setAttribute('aria-label',language.labels[lang]);
- const attrTranslations=[['a.naver-blog-link','aria-label','네이버 블로그 새 창으로 열기','Open Naver Blog in a new tab'],['a.now-link','aria-label','NOW 마음챙김 홈페이지 새 창으로 열기','Open NOW Mindfulness in a new tab'],['a.chat-nav-link','aria-label','NOW Mind Search 실시간 채팅방 새 창으로 열기','Open NOW Mind Search live chat in a new tab'],['.board-nav-link','aria-label','',''],['.nav','aria-label','주요 메뉴','Main navigation']];
- for(const [selector,attr,ko,en] of attrTranslations){if(!ko)continue;const el=document.querySelector(selector);if(el)el.setAttribute(attr,lang==='ko'?ko:lang==='fr'?french[ko]||en:lang==='en'?en:(extras[ko]||[])[lang==='zh'?0:1]||en)}
- for(const el of document.querySelectorAll('[aria-label],[title]')){if(el.id==='languageToggle')continue;for(const attr of ['aria-label','title']){const value=el.getAttribute(attr);if(value){const translated=translateFromSource(el,attr,value);if(translated!==value)el.setAttribute(attr,translated)}}}
+ for(const el of document.querySelectorAll('[aria-label],[title],img[alt]')){if(el.id==='languageToggle')continue;for(const attr of ['aria-label','title','alt']){const value=el.getAttribute(attr);if(value){const translated=translateFromSource(el,attr,value);if(translated!==value)el.setAttribute(attr,translated)}}}
  const title=document.querySelector('title');if(title)title.textContent=lang==='fr'?'NOW Mind Search | Pleine conscience et méditation':lang==='ko'?'NOW Mind Search | 마음챙김 명상 타이머와 마음 일지':lang==='en'?'NOW Mind Search | Mindfulness meditation timer and journal':lang==='zh'?'NOW Mind Search | 正念冥想计时器与心灵日记':'NOW Mind Search | マインドフルネス瞑想タイマーと心の日記';
  const area=document.getElementById('journalArea');
  area.placeholder=({fr:'Que se passe-t-il dans votre esprit…',ko:'지금 나의 마음은...',en:'What is on your mind...',zh:'写下此刻的心情...',ja:'今の気持ちを書いてください...'})[lang];
