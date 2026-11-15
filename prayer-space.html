@@ -114,6 +114,21 @@
       height: 100%;
       object-fit: contain;
     }
+    .temple-sound {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      min-height: 44px;
+      max-width: calc(100% - 24px);
+      padding: 8px 14px;
+      border: 1px solid #f2d49a;
+      border-radius: 999px;
+      background: #271a13ed;
+      color: #fff5e2;
+      font: inherit;
+      cursor: pointer;
+    }
+    .temple-sound:focus-visible { outline: 2px solid white; outline-offset: 3px; }
     @media (max-width: 600px) and (orientation: portrait) {
       .temple-motion :is(img, video) { object-fit: cover; }
     }
@@ -399,7 +414,7 @@
     const templeHalls = {
       daejeokgwangjeon: { name: '대적광전', alt: '금빛 비로자나불과 푸른 단청이 보이는 대적광전', image: 'daejeokgwangjeon.webp', color: '#316661' },
       daeungjeon: { name: '대웅전', alt: '단청과 연등 사이로 금빛 석가모니불이 보이는 대웅전', image: 'hall.webp', color: '#893d31' },
-      muryangsujeon: { name: '무량수전', alt: '아미타불과 따뜻한 목조 기둥이 보이는 무량수전', image: 'muryangsujeon-incense-poster.webp', video: 'muryangsujeon-incense.mp4', color: '#98612a' },
+      muryangsujeon: { name: '무량수전', alt: '아미타불과 따뜻한 목조 기둥이 보이는 무량수전', image: 'muryangsujeon-incense-poster.webp', video: 'muryangsujeon-incense.mp4', audio: './assets/temple/chant/amitabha.mp3', color: '#98612a' },
       gwaneumjeon: { name: '관음전', alt: '흰 옷을 입은 관세음보살이 보이는 관음전', image: 'gwaneumjeon.webp', color: '#507968' },
       jijangjeon: { name: '지장전', alt: '보주와 석장을 지닌 지장보살이 보이는 지장전', image: 'jijangjeon.webp', color: '#48496e' },
       samseonggak: { name: '삼성각', alt: '왼쪽부터 산신·칠성·독성이 모셔진 삼성각', image: 'samseonggak.webp', color: '#714339' },
@@ -800,6 +815,46 @@
       return seatCount;
     }
 
+    function addTempleSound(scene, source) {
+      const audio = document.createElement('audio');
+      audio.preload = 'none';
+      audio.loop = true;
+      audio.src = source;
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'temple-sound';
+      const label = prayerCopy('나무아미타불 소리', 'Amitabha chant sound', '南无阿弥陀佛声音', '南無阿弥陀仏の音声');
+      button.setAttribute('aria-label', label);
+      const update = () => {
+        const playing = !audio.paused && !audio.error;
+        button.textContent = label + (playing
+          ? prayerCopy(' 끄기', ' off', ' 关闭', ' オフ')
+          : prayerCopy(' 켜기', ' on', ' 开启', ' オン'));
+        button.setAttribute('aria-pressed', String(playing));
+      };
+      for (const event of ['playing', 'pause', 'error']) audio.addEventListener(event, update);
+      button.addEventListener('click', async () => {
+        if (!audio.paused) {
+          audio.pause();
+          return;
+        }
+        if (audio.error) audio.load();
+        const video = scene.querySelector('video');
+        audio.currentTime = video?.currentTime ?? 0;
+        try {
+          await audio.play();
+        } catch (error) {
+          if (error.name !== 'AbortError') {
+            button.textContent = prayerCopy('소리 다시 시도', 'Retry sound', '重试声音', '音声を再試行');
+          }
+        }
+      });
+      window.addEventListener('pagehide', () => audio.pause());
+      update();
+      scene.append(audio, button);
+    }
+
     function openTempleHall(hall, interior) {
       const view = interior.querySelector('.space-gallery');
       const image = new Image();
@@ -824,6 +879,7 @@
           video.src = './assets/temple/' + hall.video;
           scene.append(video);
         }
+        if (hall.audio) addTempleSound(scene, hall.audio);
         view.replaceWith(scene);
       } else {
         view.replaceWith(image);
