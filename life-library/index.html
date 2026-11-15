@@ -37,6 +37,11 @@
 .footer-links{display:flex;justify-content:space-between;align-items:center;gap:6px 20px;flex-wrap:wrap}
 .publication-notice{background:#f0e4cb;color:#284237;border-block:1px solid #c7a975;padding-block:11px;font-size:.92rem;font-weight:600}
 .publication-notice .wrap{border-inline-start:2px solid #a57936;padding-inline-start:12px;word-break:keep-all;overflow-wrap:anywhere}
+.question-field{display:grid;gap:4px;min-width:0}
+.question-select{position:relative;min-width:0}
+#question{appearance:none;display:block;width:100%;min-height:46px;padding-inline-end:38px;cursor:pointer;border-color:#a97d3d}
+#question:invalid{color:#536057}
+.question-chevron{position:absolute;inset-inline-end:16px;top:50%;width:9px;height:9px;border-right:2px solid #715021;border-bottom:2px solid #715021;transform:translateY(-70%) rotate(45deg);pointer-events:none}
 </style>
 </head>
 <body>
@@ -58,7 +63,17 @@
   <section class="prompt" id="write"><div class="wrap">
     <div><h2>나의 이야기 남기기</h2><p>질문 하나를 고르고, 떠오르는 장면부터 적어보세요.</p></div>
     <form id="story-form">
-      <label>물음<select id="question"><option value="다시 시작">지금 시작하기엔 늦었다고 느낀 적이 있나요?</option><option value="관계">누군가와의 관계에서 뒤늦게 배운 것은 무엇인가요?</option><option value="일상">평범한 하루를 다르게 보게 된 순간이 있나요?</option><option value="기억">오래 마음에 남아 있는 말 한마디가 있나요? 누가 언제 해 준 말인가요?</option><option value="선택">그때는 작은 선택이었지만, 돌아보니 삶의 방향을 바꾼 일이 있나요?</option><option value="실패">뜻대로 되지 않은 일에서 뒤늦게 무엇을 배웠나요?</option><option value="용기">두려웠지만 한 발 내디뎠던 날을 기억하나요? 무엇이 힘이 되었나요?</option><option value="놓아주기">오랫동안 붙들고 있다가 내려놓은 것이 있나요? 그 뒤로 무엇이 달라졌나요?</option><option value="고마움">그때 미처 고맙다고 말하지 못한 사람이 있나요? 지금이라면 어떤 말을 건네고 싶나요?</option><option value="변화">예전에는 당연하다고 여겼지만, 살아오면서 생각이 달라진 일이 있나요?</option></select></label>
+      <div class="question-field">
+        <label for="question">질문 선택</label>
+        <div class="question-select">
+          <select id="question" aria-describedby="question-hint" required>
+            <option value="" selected disabled>질문을 선택하세요</option>
+            <option value="다시 시작">지금 시작하기엔 늦었다고 느낀 적이 있나요?</option><option value="관계">누군가와의 관계에서 뒤늦게 배운 것은 무엇인가요?</option><option value="일상">평범한 하루를 다르게 보게 된 순간이 있나요?</option><option value="기억">오래 마음에 남아 있는 말 한마디가 있나요? 누가 언제 해 준 말인가요?</option><option value="선택">그때는 작은 선택이었지만, 돌아보니 삶의 방향을 바꾼 일이 있나요?</option><option value="실패">뜻대로 되지 않은 일에서 뒤늦게 무엇을 배웠나요?</option><option value="용기">두려웠지만 한 발 내디뎠던 날을 기억하나요? 무엇이 힘이 되었나요?</option><option value="놓아주기">오랫동안 붙들고 있다가 내려놓은 것이 있나요? 그 뒤로 무엇이 달라졌나요?</option><option value="고마움">그때 미처 고맙다고 말하지 못한 사람이 있나요? 지금이라면 어떤 말을 건네고 싶나요?</option><option value="변화">예전에는 당연하다고 여겼지만, 살아오면서 생각이 달라진 일이 있나요?</option>
+          </select>
+          <span class="question-chevron" aria-hidden="true"></span>
+        </div>
+        <p class="quiet" id="question-hint">이 칸을 눌러 질문 10개 중 하나를 골라보세요.</p>
+      </div>
       <label>제목<input id="entry-title" maxlength="80" required></label>
       <label>이야기<textarea id="entry-body" maxlength="6000" required></textarea></label>
       <p class="quiet">저장한 글은 이 브라우저의 서가에서만 볼 수 있어요.</p>
