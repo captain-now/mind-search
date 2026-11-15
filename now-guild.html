@@ -3,44 +3,204 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#284d3f">
+  <meta name="theme-color" content="#101a1d">
   <title>NOW길드 | NOW Mind Search</title>
   <link rel="icon" href="./favicon.ico">
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 28px;
       min-height: 100svh;
-      display: grid;
-      place-items: center;
-      background: #f7f5ee;
-      color: #263d36;
+      padding: clamp(12px, 4vw, 36px);
+      background: radial-gradient(ellipse at 50% 10%, #263c3d, transparent 65%), #0d1519;
+      color: #f6edda;
       font-family: system-ui, -apple-system, 'Noto Sans KR', sans-serif;
     }
-    main { width: min(100%, 480px); text-align: center; }
-    h1 {
-      margin: 0 0 20px;
-      padding: 40px 20px;
-      border: 1px solid #b49b5e;
-      border-radius: 20px;
-      background: #284d3f;
-      color: #fff2cb;
-      font-size: clamp(30px, 8vw, 44px);
+    main {
+      max-width: 760px;
+      margin-inline: auto;
+      overflow: hidden;
+      border: 1px solid #6e5a3e;
+      border-radius: 16px;
+      background: linear-gradient(160deg, #202d31, #141e23 58%);
+      box-shadow: 0 18px 48px #0006, inset 0 0 0 3px #10191d;
     }
-    a {
+    header {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      display: grid;
+      justify-items: center;
+      padding: 22px 12px 18px;
+      text-align: center;
+      border-bottom: 1px solid #665238;
+      background: radial-gradient(ellipse at 50% 0%, #4a3a23, transparent 75%), #182124;
+    }
+    header::before {
+      position: absolute;
+      z-index: -1;
+      top: -122px;
+      width: 220px;
+      aspect-ratio: 1;
+      border: 1px solid #b48e4b40;
+      box-shadow: 0 0 0 10px #b48e4b16, 0 0 0 24px #b48e4b10;
+      content: '';
+      transform: rotate(45deg);
+    }
+    h1 {
+      margin: 0;
+      color: #ffe6a7;
+      font-size: clamp(28px, 6vw, 40px);
+      line-height: 1.15;
+    }
+    h2 { margin: 6px 0 0; color: #ded0ae; font-size: 14px; font-weight: 600; }
+    .pyramid {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      margin: 0;
+      padding: 18px clamp(10px, 3vw, 25px) 16px;
+      list-style: none;
+    }
+    .tier {
+      --tier-width: 100%;
+      --columns: 5;
+      --accent: #d9c2a1;
+      --edge: #7d6751;
+      --fill: #302923;
+      width: var(--tier-width);
+      text-align: center;
+    }
+    .tier h3 {
+      margin: 0 0 4px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 650;
+    }
+    .tier h3 span { padding-inline: 3px; }
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+      gap: clamp(3px, 1vw, 8px);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .slots li {
+      display: grid;
+      min-height: 32px;
+      place-items: center;
+      padding: 5px 1px;
+      border: 1px solid var(--edge);
+      border-radius: 5px;
+      background: linear-gradient(#ffffff0b, transparent), var(--fill);
+      box-shadow: inset 0 0 0 2px #10151955;
+      color: var(--accent);
+      font-size: clamp(11px, 2.6vw, 15px);
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .tier-leader {
+      --tier-width: 28%; --columns: 1;
+      --accent: #ffe4a2; --edge: #ae874b; --fill: #523719;
+    }
+    .tier-deputy {
+      --tier-width: 45%; --columns: 2;
+      --accent: #f6d4ac; --edge: #9a745c; --fill: #463024;
+    }
+    .tier-elder {
+      --tier-width: 62%; --columns: 3;
+      --accent: #e9d5f0; --edge: #7d668f; --fill: #352a40;
+    }
+    .tier-guardians {
+      --tier-width: 79%; --columns: 4;
+      --accent: #bae4db; --edge: #567e77; --fill: #233e41;
+    }
+    .members {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 clamp(10px, 3vw, 25px);
+      padding: 10px 12px;
+      border: 1px solid #485c60;
+      border-radius: 5px;
+      background: #222f34;
+    }
+    .members span { color: #c1cdcd; font-size: 11px; }
+    .members strong { font-size: 15px; }
+    footer { text-align: center; }
+    footer a {
       display: inline-grid;
       min-height: 44px;
       place-items: center;
-      color: inherit;
+      padding-inline: 10px;
+      color: #d9ccb2;
+      font-size: 13px;
       text-underline-offset: 4px;
     }
+    footer a:focus-visible { outline: 2px solid #ffe4a2; outline-offset: -3px; }
   </style>
 </head>
 <body>
   <main>
-    <h1>NOW길드</h1>
-    <a href="./">NOW Mind Search 홈</a>
+    <header>
+      <h1>NOW길드</h1>
+      <h2>길드 구성표</h2>
+    </header>
+
+    <ol class="pyramid" aria-label="1~5단계 길드 직책">
+      <li class="tier tier-leader">
+        <h3>1단계 <span>·</span> 1명</h3>
+        <ul class="slots"><li>길드장</li></ul>
+      </li>
+      <li class="tier tier-deputy">
+        <h3>2단계 <span>·</span> 2명</h3>
+        <ul class="slots">
+          <li>부길드장</li>
+          <li>부길드장</li>
+        </ul>
+      </li>
+      <li class="tier tier-elder">
+        <h3>3단계 <span>·</span> 3명</h3>
+        <ul class="slots">
+          <li>장로</li>
+          <li>장로</li>
+          <li>장로</li>
+        </ul>
+      </li>
+      <li class="tier tier-guardians">
+        <h3>4단계 <span>·</span> 사신 <span>·</span> 4명</h3>
+        <ul class="slots">
+          <li>청룡</li>
+          <li>백호</li>
+          <li>주작</li>
+          <li>현무</li>
+        </ul>
+      </li>
+      <li class="tier">
+        <h3>5단계 <span>·</span> 십대제자 칭호 <span>·</span> 10명</h3>
+        <ul class="slots">
+          <li>지혜제일</li>
+          <li>신통제일</li>
+          <li>두타제일</li>
+          <li>천안제일</li>
+          <li>해공제일</li>
+          <li>설법제일</li>
+          <li>논의제일</li>
+          <li>지계제일</li>
+          <li>밀행제일</li>
+          <li>다문제일</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="members">
+      <span>6단계</span>
+      <strong>길드원</strong>
+    </div>
+
+    <footer><a href="./">NOW Mind Search 홈</a></footer>
   </main>
 </body>
 </html>
