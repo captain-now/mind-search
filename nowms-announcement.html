@@ -26,6 +26,9 @@
 .fee-population,.fee-sources{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap}
 .fee-population{margin-top:12px}
 .fee-sources a{color:var(--gold)}
+.exchange-start{margin-top:16px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;overflow-wrap:anywhere}
+.exchange-start h3{margin:0 0 6px;color:var(--gold);font-size:1rem}
+.exchange-start p{margin:0}
 .round-capacity{margin-top:20px;overflow-wrap:anywhere}
 .round-capacity h3{margin:0;color:var(--gold);font-size:1rem}
 .round-capacity-table th:first-child{width:16%}
@@ -85,6 +88,10 @@
         <tr><th scope="row">5차</th><td>10,000,000</td><td>10,000개</td></tr>
       </tbody>
     </table>
+    <div class="exchange-start">
+      <h3>회차별 교환 시작 기준</h3>
+      <p>1차부터 5차까지, 각 회차의 누적 교환 신청량을 NOWMS로 환산한 수량이 해당 회차의 배정 물량을 넘으면 그 회차의 코인 교환을 진행할 계획입니다.</p>
+    </div>
     <p class="table-note">예를 들어 2차에는 적립 NOW 10개로 NOWMS 1개를 받는 계획이에요. 5차는 교환용 마지막 1,000만 NOWMS를 장기간에 걸쳐 배정하는 구간이에요.</p>
     <div class="round-capacity">
       <h3>연 120,000 NOW 기준 교환 가능 인원</h3>
@@ -154,6 +161,8 @@
 <script src="./ui-language.js?v=1"></script>
 <script>
 const translations = new Map([
+  ["회차별 교환 시작 기준",["When each round opens","各轮兑换启动条件","各回の交換開始条件"]],
+  ["1차부터 5차까지, 각 회차의 누적 교환 신청량을 NOWMS로 환산한 수량이 해당 회차의 배정 물량을 넘으면 그 회차의 코인 교환을 진행할 계획입니다.",["For rounds 1 through 5, we plan to begin exchanges for a round once the cumulative exchange requests for that round, measured in NOWMS, exceed its allocation.","第 1 至第 5 轮中，各轮累计兑换申请量折算为 NOWMS 后超过该轮分配额度时，计划启动该轮兑换。","第1回から第5回まで、各回の累計交換申請量をNOWMSに換算した数量がその回の割当量を超えた時点で、その回の交換を実施する予定です。"]],
   ["연 120,000 NOW 기준 교환 가능 인원",["Estimated capacity at 120,000 NOW per person per year","按每人每年 120,000 NOW 估算可兑换人数","1人あたり年間120,000 NOWを基準とした交換可能人数"]],
   ["1인당 연간 적립 NOW 120,000개를 각 차수의 교환 비율로 전부 교환한다고 가정한 예시입니다.",["This estimate assumes each person exchanges all 120,000 NOW earned in a year at the rate for that round.","假设每人按各轮兑换比例，将一年获得的 120,000 NOW 全部兑换。","各回の交換比率で、1人が年間に獲得した120,000 NOWをすべて交換する場合の試算です。"]],
   ["1인당 교환량",["Per person","每人兑换量","1人あたり"]],
