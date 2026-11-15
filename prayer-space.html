@@ -98,7 +98,7 @@
       overflow: hidden;
       isolation: isolate;
     }
-    .temple-motion :is(img, video) {
+    .temple-motion :is(img, video), .foreground .chant-video {
       position: absolute;
       inset: 0;
       display: block;
@@ -213,8 +213,8 @@
       justify-content: flex-end;
       gap: 6px;
     }
-    .samseonggak .hall-chant { left: 12px; text-align: center; }
-    .samseonggak .chant-controls { justify-content: center; }
+    :is(.daejeokgwangjeon, .samseonggak) .hall-chant { left: 12px; text-align: center; }
+    :is(.daejeokgwangjeon, .samseonggak) .chant-controls { justify-content: center; }
     .chant-controls button[aria-pressed="true"] { background: #355a48; }
     .chant-status:not(:empty) {
       display: inline-block;
@@ -408,10 +408,8 @@
 
     const hallChants = {
       "daejeokgwangjeon": [
-        [
-          "om-nam",
-          "옴남"
-        ]
+        ["om-nam", "옴남"],
+        [null, "이뭣고"]
       ],
       "daeungjeon": [
         [
@@ -451,43 +449,79 @@
       const controls = panel.querySelector('.chant-controls');
       const status = panel.querySelector('.chant-status');
       const audio = panel.querySelector('audio');
-      let selected = null;
+      let active = null;
       let attempt = 0;
-      const buttons = tracks.map(([id, label]) => {
+
+      function stopVideo(video) {
+        video.remove();
+        video.removeAttribute('src');
+        video.load();
+      }
+
+      const buttons = tracks.map(([id, label, videoSource]) => {
         const button = document.createElement('button');
+        const name = prayerText(label);
+        const available = Boolean(id || videoSource);
+        const setPlaying = (playing) => {
+          button.textContent = (playing ? '⏸ ' : available ? '▶ ' : '') + name;
+          button.setAttribute('aria-pressed', String(playing));
+        };
         button.type = 'button';
-        button.textContent = '▶ ' + prayerText(label);
-        button.setAttribute('aria-label', prayerCopy(label + ' 정근 재생 또는 일시정지', 'Play or pause ' + prayerText(label), '播放或暂停' + prayerText(label), prayerText(label) + 'を再生・一時停止'));
-        button.setAttribute('aria-pressed', 'false');
+        button.setAttribute('aria-label', prayerCopy(label + ' 재생 또는 일시정지', 'Play or pause ' + name, '播放或暂停' + name, name + 'を再生・一時停止'));
+        setPlaying(false);
+
         button.addEventListener('click', async () => {
-          const currentAttempt = ++attempt;
           status.textContent = '';
-          if (selected === id && !audio.paused) {
-            audio.pause();
+          if (!available) {
+            status.textContent = prayerCopy('준비중입니다', 'Coming soon', '准备中', '準備中です');
             return;
           }
-          if (selected !== id || audio.error) {
-            selected = id;
-            audio.src = audioDirectory + id + '.mp3';
+
+          const currentAttempt = ++attempt;
+          const previous = active;
+          active = null;
+          if (previous) {
+            previous.media.pause();
+            previous.setPlaying(false);
+            if (previous.media !== audio) stopVideo(previous.media);
+            if (previous.button === button) return;
           }
+
+          const media = videoSource ? document.createElement('video') : audio;
+          if (videoSource) {
+            media.className = 'chant-video';
+            media.loop = true;
+            media.playsInline = true;
+            panel.before(media);
+            media.src = videoSource;
+          } else {
+            const source = audioDirectory + id + '.mp3';
+            if (audio.getAttribute('src') !== source || audio.error) audio.src = source;
+          }
+          active = { button, media, setPlaying };
+          setPlaying(true);
           try {
-            await audio.play();
+            await media.play();
           } catch {
-            if (currentAttempt === attempt) status.textContent = prayerText('음성을 재생할 수 없어요. 다시 눌러 주세요.');
+            if (currentAttempt !== attempt) return;
+            active = null;
+            setPlaying(false);
+            if (videoSource) stopVideo(media);
+            status.textContent = prayerCopy('재생할 수 없어요. 다시 눌러 주세요.', 'Unable to play. Tap to try again.', '无法播放，请重试。', '再生できません。もう一度お試しください。');
           }
         });
-        return { id, label, button };
+        return button;
       });
-      const updateButtons = () => {
-        for (const { id, label, button } of buttons) {
-          const playing = selected === id && !audio.paused && !audio.error;
-          button.textContent = (playing ? '⏸ ' : '▶ ') + prayerText(label);
-          button.setAttribute('aria-pressed', String(playing));
-        }
-      };
-      for (const event of ['play', 'pause', 'error']) audio.addEventListener(event, updateButtons);
-      window.addEventListener('pagehide', () => audio.pause());
-      controls.replaceChildren(...buttons.map(({ button }) => button));
+
+      window.addEventListener('pagehide', () => {
+        attempt++;
+        if (!active) return;
+        active.media.pause();
+        active.setPlaying(false);
+        if (active.media !== audio) stopVideo(active.media);
+        active = null;
+      });
+      controls.replaceChildren(...buttons);
       panel.hidden = false;
     }
 
@@ -901,7 +935,7 @@
         prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。'));
 
       if (hall) {
-        if (hallId === 'samseonggak') interior.classList.add('samseonggak');
+        interior.classList.add(hallId);
         seating.setAttribute('aria-label', '수행 공간');
         plan.style.setProperty('--cushion-color', hall.color);
         openTempleHall(hall, interior);
