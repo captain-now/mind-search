@@ -17,6 +17,9 @@
       max-width: none;
       padding: 0;
     }
+    .interior.muryangsujeon:not([hidden]) {
+      grid-template-rows: 60% auto minmax(0, 1fr);
+    }
     .interior section { display: grid; place-items: center; }
     .interior section + section { border-top: 1px solid #b8949f; }
     .interior h2 { margin: 0; font-size: clamp(24px, 6vw, 36px); }
@@ -98,21 +101,14 @@
       overflow: hidden;
       isolation: isolate;
     }
-    .temple-motion::before {
-      content: '';
-      position: absolute;
-      inset: -16px;
-      z-index: -1;
-      background: center / cover no-repeat var(--temple-poster);
-      filter: blur(12px) brightness(.58);
-    }
     .temple-motion :is(img, video) {
       position: absolute;
       inset: 0;
       display: block;
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
+      object-position: center 40%;
     }
     .temple-sound {
       position: absolute;
@@ -129,9 +125,6 @@
       cursor: pointer;
     }
     .temple-sound:focus-visible { outline: 2px solid white; outline-offset: 3px; }
-    @media (max-width: 600px) and (orientation: portrait) {
-      .temple-motion :is(img, video) { object-fit: cover; }
-    }
     .interior .temple-seating {
       background:
         repeating-linear-gradient(90deg, #52301c22 0 1px, transparent 1px 66px),
@@ -864,7 +857,6 @@
       if (hall.video) {
         const scene = document.createElement('div');
         scene.className = 'temple-motion';
-        scene.style.setProperty('--temple-poster', `url("${image.src}")`);
         scene.append(image);
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           const video = document.createElement('video');
@@ -917,6 +909,7 @@
         prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。'));
 
       if (hall) {
+        if (hallId === 'muryangsujeon') interior.classList.add('muryangsujeon');
         seating.setAttribute('aria-label', '수행 공간');
         plan.style.setProperty('--cushion-color', hall.color);
         openTempleHall(hall, interior);
