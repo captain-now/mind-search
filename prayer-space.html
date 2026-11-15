@@ -215,6 +215,18 @@
     }
     :is(.daejeokgwangjeon, .samseonggak) .hall-chant { left: 12px; text-align: center; }
     :is(.daejeokgwangjeon, .samseonggak) .chant-controls { justify-content: center; }
+    .chant-controls button { position: relative; }
+    .chant-button-size { visibility: hidden; }
+    .chant-button-label {
+      position: absolute;
+      inset: 2px 3px;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      line-height: 1.1;
+      text-align: center;
+      word-break: keep-all;
+    }
     .chant-controls button[aria-pressed="true"] { background: #355a48; }
     .chant-status:not(:empty) {
       display: inline-block;
@@ -462,12 +474,21 @@
         const button = document.createElement('button');
         const name = prayerText(label);
         const available = Boolean(id || videoSource);
+        const size = document.createElement('span');
+        size.className = 'chant-button-size';
+        size.setAttribute('aria-hidden', 'true');
+        const caption = document.createElement('span');
+        caption.className = 'chant-button-label';
+        button.type = 'button';
+        button.append(size, caption);
         const setPlaying = (playing) => {
-          button.textContent = (playing ? '⏸ ' : available ? '▶ ' : '') + name;
+          size.textContent = (available ? '▶ ' : '') + name;
+          const action = playing
+            ? prayerCopy(name + ' 소리 끄기', 'Stop ' + name, '关闭' + name, name + 'の音声を停止')
+            : prayerCopy(name + ' 소리듣기', 'Listen to ' + name, '聆听' + name, name + 'の音声を聴く');
+          caption.textContent = action;
           button.setAttribute('aria-pressed', String(playing));
         };
-        button.type = 'button';
-        button.setAttribute('aria-label', prayerCopy(label + ' 재생 또는 일시정지', 'Play or pause ' + name, '播放或暂停' + name, name + 'を再生・一時停止'));
         setPlaying(false);
 
         button.addEventListener('click', async () => {
