@@ -13,6 +13,19 @@
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .language-select{background:var(--surface);color:var(--text);border:1px solid #a78b56;border-radius:9px;padding:8px;font:inherit}
 .video-link{display:inline-block;margin-top:14px}
+.fee-panel{overflow-wrap:anywhere}
+.fee-panel h3{margin:20px 0 8px;color:var(--gold);font-size:1rem}
+.fee-panel h4{margin:14px 0 4px;font-size:.9rem}
+.fee-assumptions{padding-inline-start:1.2em;margin:12px 0;font-size:.92rem}
+.fee-assumptions li+li{margin-top:6px}
+.fee-table th,.fee-table td{padding:8px 4px;font-size:clamp(.7rem,2.8vw,.88rem);line-height:1.35}
+.fee-table th:first-child{width:24%}
+.fee-table tbody th{color:var(--text)}
+.fee-table td span{display:block}
+.fee-table td span+span{color:var(--muted);margin-top:2px}
+.fee-population,.fee-sources{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap}
+.fee-population{margin-top:12px}
+.fee-sources a{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -71,6 +84,44 @@
     <p class="table-note">예를 들어 2차에는 적립 NOW 10개로 NOWMS 1개를 받는 계획이에요. 5차는 교환용 마지막 1,000만 NOWMS를 장기간에 걸쳐 배정하는 구간이에요.</p>
   </section>
 
+  <section class="panel fee-panel" aria-labelledby="fees-title">
+    <h2 id="fees-title">교환 수수료와 계정 보증금</h2>
+    <p class="muted">아래는 NOWMS를 지급할 때 드는 솔라나 비용의 예시입니다. 이용자에게 부과할 교환 수수료와 비용 부담 주체는 아직 정해지지 않았습니다.</p>
+    <ul class="fee-assumptions"><li>기본 전송 수수료는 한 건당 0.000005 SOL입니다. 1명당 한 건, 서명 1개, 우선순위 수수료 0 SOL로 계산했습니다.</li><li>받는 지갑에 NOWMS 보관 계정이 없으면 처음에 0.00148844 SOL이 보증금으로 추가됩니다. 계정을 유지하면 다음 교환부터 기본 전송 수수료만 듭니다.</li></ul>
+    <h3>한 번 교환할 때 · 인원별 비용</h3>
+    <table class="fee-table"  aria-label="한 번 교환할 때 · 인원별 비용"><thead><tr><th scope="col">교환 인원</th><th scope="col">기존 계정</th><th scope="col">새 계정</th></tr></thead><tbody>
+<tr><th scope="row">1</th><td><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td><span>0.00149344 SOL</span><span>≈ ₩147.7</span></td></tr>
+<tr><th scope="row">10</th><td><span>0.00005 SOL</span><span>≈ ₩4.95</span></td><td><span>0.0149344 SOL</span><span>≈ ₩1,477.01</span></td></tr>
+<tr><th scope="row">100</th><td><span>0.0005 SOL</span><span>≈ ₩49.45</span></td><td><span>0.149344 SOL</span><span>≈ ₩14,770.12</span></td></tr>
+<tr><th scope="row">1,000</th><td><span>0.005 SOL</span><span>≈ ₩494.5</span></td><td><span>1.49344 SOL</span><span>≈ ₩147,701.22</span></td></tr>
+<tr><th scope="row">10,000</th><td><span>0.05 SOL</span><span>≈ ₩4,945</span></td><td><span>14.9344 SOL</span><span>≈ ₩1,477,012.16</span></td></tr>
+<tr><th scope="row">100,000</th><td><span>0.5 SOL</span><span>≈ ₩49,450</span></td><td><span>149.344 SOL</span><span>≈ ₩14,770,121.6</span></td></tr>
+<tr><th scope="row">1,000,000</th><td><span>5 SOL</span><span>≈ ₩494,500</span></td><td><span>1,493.44 SOL</span><span>≈ ₩147,701,216</span></td></tr>
+</tbody></table>
+    <p class="table-note">각 열은 모든 수령자가 같은 조건인 경우를 보여줍니다. 기존 계정과 새 계정이 섞이면 전체 인원에 전송 수수료를, 새 계정이 필요한 인원에만 보증금을 더합니다.</p>
+    <h3>1차~5차 교환 비용</h3>
+    <p class="muted">매 회차 같은 인원이 같은 지갑으로 한 번씩 받는 경우입니다. 첫 교환 때 계정이 없는 지갑에는 1차에만 보증금이 듭니다. 2~5차에 처음 참여하는 지갑에도 보증금이 필요합니다.</p>
+    <label class="fee-population"><span>교환 인원</span><select id="fee-population" class="language-select"><option value="1">1</option><option value="10">10</option><option value="100">100</option><option value="1000">1,000</option><option value="10000">10,000</option><option value="100000">100,000</option><option value="1000000">1,000,000</option></select></label>
+    <h4>처음부터 기존 계정 사용</h4>
+    <table class="fee-table" id="fee-rounds-0" aria-label="처음부터 기존 계정 사용"><thead><tr><th scope="col">회차</th><th scope="col">회차별 비용</th><th scope="col">누적 비용</th></tr></thead><tbody>
+<tr><th scope="row">1차</th><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td></tr>
+<tr><th scope="row">2차</th><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td data-lamports="10000"><span>0.00001 SOL</span><span>≈ ₩0.99</span></td></tr>
+<tr><th scope="row">3차</th><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td data-lamports="15000"><span>0.000015 SOL</span><span>≈ ₩1.48</span></td></tr>
+<tr><th scope="row">4차</th><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td data-lamports="20000"><span>0.00002 SOL</span><span>≈ ₩1.98</span></td></tr>
+<tr><th scope="row">5차</th><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td data-lamports="25000"><span>0.000025 SOL</span><span>≈ ₩2.47</span></td></tr>
+</tbody></table>
+    <h4>첫 교환 때 새 계정 생성</h4>
+    <table class="fee-table" id="fee-rounds-1" aria-label="첫 교환 때 새 계정 생성"><thead><tr><th scope="col">회차</th><th scope="col">회차별 비용</th><th scope="col">누적 비용</th></tr></thead><tbody>
+<tr><th scope="row">1차</th><td data-lamports="1493440"><span>0.00149344 SOL</span><span>≈ ₩147.7</span></td><td data-lamports="1493440"><span>0.00149344 SOL</span><span>≈ ₩147.7</span></td></tr>
+<tr><th scope="row">2차</th><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td data-lamports="1498440"><span>0.00149844 SOL</span><span>≈ ₩148.2</span></td></tr>
+<tr><th scope="row">3차</th><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td data-lamports="1503440"><span>0.00150344 SOL</span><span>≈ ₩148.69</span></td></tr>
+<tr><th scope="row">4차</th><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td data-lamports="1508440"><span>0.00150844 SOL</span><span>≈ ₩149.18</span></td></tr>
+<tr><th scope="row">5차</th><td data-lamports="5000"><span>0.000005 SOL</span><span>≈ ₩0.49</span></td><td data-lamports="1513440"><span>0.00151344 SOL</span><span>≈ ₩149.68</span></td></tr>
+</tbody></table>
+    <p class="table-note">2026년 11월 15일 확인 기준. 원화는 1 SOL = 98,900원으로 환산한 참고값입니다. 실제 비용은 교환 시점의 SOL 시세, 우선순위 수수료, 계정 생성 조건에 따라 달라질 수 있습니다.</p>
+    <p class="table-note fee-sources"><a href="https://solana.com/ko/docs/core/fees/fee-structure">솔라나 수수료 안내</a><a href="https://solana.com/docs/rpc/http/getminimumbalanceforrentexemption">계정 보증금 안내</a></p>
+  </section>
+
   <section class="panel" aria-labelledby="next-title">
     <h2 id="next-title">앞으로의 일정</h2>
     <ul class="steps">
@@ -84,6 +135,25 @@
 <script src="./ui-language.js?v=1"></script>
 <script>
 const translations = new Map([
+  ["교환 수수료와 계정 보증금",["Exchange fees and account deposits","兑换手续费与账户押金","交換手数料と口座保証金"]],
+  ["아래는 NOWMS를 지급할 때 드는 솔라나 비용의 예시입니다. 이용자에게 부과할 교환 수수료와 비용 부담 주체는 아직 정해지지 않았습니다.",["These are estimated Solana costs for distributing NOWMS. User fees and who will cover the costs are still undecided.","以下是发放 NOWMS 的 Solana 费用估算。用户手续费和费用承担方尚未确定。","以下は NOWMS 配布時の Solana 費用の試算です。利用者の手数料と費用負担者は未定です。"]],
+  ["기본 전송 수수료는 한 건당 0.000005 SOL입니다. 1명당 한 건, 서명 1개, 우선순위 수수료 0 SOL로 계산했습니다.",["The base fee is 0.000005 SOL per transfer, assuming one transfer per recipient, one signature, and no priority fee.","每笔基本转账费为 0.000005 SOL，按每人一笔、一次签名且无优先费计算。","基本送金手数料は1件0.000005 SOLです。1人1件、署名1つ、優先手数料なしで計算しています。"]],
+  ["받는 지갑에 NOWMS 보관 계정이 없으면 처음에 0.00148844 SOL이 보증금으로 추가됩니다. 계정을 유지하면 다음 교환부터 기본 전송 수수료만 듭니다.",["A wallet without a NOWMS token account needs a one-time deposit of 0.00148844 SOL. Later transfers to the same open account incur only the base fee.","如果收款钱包没有 NOWMS 代币账户，首次需另付 0.00148844 SOL 押金。保留该账户时，之后只需支付基本转账费。","受取ウォレットに NOWMS 口座がない場合、初回のみ0.00148844 SOLの保証金がかかります。同じ口座を維持すれば次回から基本手数料だけです。"]],
+  ["한 번 교환할 때 · 인원별 비용",["One exchange · cost by recipient count","单次兑换 · 按人数估算","1回の交換 · 人数別費用"]],
+  ["교환 인원",["Recipients","兑换人数","交換人数"]],
+  ["기존 계정",["Existing accounts","已有账户","既存口座"]],
+  ["새 계정",["New accounts","新建账户","新規口座"]],
+  ["각 열은 모든 수령자가 같은 조건인 경우를 보여줍니다. 기존 계정과 새 계정이 섞이면 전체 인원에 전송 수수료를, 새 계정이 필요한 인원에만 보증금을 더합니다.",["Each column assumes the same account status for every recipient. For a mix, add the transfer fee for all recipients and the deposit only for those needing a new account.","每列假定所有收款人的账户状况相同。混合计算时，所有人计入转账费，仅需开设新账户的人计入押金。","各列は全員が同じ条件の場合です。混在する場合は全員分の送金手数料に、新規口座が必要な人数分の保証金を足します。"]],
+  ["1차~5차 교환 비용",["Costs for rounds 1–5","第 1 至第 5 轮费用","第1〜5回の交換費用"]],
+  ["매 회차 같은 인원이 같은 지갑으로 한 번씩 받는 경우입니다. 첫 교환 때 계정이 없는 지갑에는 1차에만 보증금이 듭니다. 2~5차에 처음 참여하는 지갑에도 보증금이 필요합니다.",["This assumes the same recipients use the same wallets once per round. Wallets without an account pay the deposit in round 1. Wallets joining for the first time in rounds 2–5 also need a deposit.","假设同一批人每轮用同一钱包接收一次。没有账户的钱包在首轮支付押金，第 2 至第 5 轮首次参与的钱包也需支付押金。","毎回、同じ参加者が同じウォレットで1回受け取る想定です。口座がなければ第1回のみ保証金がかかります。第2〜5回に初参加する場合も保証金が必要です。"]],
+  ["회차",["Round","轮次","回"]],
+  ["회차별 비용",["Cost each round","本轮费用","各回の費用"]],
+  ["누적 비용",["Cumulative cost","累计费用","累計費用"]],
+  ["처음부터 기존 계정 사용",["Existing accounts from the start","从首轮起使用已有账户","初回から既存口座を使用"]],
+  ["첫 교환 때 새 계정 생성",["New accounts on first exchange","首次兑换时新建账户","初回に新規口座を作成"]],
+  ["2026년 11월 15일 확인 기준. 원화는 1 SOL = 98,900원으로 환산한 참고값입니다. 실제 비용은 교환 시점의 SOL 시세, 우선순위 수수료, 계정 생성 조건에 따라 달라질 수 있습니다.",["Checked November 15, 2026. KRW estimates use 98,900 KRW per SOL. Actual costs may vary with the SOL price, priority fees, and account creation requirements at the time of exchange.","核算日期为 2026 年 11 月 15 日。韩元参考价按 1 SOL = 98,900 韩元换算。实际费用取决于兑换时的 SOL 价格、优先费及开户条件。","2026年11月15日確認。韓国ウォンは1 SOL＝98,900ウォンで換算しています。実際の費用は交換時のSOL価格、優先手数料、口座作成条件によって変わります。"]],
+  ["솔라나 수수료 안내",["Solana fee documentation","Solana 手续费说明","Solana 手数料の説明"]],
+  ["계정 보증금 안내",["Account deposit documentation","账户押金说明","口座保証金の説明"]],
   ["← Mind Search 홈",["← Mind Search Home","← Mind Search 首页","← Mind Search ホーム"]],
   ["나우코인 발행 안내",["NOWMS Token Launch","NOWMS 代币发行公告","NOWMS トークン発行のお知らせ"]],
   ["NOW Mind Search · 솔라나 메인넷 발행 완료",["NOW Mind Search · Issued on Solana Mainnet","NOW Mind Search · 已在 Solana 主网发行","NOW Mind Search · Solana メインネットで発行済み"]],
@@ -137,6 +207,17 @@ const translations = new Map([
   ["주소를 길게 눌러 복사해 주세요.",["Press and hold the address to copy it.","请长按地址进行复制。","アドレスを長押ししてコピーしてください。"]],
   ["NOW Mind Search(NOWMS)의 솔라나 메인넷 발행 현황과 NOW 마음챙김 적립 코인 교환 계획을 확인하세요.",["See NOWMS issuance on Solana Mainnet and the proposed exchange plan for NOW Mindfulness rewards.","查看 NOWMS 在 Solana 主网的发行情况，以及 NOW 正念积分币兑换计划。","Solana メインネットでの NOWMS 発行状況と、NOW マインドフルネスの報酬コイン交換計画をご確認ください。"]]
 ]);
+const population = document.getElementById('fee-population');
+const feeCells = document.querySelectorAll('[data-lamports]');
+const feeNumber = new Intl.NumberFormat('en', { maximumFractionDigits: 9 });
+const wonNumber = new Intl.NumberFormat('en', { maximumFractionDigits: 2 });
+population.addEventListener('change', () => {
+  for (const cell of feeCells) {
+    const sol = Number(cell.dataset.lamports) * Number(population.value) / 1e9;
+    cell.firstElementChild.textContent = feeNumber.format(sol) + ' SOL';
+    cell.lastElementChild.textContent = '≈ ₩' + wonNumber.format(sol * 98900);
+  }
+});
 const language = window.mindSearchLanguage;
 let lang = language?.read() ?? 'ko';
 const select = document.getElementById('languageToggle');
