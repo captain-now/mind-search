@@ -107,7 +107,7 @@
       object-fit: cover;
       object-position: center 40%;
     }
-    .temple-sound, .hall-chant {
+    .hall-chant {
       position: absolute;
       left: 50%;
       bottom: 12px;
@@ -115,7 +115,7 @@
       max-width: calc(100% - 24px);
       transform: translateX(-50%);
     }
-    .temple-sound, .chant-controls button {
+    .chant-controls button {
       min-height: 44px;
       padding: 8px 14px;
       border: 1px solid #f2d49a;
@@ -125,7 +125,7 @@
       font: inherit;
       cursor: pointer;
     }
-    .temple-sound:focus-visible, .chant-controls button:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+    .chant-controls button:focus-visible { outline: 2px solid white; outline-offset: 3px; }
     .interior .temple-seating {
       background:
         repeating-linear-gradient(90deg, #52301c22 0 1px, transparent 1px 66px),
@@ -215,9 +215,9 @@
       justify-content: center;
       gap: 6px;
     }
-    .daeungjeon .chant-controls { flex-wrap: nowrap; }
-    .daeungjeon .chant-controls button { min-width: 0; }
-    .daeungjeon .chant-button-size { white-space: nowrap; }
+    :is(.daeungjeon, .muryangsujeon) .chant-controls { flex-wrap: nowrap; }
+    :is(.daeungjeon, .muryangsujeon) .chant-controls button { min-width: 0; }
+    :is(.daeungjeon, .muryangsujeon) .chant-button-size { white-space: nowrap; }
     .chant-controls button { position: relative; }
     .chant-button-size { visibility: hidden; }
     .chant-button-label {
@@ -432,6 +432,10 @@
         ["shakyamuni", "석가모니불"],
         [null, "금강경 한글"]
       ],
+      "muryangsujeon": [
+        [null, "아미타경 한문"],
+        [null, "아미타경 한글"]
+      ],
       "gwaneumjeon": [
         [
           "avalokiteshvara",
@@ -485,7 +489,7 @@
       video.load();
     }
 
-    function addHallChants(interior, tracks, audioDirectory = './assets/temple/chant/') {
+    function addHallChants(interior, tracks, { audioDirectory = './assets/temple/chant/', middleButton } = {}) {
       const panel = interior.querySelector('.hall-chant');
       const controls = panel.querySelector('.chant-controls');
       const status = panel.querySelector('.chant-status');
@@ -553,6 +557,7 @@
         if (active.media !== audio) stopVideo(active.media);
         active = null;
       });
+      if (middleButton) buttons.splice(1, 0, middleButton);
       controls.replaceChildren(...buttons);
       panel.hidden = false;
     }
@@ -866,7 +871,7 @@
       return seatCount;
     }
 
-    function addTempleSound(scene, hall, image) {
+    function createTempleVideoControl(scene, hall, image) {
       const audio = document.createElement('audio');
       audio.preload = 'none';
       audio.loop = true;
@@ -874,10 +879,8 @@
 
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'temple-sound';
       const name = prayerCopy('나무아미타불', 'Amitabha chant', '南无阿弥陀佛', '南無阿弥陀仏');
-      const sizeLabel = prayerCopy('나무아미타불 소리 켜기', 'Amitabha chant sound on', '南无阿弥陀佛声音 开启', '南無阿弥陀仏の音声 オン');
-      const caption = addSoundCaption(button, sizeLabel);
+      const caption = addSoundCaption(button, name);
       let video = null;
 
       function stop() {
@@ -922,7 +925,8 @@
 
       window.addEventListener('pagehide', stop);
       setSoundCaption(button, caption, name, false);
-      scene.append(audio, button);
+      scene.append(audio);
+      return button;
     }
 
     function openTempleHall(hall, interior) {
@@ -931,17 +935,19 @@
       image.src = './assets/temple/' + hall.image;
       image.alt = prayerText(hall.alt);
       const section = view.parentElement;
+      let videoButton;
       if (hall.video) {
         const scene = document.createElement('div');
         scene.className = 'temple-motion';
         scene.append(image);
-        addTempleSound(scene, hall, image);
+        videoButton = createTempleVideoControl(scene, hall, image);
         view.replaceWith(scene);
       } else {
         view.replaceWith(image);
       }
       section.classList.add('temple-view');
       section.querySelector('#view-title').hidden = true;
+      return videoButton;
     }
 
     const params = new URLSearchParams(location.search);
@@ -973,14 +979,14 @@
         prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。'));
 
       if (hall) {
-        if (hallId === 'daeungjeon') interior.classList.add('daeungjeon');
+        if (hallId === 'daeungjeon' || hallId === 'muryangsujeon') interior.classList.add(hallId);
         seating.setAttribute('aria-label', '수행 공간');
         plan.style.setProperty('--cushion-color', hall.color);
-        openTempleHall(hall, interior);
+        const middleButton = openTempleHall(hall, interior);
         const memorial = hallId === 'muryangsujeon' || hallId === 'jijangjeon';
         enableSeatNames(plan, '좌복', memorial, fixedSeatsByHall.get(hallId));
         const tracks = hallChants[hallId];
-        if (tracks) addHallChants(interior, tracks);
+        if (tracks) addHallChants(interior, tracks, { middleButton });
         const backLink = seating.querySelector('.home-return');
         backLink.href = './temple.html?v=centered-sound-v2';
         backLink.textContent = '각 전각으로 돌아가기';
@@ -988,9 +994,9 @@
         enableSeatNames(plan, '좌석', false, sharedFixedSeats);
         startGallery(space);
         if (space === 'church') {
-          addHallChants(interior, [['amen', '아멘']], './assets/church/chant/');
+          addHallChants(interior, [['amen', '아멘']], { audioDirectory: './assets/church/chant/' });
         } else if (space === 'cathedral') {
-          addHallChants(interior, [['ave-maria', '아베마리아']], './assets/cathedral/chant/');
+          addHallChants(interior, [['ave-maria', '아베마리아']], { audioDirectory: './assets/cathedral/chant/' });
         }
       }
       interior.hidden = false;
