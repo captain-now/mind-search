@@ -213,6 +213,8 @@
       justify-content: flex-end;
       gap: 6px;
     }
+    .samseonggak .hall-chant { left: 12px; text-align: center; }
+    .samseonggak .chant-controls { justify-content: center; }
     .chant-controls button[aria-pressed="true"] { background: #355a48; }
     .chant-status:not(:empty) {
       display: inline-block;
@@ -899,6 +901,7 @@
         prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。'));
 
       if (hall) {
+        if (hallId === 'samseonggak') interior.classList.add('samseonggak');
         seating.setAttribute('aria-label', '수행 공간');
         plan.style.setProperty('--cushion-color', hall.color);
         openTempleHall(hall, interior);
