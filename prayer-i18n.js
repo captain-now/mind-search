@@ -211,6 +211,13 @@
   "좌복을 선택하시고 기도하시려는 분의 성함을 넣으세요.": "Sélectionnez un coussin et saisissez le nom de la personne pour laquelle vous priez.",
   "최대 16명까지 가능합니다.": "Jusqu’à 16 personnes."
 };
+  Object.assign(french, {
+    '정근': 'Prières audio',
+    '금강경 한문': 'Sūtra du Diamant (chinois classique)',
+    '금강경 한글': 'Sūtra du Diamant (coréen)',
+    '아미타경 한문': 'Sūtra d’Amitābha (chinois classique)',
+    '관세음보살 보문품 한글': 'Chapitre de la Porte universelle d’Avalokiteśvara (coréen)'
+  });
   const code = language.read();
   const index = ['en', 'zh', 'ja'].indexOf(code);
   const choose = (ko, en, zh, ja, fr) => code === 'fr' ? (fr ?? french[ko] ?? en ?? ko) : index === -1 ? ko : [en, zh, ja][index];
