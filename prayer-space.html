@@ -18,7 +18,7 @@
       padding: 0;
     }
     .interior section { display: grid; place-items: center; }
-    .interior section + section { border-top: 1px solid #b8949f; }
+    .foreground { position: relative; min-height: 0; }
     .interior h2 { margin: 0; font-size: clamp(24px, 6vw, 36px); }
     .interior .seating { min-height: 0; border-top: 1px solid #b8949f; background: #f5e8d5; }
     .space-gallery {
@@ -31,7 +31,7 @@
     .space-gallery img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .space-gallery button {
       position: absolute;
-      right: 12px;
+      left: 12px;
       bottom: 12px;
       min-height: 44px;
       padding: 8px 14px;
@@ -111,8 +111,10 @@
       position: absolute;
       right: 12px;
       bottom: 12px;
-      min-height: 44px;
       max-width: calc(100% - 24px);
+    }
+    .temple-sound, .chant-controls button {
+      min-height: 44px;
       padding: 8px 14px;
       border: 1px solid #f2d49a;
       border-radius: 999px;
@@ -121,7 +123,7 @@
       font: inherit;
       cursor: pointer;
     }
-    .temple-sound:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+    .temple-sound:focus-visible, .chant-controls button:focus-visible { outline: 2px solid white; outline-offset: 3px; }
     .interior .temple-seating {
       background:
         repeating-linear-gradient(90deg, #52301c22 0 1px, transparent 1px 66px),
@@ -185,10 +187,6 @@
       background: var(--cushion-color);
       box-shadow: inset 0 0 0 2px #e5b07966, inset 0 4px 12px #fff2, 0 2px 3px #41241480;
     }
-    .interior.with-chant:not([hidden]) {
-      grid-template-rows: 60% auto auto minmax(0, 1fr);
-      min-height: 720px;
-    }
     .seat-guide {
       margin: 0;
       padding: 8px 12px;
@@ -200,33 +198,29 @@
       line-height: 1.4;
     }
     .hall-chant {
-      min-width: 0;
-      padding: 6px 10px;
-      background: #f6efe2;
-      color: #30251b;
-      font: 600 14px/1.3 system-ui, sans-serif;
-      text-align: center;
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      max-width: calc(100% - 24px);
+      color: #fff5e2;
+      font-size: 14px;
+      text-align: right;
     }
-    .hall-chant strong { display: block; margin-bottom: 4px; }
+    .space-gallery:not([hidden]) + .hall-chant { max-width: calc(100% - 144px); }
     .chant-controls {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-end;
       gap: 6px;
     }
-    .chant-controls button {
-      min-height: 44px;
-      padding: 4px 10px;
-      border: 1px solid #355a48;
-      border-radius: 12px;
-      background: #fff9e9;
-      color: #274637;
-      font: inherit;
-      cursor: pointer;
+    .chant-controls button[aria-pressed="true"] { background: #355a48; }
+    .chant-status:not(:empty) {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: #271a13ed;
     }
-    .chant-controls button[aria-pressed="true"] { background: #355a48; color: #fff; }
-    .chant-controls button:focus-visible { outline: 2px solid #986538; outline-offset: 2px; }
-    .chant-status:not(:empty) { display: block; margin-top: 4px; }
     .temple-cushion[type="button"], .chair-name-button { position: relative; }
     /* 읏맨-궁서체 · OK금융그룹 */
     @font-face {
@@ -299,18 +293,17 @@
     <a href="./prayer.html">공간 선택으로 돌아가기</a>
   </main>
   <main id="space-interior" class="interior" hidden>
-    <section aria-label="전경">
+    <section class="foreground" aria-label="전경">
       <h2 id="view-title">전경</h2>
       <div class="space-gallery" hidden>
         <button type="button">일시정지</button>
       </div>
+      <div class="hall-chant" role="group" aria-label="정근" hidden>
+        <div class="chant-controls"></div>
+        <span class="chant-status" role="status"></span>
+        <audio loop preload="none"></audio>
+      </div>
     </section>
-    <div class="hall-chant" role="group" aria-labelledby="chant-heading" hidden>
-      <strong id="chant-heading">NOW 마음챙김 · 정근</strong>
-      <div class="chant-controls"></div>
-      <span class="chant-status" role="status"></span>
-      <audio loop preload="none"></audio>
-    </div>
     <p class="seat-guide"><span class="seat-guide-item">의자</span>를 선택하시고 기도하시려는 분의 성함을 넣으세요.<br>
       최대 <span class="seat-capacity"></span>명까지 가능합니다.</p>
     <section class="seating" aria-label="좌석">
@@ -494,7 +487,6 @@
       window.addEventListener('pagehide', () => audio.pause());
       controls.replaceChildren(...buttons.map(({ button }) => button));
       panel.hidden = false;
-      interior.classList.add('with-chant');
     }
 
     function formatMemorialName(value, suffix) {
