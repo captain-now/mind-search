@@ -218,6 +218,10 @@
     :is(.daeungjeon, .muryangsujeon) .chant-controls { flex-wrap: nowrap; }
     :is(.daeungjeon, .muryangsujeon) .chant-controls button { min-width: 0; }
     :is(.daeungjeon, .muryangsujeon) .chant-button-size { white-space: nowrap; }
+    .gwaneumjeon .hall-chant { width: 360px; }
+    .gwaneumjeon .chant-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .gwaneumjeon .chant-controls button { min-width: 0; }
+    .gwaneumjeon .chant-button-size { white-space: nowrap; }
     .chant-controls button { position: relative; }
     .chant-button-size { visibility: hidden; }
     .chant-button-label {
@@ -437,6 +441,7 @@
         [null, "아미타경 한글"]
       ],
       "gwaneumjeon": [
+        [null, "관세음보살 보문품 한글"],
         [
           "avalokiteshvara",
           "관세음보살"
@@ -979,7 +984,7 @@
         prayerCopy('최대 ' + capacity + '명까지 가능합니다.', 'Up to ' + capacity + ' people.', '最多可填写' + capacity + '人。', '最大' + capacity + '名まで入力できます。'));
 
       if (hall) {
-        if (hallId === 'daeungjeon' || hallId === 'muryangsujeon') interior.classList.add(hallId);
+        if (hallId === 'daeungjeon' || hallId === 'muryangsujeon' || hallId === 'gwaneumjeon') interior.classList.add(hallId);
         seating.setAttribute('aria-label', '수행 공간');
         plan.style.setProperty('--cushion-color', hall.color);
         const middleButton = openTempleHall(hall, interior);
