@@ -457,6 +457,25 @@
       ]
     };
 
+    function addSoundCaption(button, sizeLabel) {
+      const size = document.createElement('span');
+      size.className = 'chant-button-size';
+      size.setAttribute('aria-hidden', 'true');
+      size.textContent = sizeLabel;
+      const caption = document.createElement('span');
+      caption.className = 'chant-button-label';
+      button.append(size, caption);
+      return caption;
+    }
+
+    function setSoundCaption(button, caption, name, playing) {
+      const action = playing
+        ? prayerCopy('소리 끄기', 'Sound off', '关闭声音', '音声オフ')
+        : prayerCopy('소리 켜기', 'Sound on', '开启声音', '音声オン');
+      caption.textContent = name + '\n' + action;
+      button.setAttribute('aria-pressed', String(playing));
+    }
+
     function addHallChants(interior, tracks, audioDirectory = './assets/temple/chant/') {
       const panel = interior.querySelector('.hall-chant');
       const controls = panel.querySelector('.chant-controls');
@@ -474,23 +493,10 @@
       const buttons = tracks.map(([id, label, videoSource]) => {
         const button = document.createElement('button');
         const name = prayerText(label);
-        const labelBreak = name.length >= 4 ? '\n' : ' ';
         const available = Boolean(id || videoSource);
-        const size = document.createElement('span');
-        size.className = 'chant-button-size';
-        size.setAttribute('aria-hidden', 'true');
-        const caption = document.createElement('span');
-        caption.className = 'chant-button-label';
         button.type = 'button';
-        button.append(size, caption);
-        const setPlaying = (playing) => {
-          size.textContent = (available ? '▶ ' : '') + name;
-          const action = playing
-            ? prayerCopy(name + labelBreak + '소리 끄기', 'Stop ' + name, '关闭' + name, name + 'の音声を停止')
-            : prayerCopy(name + labelBreak + '소리 켜기', 'Turn on ' + name, '开启' + name, name + 'の音声をオン');
-          caption.textContent = action;
-          button.setAttribute('aria-pressed', String(playing));
-        };
+        const caption = addSoundCaption(button, (available ? '▶ ' : '') + name);
+        const setPlaying = (playing) => setSoundCaption(button, caption, name, playing);
         setPlaying(false);
 
         button.addEventListener('click', async () => {
@@ -866,15 +872,10 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'temple-sound';
-      const label = prayerCopy('나무아미타불 소리', 'Amitabha chant sound', '南无阿弥陀佛声音', '南無阿弥陀仏の音声');
-      button.setAttribute('aria-label', label);
-      const update = () => {
-        const playing = !audio.paused && !audio.error;
-        button.textContent = label + (playing
-          ? prayerCopy(' 끄기', ' off', ' 关闭', ' オフ')
-          : prayerCopy(' 켜기', ' on', ' 开启', ' オン'));
-        button.setAttribute('aria-pressed', String(playing));
-      };
+      const name = prayerCopy('나무아미타불', 'Amitabha chant', '南无阿弥陀佛', '南無阿弥陀仏');
+      const sizeLabel = prayerCopy('나무아미타불 소리 켜기', 'Amitabha chant sound on', '南无阿弥陀佛声音 开启', '南無阿弥陀仏の音声 オン');
+      const caption = addSoundCaption(button, sizeLabel);
+      const update = () => setSoundCaption(button, caption, name, !audio.paused && !audio.error);
       for (const event of ['playing', 'pause', 'error']) audio.addEventListener(event, update);
       button.addEventListener('click', async () => {
         if (!audio.paused) {
@@ -888,7 +889,7 @@
           await audio.play();
         } catch (error) {
           if (error.name !== 'AbortError') {
-            button.textContent = prayerCopy('소리 다시 시도', 'Retry sound', '重试声音', '音声を再試行');
+            caption.textContent = prayerCopy('소리 다시 시도', 'Retry sound', '重试声音', '音声を再試行');
           }
         }
       });
