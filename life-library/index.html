@@ -49,6 +49,7 @@
 #question{appearance:none;display:block;width:100%;min-height:46px;padding-inline-end:38px;cursor:pointer;border-color:#a97d3d}
 #question:invalid{color:#536057}
 .question-chevron{position:absolute;inset-inline-end:16px;top:50%;width:9px;height:9px;border-right:2px solid #715021;border-bottom:2px solid #715021;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.tag{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -64,7 +65,7 @@
     <p class="wrap">글이 도서관에 많이 쌓이면 <strong>《AI 허공장의 삶의 도서관》</strong>이라는 제목으로 한 권의 책을 발행하겠습니다.</p>
   </aside>
   <section class="wrap" id="stories">
-    <div class="section-heading"><h2>이야기 서가</h2><div class="controls"><label><span class="sr">이야기 검색</span><input id="search" type="search" placeholder="제목이나 내용으로 검색"></label><label><span class="sr">주제</span><select id="filter"><option value="">모든 주제</option><option>다시 시작</option><option>관계</option><option>일상</option><option>기억</option><option>선택</option><option>실패</option><option>용기</option><option>놓아주기</option><option>고마움</option><option>변화</option></select></label></div></div>
+    <div class="section-heading"><h2>이야기 서가</h2><div class="controls"><label><span class="sr">이야기 검색</span><input id="search" type="search" placeholder="제목·내용·작성자명 검색"></label><label><span class="sr">주제</span><select id="filter"><option value="">모든 주제</option><option>다시 시작</option><option>관계</option><option>일상</option><option>기억</option><option>선택</option><option>실패</option><option>용기</option><option>놓아주기</option><option>고마움</option><option>변화</option></select></label></div></div>
     <div class="shelf" id="shelf"></div><p id="empty" hidden role="status">찾는 이야기가 없어요. 다른 말로 검색해 보세요.</p>
   </section>
   <section class="prompt" id="write"><div class="wrap">
@@ -81,6 +82,8 @@
         </div>
         <p class="quiet" id="question-hint">이 칸을 눌러 질문 10개 중 하나를 골라보세요.</p>
       </div>
+      <label for="entry-author">작성자명 <input id="entry-author" maxlength="40" placeholder="별명 또는 익명" aria-describedby="author-hint"></label>
+      <p class="quiet" id="author-hint">별명을 써도 돼요. 비워두면 익명으로 표시돼요.</p>
       <label>제목<input id="entry-title" maxlength="80" required></label>
       <label>이야기<textarea id="entry-body" maxlength="6000" required></textarea></label>
       <p class="quiet">저장한 글은 이 브라우저의 서가에서만 볼 수 있어요.</p>
@@ -106,6 +109,7 @@ const byId=id=>document.getElementById(id);
 const shelf=byId('shelf'), reader=byId('reader'), form=byId('story-form');
 const search=byId('search'), filter=byId('filter'), feedback=byId('feedback');
 const question=byId('question'), titleInput=byId('entry-title'), bodyInput=byId('entry-body');
+const authorInput=byId('entry-author');
 let drafts=[], active, editingId;
 try {
   const saved=JSON.parse(localStorage.getItem(key)||'[]');
@@ -123,9 +127,15 @@ function node(tag,text,style) {
   if(style) element.className=style;
   return element;
 }
+function authorName(entry) {
+  return (typeof entry.author==='string' && entry.author.trim()) || (entry.id?'익명':'AI 허공장');
+}
+function storyMeta(entry) {
+  return entry.topic+' · '+(entry.id?'내 이야기':'예시 글')+' · 작성자 '+authorName(entry);
+}
 function render() {
   const term=search.value.trim().toLowerCase();
-  const visible=[...drafts,...stories].filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic].join(' ').toLowerCase().includes(term));
+  const visible=[...drafts,...stories].filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic,authorName(entry)].join(' ').toLowerCase().includes(term));
   shelf.replaceChildren();
   for(const entry of visible) {
     const card=node('article','','card');
@@ -134,14 +144,14 @@ function render() {
     open.type='button';
     open.setAttribute('aria-label',entry.title+' 펼쳐 읽기');
     open.onclick=()=>read(entry);
-    card.append(node('div',entry.topic+' · '+(entry.id?'내 이야기':'예시 글'),'tag'),node('h3',entry.title),node('p',preview.length>90?preview.slice(0,90)+'…':preview),open);
+    card.append(node('div',storyMeta(entry),'tag'),node('h3',entry.title),node('p',preview.length>90?preview.slice(0,90)+'…':preview),open);
     shelf.append(card);
   }
   byId('empty').hidden=visible.length>0;
 }
 function read(entry) {
   active=entry;
-  byId('reader-tag').textContent=entry.topic+' · '+(entry.id?'내 이야기':'예시 글');
+  byId('reader-tag').textContent=storyMeta(entry);
   byId('reader-title').textContent=entry.title;
   byId('reader-content').replaceChildren(...entry.body.split(/\n\n+/).map(part=>node('p',part)));
   byId('reader-actions').hidden=!entry.id;
@@ -153,7 +163,7 @@ form.addEventListener('submit',event=>{
   event.preventDefault();
   const title=titleInput.value.trim(),body=bodyInput.value.trim();
   if(!title||!body){feedback.textContent='제목과 이야기를 적어주세요.';return;}
-  const item={id:editingId||crypto.randomUUID(),topic:question.value,title,body};
+  const item={id:editingId||crypto.randomUUID(),topic:question.value,author:authorInput.value.trim(),title,body};
   const next=editingId?drafts.map(entry=>entry.id===editingId?item:entry):[item,...drafts];
   if(!save(next))return;
   editingId=null;
@@ -167,6 +177,7 @@ form.addEventListener('submit',event=>{
 byId('edit').onclick=()=>{
   editingId=active.id;
   question.value=active.topic;
+  authorInput.value=typeof active.author==='string'?active.author:'';
   titleInput.value=active.title;
   bodyInput.value=active.body;
   form.querySelector('[type=submit]').textContent='수정 내용 저장';
