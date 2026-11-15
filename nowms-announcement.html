@@ -39,7 +39,7 @@
 <header class="top"><div class="wrap"><a href="./#nowms">← Mind Search 홈</a>
   <select id="languageToggle" class="language-select" aria-label="언어 선택" hidden>
     <option value="ko">🇰🇷 한국어</option><option value="en">🇺🇸 English</option>
-    <option value="zh">🇨🇳 中文</option><option value="ja">🇯🇵 日本語</option>
+    <option value="zh">🇨🇳 中文</option><option value="ja">🇯🇵 日本語</option><option value="fr">🇫🇷 Français</option>
   </select></div></header>
 <main class="wrap">
   <header class="hero">
@@ -158,8 +158,89 @@
   </section>
 </main>
 <footer class="wrap"><a href="https://captain-now.github.io/NOW-Mindfulness-Web/">NOW 마음챙김 홈페이지</a></footer>
-<script src="./ui-language.js?v=1"></script>
+<script src="./ui-language.js?v=2"></script>
 <script>
+const french = {
+  "회차별 교환 시작 기준": "Quand chaque tranche démarre",
+  "1차부터 5차까지, 각 회차의 누적 교환 신청량을 NOWMS로 환산한 수량이 해당 회차의 배정 물량을 넘으면 그 회차의 코인 교환을 진행할 계획입니다.": "Pour les tranches 1 à 5, l’échange d’une tranche est prévu lorsque le volume cumulé des demandes de cette tranche, exprimé en NOWMS, dépasse son allocation.",
+  "연 120,000 NOW 기준 교환 가능 인원": "Nombre estimé de participants à raison de 120 000 NOW par personne et par an",
+  "1인당 연간 적립 NOW 120,000개를 각 차수의 교환 비율로 전부 교환한다고 가정한 예시입니다.": "Ce calcul suppose que chaque personne échange la totalité des 120 000 NOW gagnés sur un an, au taux de la tranche concernée.",
+  "1인당 교환량": "Par personne",
+  "교환 가능 인원": "Participants estimés",
+  "남는 물량": "Quantité restante",
+  "1차에서는 166명이 120,000 NOWMS씩 교환하면 19,920,000 NOWMS를 사용하고 80,000 NOWMS가 남습니다.": "Pour la première tranche, si 166 personnes échangent chacune 120 000 NOWMS, 19 920 000 NOWMS seront utilisés et il en restera 80 000.",
+  "교환 수수료와 계정 보증금": "Frais d’échange et dépôt de compte",
+  "아래는 NOWMS를 지급할 때 드는 솔라나 비용의 예시입니다. 이용자에게 부과할 교환 수수료와 비용 부담 주체는 아직 정해지지 않았습니다.": "Voici une estimation des coûts Solana pour distribuer des NOWMS. Les frais facturés aux utilisateurs et leur prise en charge restent à déterminer.",
+  "기본 전송 수수료는 한 건당 0.000005 SOL입니다. 1명당 한 건, 서명 1개, 우선순위 수수료 0 SOL로 계산했습니다.": "Les frais de base sont de 0,000005 SOL par transfert, à raison d’un transfert par destinataire, d’une signature et sans frais de priorité.",
+  "받는 지갑에 NOWMS 보관 계정이 없으면 처음에 0.00148844 SOL이 보증금으로 추가됩니다. 계정을 유지하면 다음 교환부터 기본 전송 수수료만 듭니다.": "Un portefeuille sans compte de jetons NOWMS nécessite un dépôt unique de 0,00148844 SOL. Les transferts suivants vers ce même compte ouvert n’entraînent que les frais de base.",
+  "한 번 교환할 때 · 인원별 비용": "Coût d’un échange selon le nombre de destinataires",
+  "교환 인원": "Destinataires",
+  "기존 계정": "Comptes existants",
+  "새 계정": "Nouveaux comptes",
+  "각 열은 모든 수령자가 같은 조건인 경우를 보여줍니다. 기존 계정과 새 계정이 섞이면 전체 인원에 전송 수수료를, 새 계정이 필요한 인원에만 보증금을 더합니다.": "Chaque colonne suppose le même type de compte pour tous les destinataires. Si les situations diffèrent, comptez les frais de transfert pour tous et le dépôt uniquement pour les nouveaux comptes.",
+  "1차~5차 교환 비용": "Coûts des tranches 1 à 5",
+  "매 회차 같은 인원이 같은 지갑으로 한 번씩 받는 경우입니다. 첫 교환 때 계정이 없는 지갑에는 1차에만 보증금이 듭니다. 2~5차에 처음 참여하는 지갑에도 보증금이 필요합니다.": "Ce calcul suppose que les mêmes destinataires utilisent le même portefeuille une fois par tranche. Le dépôt est dû au premier échange pour tout portefeuille sans compte, quelle que soit la tranche.",
+  "회차": "Tranche",
+  "회차별 비용": "Coût par tranche",
+  "누적 비용": "Coût cumulé",
+  "처음부터 기존 계정 사용": "Comptes déjà ouverts",
+  "첫 교환 때 새 계정 생성": "Comptes créés au premier échange",
+  "2026년 11월 15일 확인 기준. 원화는 1 SOL = 98,900원으로 환산한 참고값입니다. 실제 비용은 교환 시점의 SOL 시세, 우선순위 수수료, 계정 생성 조건에 따라 달라질 수 있습니다.": "Vérifié le 15 novembre 2026. Les estimations reposent sur un cours de 98 900 KRW par SOL. Les coûts réels peuvent varier selon le cours du SOL, les frais de priorité et les conditions d’ouverture de compte au moment de l’échange.",
+  "솔라나 수수료 안내": "Documentation Solana sur les frais",
+  "계정 보증금 안내": "Documentation sur le dépôt de compte",
+  "← Mind Search 홈": "← Accueil Mind Search",
+  "나우코인 발행 안내": "Lancement du jeton NOWMS",
+  "NOW Mind Search · 솔라나 메인넷 발행 완료": "NOW Mind Search · Émis sur le réseau principal Solana",
+  "NOWMS 공식 로고": "Logo officiel de NOWMS",
+  "발행 현황": "État de l’émission",
+  "발행일": "Date d’émission",
+  "2026년 11월 14일 (한국시간)": "14 novembre 2026 (heure de Corée)",
+  "네트워크": "Réseau",
+  "솔라나 메인넷": "Réseau principal Solana",
+  "고정 발행량": "Quantité fixe",
+  "추가 발행 권한": "Autorité de création",
+  "영구 폐기 완료": "Révoquée définitivement",
+  "공식 NOWMS 토큰 주소": "Adresse officielle du jeton NOWMS",
+  "주소 복사": "Copier l’adresse",
+  "솔라나 탐색기에서 확인 ↗": "Voir dans Solana Explorer ↗",
+  "NOW 코인 적립": "Gagner des NOW",
+  "NOW 마음챙김에서 수행과 일상 실천을 하면 적립 코인 NOW를 모을 수 있어요.": "Gagnez des points NOW en pratiquant la méditation et les activités quotidiennes dans NOW Pleine conscience.",
+  "Google 계정으로 로그인하면 적립 내역이 Firebase의 Cloud Firestore에 계정별로 자동 저장돼요.": "Lorsque vous vous connectez avec Google, l’historique de vos points est enregistré automatiquement dans Cloud Firestore de Firebase, sur votre compte.",
+  "NOW 마음챙김 적립 코인 교환 계획": "Projet d’échange des points NOW",
+  "마음챙김 활동으로 적립한 NOW를 향후 NOWMS로 교환하는 기능을 계획하고 있어요. 교환은 아직 시작되지 않았으며, 아래는 현재 계획안이에요.": "Nous prévoyons de permettre l’échange des NOW gagnés dans les activités de pleine conscience contre des NOWMS. Les échanges n’ont pas encore commencé. Voici le projet actuel.",
+  "8,000만 NOWMS": "80 millions de NOWMS",
+  "교환용 (80%)": "réservés aux échanges (80 %)",
+  "2,000만 NOWMS": "20 millions de NOWMS",
+  "운영자 배정 (20%)": "attribués à l’opérateur (20 %)",
+  "교환 단계별 배정 계획": "Allocation prévue par tranche d’échange",
+  "단계": "Tranche",
+  "교환용 배정": "Allocation d’échange",
+  "1 NOWMS에 필요한": "Pour obtenir 1 NOWMS",
+  "적립 NOW": "NOW gagnés",
+  "1차": "Tranche 1",
+  "2차": "Tranche 2",
+  "3차": "Tranche 3",
+  "4차": "Tranche 4",
+  "5차": "Tranche 5",
+  "1개": "1",
+  "10개": "10",
+  "100개": "100",
+  "1,000개": "1 000",
+  "10,000개": "10 000",
+  "예를 들어 2차에는 적립 NOW 10개로 NOWMS 1개를 받는 계획이에요. 5차는 교환용 마지막 1,000만 NOWMS를 장기간에 걸쳐 배정하는 구간이에요.": "Par exemple, la deuxième tranche prévoit d’échanger 10 NOW gagnés contre 1 NOWMS. La cinquième tranche répartit les 10 derniers millions de NOWMS réservés aux échanges sur une longue période.",
+  "앞으로의 일정": "Prochaines étapes",
+  "교환 연동 검토.": "Étude de l’intégration des échanges.",
+  "운영 비용, 보안과 암호화, 관련 법률을 검토한 뒤 연동을 추진할 계획이에요.": "Nous prévoyons de poursuivre l’intégration après examen des coûts d’exploitation, de la sécurité, du chiffrement et des règles applicables.",
+  "교환 개시 공지.": "Annonce du lancement des échanges.",
+  "시작일이 정해지면 단계별 교환 비율, 남은 수량, 교환 방법을 안내할 예정이에요.": "Une fois la date fixée, nous publierons les taux par tranche, les quantités restantes et les modalités.",
+  "사용처와 거래소 상장.": "Utilisations et cotation.",
+  "추후 결정되는 내용을 홈페이지에 안내할 예정이에요.": "Les décisions seront publiées sur le site à mesure qu’elles seront prises.",
+  "NOW 마음챙김 홈페이지": "Site NOW Pleine conscience",
+  "발행 기념 쇼츠 보기 ↗": "Voir le Short du lancement ↗",
+  "주소를 복사했어요.": "Adresse copiée.",
+  "주소를 길게 눌러 복사해 주세요.": "Appuyez longuement sur l’adresse pour la copier.",
+  "NOW Mind Search(NOWMS)의 솔라나 메인넷 발행 현황과 NOW 마음챙김 적립 코인 교환 계획을 확인하세요.": "Consultez l’émission de NOWMS sur le réseau principal Solana et le projet d’échange des points NOW."
+};
 const translations = new Map([
   ["회차별 교환 시작 기준",["When each round opens","各轮兑换启动条件","各回の交換開始条件"]],
   ["1차부터 5차까지, 각 회차의 누적 교환 신청량을 NOWMS로 환산한 수량이 해당 회차의 배정 물량을 넘으면 그 회차의 코인 교환을 진행할 계획입니다.",["For rounds 1 through 5, we plan to begin exchanges for a round once the cumulative exchange requests for that round, measured in NOWMS, exceed its allocation.","第 1 至第 5 轮中，各轮累计兑换申请量折算为 NOWMS 后超过该轮分配额度时，计划启动该轮兑换。","第1回から第5回まで、各回の累計交換申請量をNOWMSに換算した数量がその回の割当量を超えた時点で、その回の交換を実施する予定です。"]],
@@ -277,6 +358,7 @@ for (const root of roots) {
   }
 }
 function translate(key) {
+  if (lang === 'fr') return french[key] ?? key;
   const index = ['en', 'zh', 'ja'].indexOf(lang);
   return translations.get(key)?.[index] ?? key;
 }
