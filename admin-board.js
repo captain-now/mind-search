@@ -166,7 +166,7 @@ const titles=[
 ];
 let guildMembers=[],guildBusy=false;
 const selectedGuildMember=()=>guildMembers.find(member=>member.id===guildMember.value);
-const guildRank=slot=>slot===null?'6단계 길드원':titles[slot-1];
+const guildRank=slot=>slot===null?'7단계 길드원':titles[slot-1];
 function guildOption(value,label){
  const option=el('option',label);
  option.value=value;
@@ -177,7 +177,7 @@ function renderGuildPositions(){
  if(!member)return;
  byId('guildCurrentRank').textContent='현재 직책 · '+guildRank(member.slot);
  const occupied=new Map(guildMembers.filter(item=>item.slot!==null).map(item=>[item.slot,item]));
- guildPosition.replaceChildren(guildOption('','6단계 길드원'));
+ guildPosition.replaceChildren(guildOption('','7단계 길드원'));
  titles.forEach((title,index)=>{
   const slot=index+1, holder=occupied.get(slot);
   const isOccupied=holder&&holder.id!==member.id;
@@ -246,7 +246,7 @@ async function saveGuildMember(remove){
 }
 if(guildMode){
  document.title='NOW길드 | 길드원 관리';
- byId('adminReturn').href='./now-guild.html?v=ten-kings';
+ byId('adminReturn').href='./now-guild.html?v=guild-seven-tiers';
  byId('adminReturn').textContent='← 길드 구성표 돌아가기';
  byId('adminTitle').textContent='NOW길드 관리실';
  byId('adminIntro').textContent='운영자 코드 인증 후 길드원의 직책과 가입 상태를 관리할 수 있어요.';

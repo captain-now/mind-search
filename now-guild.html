@@ -223,7 +223,7 @@
       <p class="join-guide">NOW길드에 가입하시려면 <a href="./board.html#nickname-registration">게시판에서 NOW길드 가입</a>을 해주세요.</p>
     </header>
 
-    <ol class="pyramid" aria-label="1~5단계 길드 직책">
+    <ol class="pyramid" aria-label="1~6단계 길드 직책">
       <li class="tier tier-leader">
         <h3>1단계 <span>·</span> 1명</h3>
         <ul class="slots"><li>길드장</li></ul>
@@ -253,7 +253,7 @@
         </ul>
       </li>
       <li class="tier">
-        <h3>5단계 <span>·</span> 십대제자 칭호 <span>·</span> 10명</h3>
+        <h3>5단계 <span>·</span> 십대제자 <span>·</span> 10명</h3>
         <ul class="slots">
           <li>지혜제일</li>
           <li>신통제일</li>
@@ -268,7 +268,7 @@
         </ul>
       </li>
       <li class="tier tier-kings">
-        <h3>5단계 <span>·</span> 십대명왕 <span>·</span> 10명</h3>
+        <h3>6단계 <span>·</span> 십대명왕 <span>·</span> 10명</h3>
         <ul class="slots">
           <li>진광대왕</li>
           <li>초강대왕</li>
@@ -285,16 +285,16 @@
     </ol>
 
     <div class="members">
-      <span>6단계</span>
+      <span>7단계</span>
       <strong>길드원</strong>
     </div>
 
     <div class="member-roster">
       <p id="roster-status" role="status">길드원 명단을 불러오는 중이에요.</p>
-      <ol id="guild-roster" aria-label="6단계 길드원 명단" hidden></ol>
+      <ol id="guild-roster" aria-label="7단계 길드원 명단" hidden></ol>
     </div>
 
-    <a class="management-banner" href="./admin.html?v=ten-kings#guild-management">길드원 관리</a>
+    <a class="management-banner" href="./admin.html?v=guild-seven-tiers#guild-management">길드원 관리</a>
     <footer><a href="./">NOW Mind Search 홈</a></footer>
   </main>
   <script>
@@ -328,7 +328,7 @@
           position.replaceChildren(title, member);
         }
         if (!list.children.length) {
-          status.textContent = '현재 6단계 길드원이 없어요.';
+          status.textContent = '현재 7단계 길드원이 없어요.';
           return;
         }
         list.hidden = false;
