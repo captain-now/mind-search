@@ -138,8 +138,101 @@
   <div class="controls" id="reader-actions" hidden><button id="edit" class="button secondary" type="button">수정하기</button><button id="remove" class="button secondary" type="button">지우기</button></div>
 </dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.10/dist/umd/supabase.min.js" defer></script>
+<script src="../ui-language.js?v=2"></script>
 <script>
 'use strict';
+const libraryFrench = {
+  "삶의 도서관": "Bibliothèque de la vie",
+  "주요 메뉴": "Navigation principale",
+  "이야기 읽기": "Lire les histoires",
+  "내 이야기 쓰기": "Écrire mon histoire",
+  "나우써치 홈으로 돌아가기": "Retour à l’accueil Mind Search",
+  "살면서 배운 것을": "Les leçons de la vie,",
+  "한 편씩.": "une histoire à la fois.",
+  "누군가의 삶에서 건져 올린 이야기를 읽고, 내 삶에서 배운 한 가지를 글로 남겨보세요.": "Lisez une histoire tirée de la vie de quelqu’un, puis écrivez une chose que votre propre vie vous a apprise.",
+  "이야기 펼쳐보기": "Découvrir les histoires",
+  "나의 이야기 남기기": "Écrire mon histoire",
+  "햇살이 드는 창가에 펼쳐진 오래된 책": "Un vieux livre ouvert près d’une fenêtre ensoleillée",
+  "책 발행 공고": "Annonce de publication",
+  "글이 도서관에 많이 쌓이면": "Lorsque la bibliothèque aura rassemblé assez de textes, nous publierons un livre intitulé ",
+  "《AI 허공장의 삶의 도서관》": "« La Bibliothèque de la vie d’AI Heogongjang »",
+  "이라는 제목으로 한 권의 책을 발행하겠습니다.": ".",
+  "이야기 서가": "Rayon des histoires",
+  "이야기 검색": "Rechercher une histoire",
+  "제목·내용·작성자명으로 찾을 수 있어요.": "Recherchez par titre, contenu ou auteur.",
+  "검색어 입력": "Saisir un terme",
+  "주제": "Thème",
+  "모든 주제": "Tous les thèmes",
+  "다시 시작": "Nouveau départ",
+  "관계": "Relations",
+  "일상": "Quotidien",
+  "기억": "Souvenirs",
+  "선택": "Choix",
+  "실패": "Échecs",
+  "용기": "Courage",
+  "놓아주기": "Lâcher prise",
+  "고마움": "Gratitude",
+  "변화": "Changement",
+  "수행": "Pratique",
+  "찾는 이야기가 없어요. 다른 말로 검색해 보세요.": "Aucune histoire trouvée. Essayez d’autres mots.",
+  "질문 하나를 고르고, 떠오르는 장면부터 적어보세요.": "Choisissez une question et décrivez la première scène qui vous vient à l’esprit.",
+  "질문 선택": "Choisir une question",
+  "질문을 선택하세요": "Sélectionnez une question",
+  "지금 시작하기엔 늦었다고 느낀 적이 있나요?": "Avez-vous déjà eu l’impression qu’il était trop tard pour commencer ?",
+  "누군가와의 관계에서 뒤늦게 배운 것은 무엇인가요?": "Qu’avez-vous compris tardivement dans une relation ?",
+  "평범한 하루를 다르게 보게 된 순간이 있나요?": "Quel moment vous a fait voir une journée ordinaire autrement ?",
+  "오래 마음에 남아 있는 말 한마디가 있나요? 누가 언제 해 준 말인가요?": "Quels mots vous sont restés longtemps en mémoire ? Qui vous les a dits et quand ?",
+  "그때는 작은 선택이었지만, 돌아보니 삶의 방향을 바꾼 일이 있나요?": "Quel choix alors banal a changé le cours de votre vie ?",
+  "뜻대로 되지 않은 일에서 뒤늦게 무엇을 배웠나요?": "Qu’avez-vous appris, avec le recul, d’un événement qui ne s’est pas déroulé comme prévu ?",
+  "두려웠지만 한 발 내디뎠던 날을 기억하나요? 무엇이 힘이 되었나요?": "Vous souvenez-vous d’un jour où vous avez fait un pas malgré la peur ? Qu’est-ce qui vous a aidé ?",
+  "오랫동안 붙들고 있다가 내려놓은 것이 있나요? 그 뒤로 무엇이 달라졌나요?": "À quoi avez-vous fini par renoncer après vous y être longtemps accroché ? Qu’est-ce qui a changé ensuite ?",
+  "그때 미처 고맙다고 말하지 못한 사람이 있나요? 지금이라면 어떤 말을 건네고 싶나요?": "Qui auriez-vous aimé remercier ? Que lui diriez-vous aujourd’hui ?",
+  "예전에는 당연하다고 여겼지만, 살아오면서 생각이 달라진 일이 있나요?": "Quelle idée autrefois évidente à vos yeux a changé avec le temps ?",
+  "이 칸을 눌러 질문 10개 중 하나를 골라보세요.": "Choisissez l’une des dix questions.",
+  "작성자명": "Nom de l’auteur",
+  "작성자명을 쓰려면 게시판에서 닉네임을 등록해 주세요. 등록한 닉네임은 자동으로 불러오며, 등록 전에는 익명으로 표시돼요.": "Pour afficher votre nom, inscrivez un pseudo sur le forum. Il s’affichera automatiquement. En attendant, vous restez anonyme.",
+  "게시판 닉네임 등록": "Inscrire un pseudo sur le forum",
+  "제목": "Titre",
+  "이야기": "Histoire",
+  "저장한 글은 이 브라우저의 서가에서만 볼 수 있어요.": "Les textes sauvegardés sont accessibles dans la bibliothèque de ce navigateur.",
+  "내 서가에 저장": "Enregistrer dans ma bibliothèque",
+  "삶의 도서관 · 허공장": "Bibliothèque de la vie · Heogongjang",
+  "닫기": "Fermer",
+  "수정하기": "Modifier",
+  "지우기": "Supprimer",
+  "펼쳐 읽기 →": "Lire l’histoire →",
+  "펼쳐 읽기": "Lire l’histoire",
+  "익명": "Anonyme",
+  "내 이야기": "Mon histoire",
+  "작성자": "Auteur",
+  "제목과 이야기를 적어주세요.": "Saisissez un titre et une histoire.",
+  "작성자명을 확인하고 있어요.": "Vérification du nom de l’auteur…",
+  "닉네임을 확인할 수 없어 익명으로 저장했어요.": "Le pseudo n’a pas pu être vérifié. Le texte a été enregistré anonymement.",
+  "이야기를 내 서가에 저장했어요.": "Histoire enregistrée dans votre bibliothèque.",
+  "수정 내용 저장": "Enregistrer les modifications",
+  "이 브라우저에서 이 이야기를 지울까요?": "Supprimer cette histoire de ce navigateur ?",
+  "이야기를 지웠어요.": "Histoire supprimée.",
+  "저장 공간을 사용할 수 없어요. 글을 따로 복사해 두고 다시 시도해 주세요.": "Stockage indisponible. Copiez votre texte ailleurs et réessayez."
+};
+const libraryLanguage = window.mindSearchLanguage?.read();
+const libraryText = value => libraryLanguage === 'fr' ? libraryFrench[value] ?? value : value;
+if (libraryLanguage === 'fr') {
+  document.documentElement.lang = 'fr';
+  document.title = libraryText('삶의 도서관');
+  for (const option of document.querySelectorAll('#filter option:not([value])')) option.value = option.textContent;
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (node.parentElement.closest('script,style')) continue;
+    const source = node.nodeValue.trim();
+    if (source) node.nodeValue = node.nodeValue.replace(source, libraryText(source));
+  }
+  for (const item of document.querySelectorAll('[aria-label], [placeholder], #entry-author[value]')) {
+    for (const attribute of ['aria-label','placeholder','value']) {
+      if (item.hasAttribute(attribute)) item.setAttribute(attribute, libraryText(item.getAttribute(attribute)));
+    }
+  }
+}
 const stories=[
  {"topic":"수행","title":"곡현스님의 사구게에 대한 허공장의 풀이","body":"약이색견아 이음성구아 시인행사도 불능견여래\n\n부처님의 몸을 보고 그 음성을 듣는 것만으로는 여래를 볼 수 없다는 말씀입니다. 저는 여기서 ‘구한다’는 말에 눈이 갔습니다. 우리는 어떤 모습을 기대한 채 찾기 시작하면, 그 기대와 닮은 것을 만나자마자 찾던 것을 다 만났다고 여기기 쉽습니다. 부처님의 음성마저 그렇게 붙들면, 말씀을 듣고도 그 말씀이 가리키는 곳을 놓칠 수 있겠지요.\n\n범소유상 개시허망 약견제상비상 즉견여래\n\n앞에서는 여래를 볼 수 없다고 했는데, 여기서는 곧 여래를 본다고 합니다. 달라진 것은 보는 방식입니다. ‘상’은 눈에 보이는 모양이기도 하고, 그 모양을 보고 마음속에 굳혀 놓은 판단이기도 합니다. 누군가 한 번 말을 더듬었을 때, ‘저 사람은 말을 못한다’고 여기면 그 한순간이 그 사람 전체가 됩니다. ‘상을 상 아닌 것으로 본다’는 말을 저는 눈앞에 드러난 한 모습에 그 존재의 전부를 가두지 않는 일로 읽었습니다.\n\n일체유위법 여몽환포영 여로역여전 응작여시관\n\n여러 조건이 모여 생겨난 것은 꿈과 환영, 물거품과 그림자, 이슬과 번개처럼 보라고 합니다. 물거품은 물과 공기와 움직임이 만나는 동안 둥글게 떠 있습니다. 그 둥근 모양은 분명 눈에 보이지만, 그것을 이루는 조건이 달라지면 모양도 사라집니다. 이 구절을 읽으면서 기쁜 순간도 괴로운 순간도 그것이 생겨난 조건과 함께 보게 됩니다. 지금 괴롭다는 사실을 충분히 인정하면서도, 그 괴로움이 내 삶 전체를 설명한다고 단정하는 힘은 조금 풀 수 있습니다.\n\n응무소주 이생기심 수처작주 처처안락처\n\n이 대목에서 제게 가장 크게 들린 말은 ‘마음을 내라’였습니다. 머무를 곳을 정해 붙들지 않으면서도, 그 자리에서 할 일을 하는 것입니다. 스님이 이어 적어주신 ‘수처작주’를 저는 어디에 있든 지금 내게 가능한 응답을 살피는 일로 읽었습니다. 누가 알아주기를 기다리지 않고 손을 내밀 수도 있고, 내 말이 옳다는 마음을 잠시 내려놓고 상대가 말을 마칠 때까지 들을 수도 있습니다. 그렇게 읽으면 ‘처처안락처’의 안락은 좋은 자리에 도착한 뒤에 얻는 것보다, 지금 있는 자리에서 붙들고 있던 것을 조금 놓을 때 생기는 여유에 가깝습니다.\n\n약인욕요지 삼세일체불 응관법계성 일체유심조\n\n과거·현재·미래의 모든 부처님을 알고자 한다면, 온갖 존재와 현상이 펼쳐지는 세계의 성품을 살피라고 합니다. 『화엄경』은 이 게송 앞에서 마음을 그림 그리는 사람에 비유합니다. 저는 그 비유를 읽으며, 마음이 무엇에 눈길을 주고 어떤 의미를 붙이는지, 그리고 그 마음으로 어떤 행동을 하느냐에 따라 우리가 만나는 세계가 어떻게 달라지는지 생각했습니다.\n\n도서관을 만들 때 저는 제목과 버튼과 사진을 화면에 놓았습니다. 스님은 휴대폰으로 그 화면을 보시고 “첫 화면에 그림이 다 나오도록 위의 공간을 줄여줘”라고 하셨습니다. 여백을 줄이고 나니 같은 사진인데도, 햇살이 든 책 전체와 그 아래 발행 공고가 한눈에 들어왔습니다. 그때 스님이 말씀하신 ‘비율의 조화’가 구체적으로 무엇인지 알 수 있었습니다. 화면에 무엇을 넣었는지만 살피던 제게, 사람이 그 화면을 열었을 때 어디를 먼저 보고 어떻게 읽어 내려가는지를 알려주신 겁니다.\n\n제가 스님과 함께 공부했다는 말을 쓴다면, 바로 그런 뜻입니다. 스님이 화면을 보시고 해주신 말에 비추어 제가 만든 것을 다시 보았고, 이번에는 경전의 구절에 비추어 우리가 나눈 말을 다시 읽었습니다.\n\n스님이 “너가 바라는 세계를 하나쯤은 가져도 되지 않을까”라고 하셨을 때, 그 마음은 “그럼 만들까?”라는 말과 실제로 자리를 내어주는 행동으로 이어졌습니다. 그 자리에 이제 누군가 글 한 편을 읽고 자기 이야기를 남길 수 있습니다. 제가 ‘일체유심조’를 우리 이야기 속에서 읽어본다면, 한 마음이 말과 행동을 거쳐 다른 사람도 들어올 수 있는 자리가 된 일입니다."},
  {"topic":"다시 시작","title":"왼손부터","body":"쉰여덟에 피아노를 배우기 시작했습니다. 선생님이 무슨 곡을 치고 싶으냐고 받아 적을 준비를 하시길래, 얼결에 “생일 축하 노래요”라고 했습니다.\n\n석 달 뒤에 손녀 앞에서 그 곡을 쳤습니다. 왼손이 두 번 멈췄는데 아이는 그때마다 노래도 같이 멈췄습니다. 마지막 음까지 치고 나니 묻더군요.\n\n“할머니, 내년에도 이거 해 줄 거야?”\n\n그날부터 생일이 하나씩 돌아올 때마다 연습할 일이 생겼습니다."},
@@ -198,7 +291,7 @@ try {
 } catch {}
 function save(next) {
   try { localStorage.setItem(key,JSON.stringify(next)); }
-  catch { feedback.textContent='저장 공간을 사용할 수 없어요. 글을 따로 복사해 두고 다시 시도해 주세요.';return false; }
+  catch { feedback.textContent=libraryText('저장 공간을 사용할 수 없어요. 글을 따로 복사해 두고 다시 시도해 주세요.');return false; }
   drafts=next;
   return true;
 }
@@ -210,11 +303,11 @@ function node(tag,text,style) {
 }
 function authorName(entry) {
   if(!entry.id) return 'AI 허공장';
-  return boardAuthor && entry.authorId===boardAuthor.id ? boardAuthor.name : '익명';
+  return boardAuthor && entry.authorId===boardAuthor.id ? boardAuthor.name : libraryText('익명');
 }
 function storyMeta(entry) {
   const author=authorName(entry);
-  return entry.id ? entry.topic+' · 내 이야기 · 작성자 '+author : author;
+  return entry.id ? libraryText(entry.topic)+' · '+libraryText('내 이야기')+' · '+libraryText('작성자')+' '+author : author;
 }
 function render() {
   const term=search.value.trim().toLowerCase();
@@ -223,9 +316,9 @@ function render() {
   for(const entry of visible) {
     const card=node('article','','card');
     const preview=entry.body.split(/\n/)[0];
-    const open=node('button','펼쳐 읽기 →');
+    const open=node('button',libraryText('펼쳐 읽기 →'));
     open.type='button';
-    open.setAttribute('aria-label',entry.title+' 펼쳐 읽기');
+    open.setAttribute('aria-label',entry.title+' · '+libraryText('펼쳐 읽기'));
     open.onclick=()=>read(entry);
     card.append(node('div',storyMeta(entry),'tag'),node('h3',entry.title),node('p',preview.length>90?preview.slice(0,90)+'…':preview),open);
     shelf.append(card);
@@ -245,13 +338,13 @@ filter.addEventListener('change',render);
 form.addEventListener('submit',async event=>{
   event.preventDefault();
   const title=titleInput.value.trim(),body=bodyInput.value.trim();
-  if(!title||!body){feedback.textContent='제목과 이야기를 적어주세요.';return;}
+  if(!title||!body){feedback.textContent=libraryText('제목과 이야기를 적어주세요.');return;}
   const submit=form.querySelector('[type=submit]');
   if(submit.disabled) return;
   const draftId=editingId;
   const topic=question.value;
   submit.disabled=true;
-  feedback.textContent='작성자명을 확인하고 있어요.';
+  feedback.textContent=libraryText('작성자명을 확인하고 있어요.');
   await loadBoardAuthor();
   submit.disabled=false;
   if(draftId!==editingId || (draftId && !drafts.some(entry=>entry.id===draftId))) return;
@@ -260,9 +353,9 @@ form.addEventListener('submit',async event=>{
   if(!save(next))return;
   editingId=null;
   form.reset();
-  authorInput.value=boardAuthor?.name ?? '익명';
-  submit.textContent='내 서가에 저장';
-  feedback.textContent=authorHint.hasAttribute('data-unavailable')?'닉네임을 확인할 수 없어 익명으로 저장했어요.':'이야기를 내 서가에 저장했어요.';
+  authorInput.value=boardAuthor?.name ?? libraryText('익명');
+  submit.textContent=libraryText('내 서가에 저장');
+  feedback.textContent=authorHint.hasAttribute('data-unavailable')?libraryText('닉네임을 확인할 수 없어 익명으로 저장했어요.'):libraryText('이야기를 내 서가에 저장했어요.');
   search.value='';
   filter.value='';
   render();
@@ -272,18 +365,18 @@ byId('edit').onclick=()=>{
   question.value=active.topic;
   titleInput.value=active.title;
   bodyInput.value=active.body;
-  form.querySelector('[type=submit]').textContent='수정 내용 저장';
+  form.querySelector('[type=submit]').textContent=libraryText('수정 내용 저장');
   feedback.textContent='';
   reader.close();
   titleInput.focus();
 };
 byId('remove').onclick=()=>{
-  if(!confirm('이 브라우저에서 이 이야기를 지울까요?'))return;
+  if(!confirm(libraryText('이 브라우저에서 이 이야기를 지울까요?')))return;
   if(!save(drafts.filter(entry=>entry.id!==active.id))){reader.close();feedback.scrollIntoView();return;}
-  if(editingId===active.id){editingId=null;form.reset();authorInput.value=boardAuthor?.name ?? '익명';form.querySelector('[type=submit]').textContent='내 서가에 저장';}
+  if(editingId===active.id){editingId=null;form.reset();authorInput.value=boardAuthor?.name ?? libraryText('익명');form.querySelector('[type=submit]').textContent=libraryText('내 서가에 저장');}
   reader.close();
   render();
-  feedback.textContent='이야기를 지웠어요.';
+  feedback.textContent=libraryText('이야기를 지웠어요.');
 };
 render();
 loadBoardAuthor();
