@@ -465,7 +465,7 @@
     const hallChants = {
       "daejeokgwangjeon": [
         ["om-nam", "옴남"],
-        [null, "이뭣고"]
+        [null, "이뭣고", null, { audioSource: "https://captain-now.github.io/NOW-Mindfulness-Web/now_hwadu.m4a", durationMs: 60_000 }]
       ],
       "daeungjeon": [
         [null, "금강경 한문"],
@@ -572,10 +572,20 @@
       let active = null;
       let attempt = 0;
 
-      const buttons = tracks.map(([id, label, videoSource]) => {
+      function stopActive() {
+        const current = active;
+        active = null;
+        if (!current) return;
+        window.clearTimeout(current.timer);
+        if (current.media === audio) audio.pause();
+        else stopVideo(current.media);
+        current.setPlaying(false);
+      }
+
+      const buttons = tracks.map(([id, label, videoSource, { audioSource, durationMs } = {}]) => {
         const button = document.createElement('button');
         const name = prayerText(label);
-        const available = Boolean(id || videoSource);
+        const available = Boolean(id || videoSource || audioSource);
         button.type = 'button';
         const caption = addSoundCaption(button, (available ? '▶ ' : '') + name);
         const setPlaying = (playing) => setSoundCaption(button, caption, name, playing);
@@ -589,14 +599,9 @@
           }
 
           const currentAttempt = ++attempt;
-          const previous = active;
-          active = null;
-          if (previous) {
-            previous.media.pause();
-            previous.setPlaying(false);
-            if (previous.media !== audio) stopVideo(previous.media);
-            if (previous.button === button) return;
-          }
+          const toggledOff = active?.button === button;
+          stopActive();
+          if (toggledOff) return;
 
           const media = videoSource ? document.createElement('video') : audio;
           if (videoSource) {
@@ -606,18 +611,23 @@
             panel.before(media);
             media.src = videoSource;
           } else {
-            const source = audioDirectory + id + '.mp3';
+            const source = audioSource ?? audioDirectory + id + '.mp3';
             if (audio.getAttribute('src') !== source || audio.error) audio.src = source;
+            if (durationMs) audio.currentTime = 0;
           }
           active = { button, media, setPlaying };
           setPlaying(true);
           try {
             await media.play();
+            if (durationMs && currentAttempt === attempt) {
+              active.timer = window.setTimeout(() => {
+                stopActive();
+                status.textContent = prayerCopy('재생이 끝났습니다.', 'Playback completed.', '播放已结束。', '再生が終了しました。');
+              }, durationMs);
+            }
           } catch {
             if (currentAttempt !== attempt) return;
-            active = null;
-            setPlaying(false);
-            if (videoSource) stopVideo(media);
+            stopActive();
             status.textContent = prayerCopy('재생할 수 없어요. 다시 눌러 주세요.', 'Unable to play. Tap to try again.', '无法播放，请重试。', '再生できません。もう一度お試しください。');
           }
         });
@@ -626,11 +636,7 @@
 
       window.addEventListener('pagehide', () => {
         attempt++;
-        if (!active) return;
-        active.media.pause();
-        active.setPlaying(false);
-        if (active.media !== audio) stopVideo(active.media);
-        active = null;
+        stopActive();
       });
       if (middleButton) buttons.splice(1, 0, middleButton);
       controls.replaceChildren(...buttons);
