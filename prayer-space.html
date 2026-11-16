@@ -114,6 +114,12 @@
     }
     .sasi-book { position: fixed; inset: 0; z-index: 1000; background: radial-gradient(circle at center,#5a3d27,#160f0b); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 14px; box-sizing: border-box; color: #fff4d8; }
     .sasi-book[hidden] { display: none; }
+    body.cheonsu-preview .sasi-book { background:#514b42; }
+    body.cheonsu-preview .sasi-book-sheet { width:min(94vw,540px); height:min(78dvh,790px); filter:drop-shadow(0 10px 22px #0008); }
+    body.cheonsu-preview .sasi-book-page { background:#fffdf5; border:3px double #4c443b; padding:clamp(12px,3vw,27px); color:#1d1b19; }
+    body.cheonsu-preview .sasi-flow-heading { font-size:clamp(17px,3.5vw,24px); color:#111; font-weight:800; margin:12px 0 7px; text-align:center; }
+    body.cheonsu-preview .sasi-flow-line { font-size:clamp(13px,2.8vw,18px); line-height:1.5; color:#111; text-align:center; white-space:pre-wrap; overflow-wrap:anywhere; }
+
     .sasi-book-top,.sasi-book-actions { width: min(96vw,760px); display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
     .sasi-book button { border:1px solid #d8bb86; border-radius:10px; background:#382719; color:#fff2d9; padding:9px 13px; font:inherit; cursor:pointer; }
     .sasi-book-sheet { position:relative; width:min(94vw,760px); height:min(77dvh,700px); min-height:220px; display:grid; grid-template-columns:1fr; perspective:1000px; filter:drop-shadow(0 14px 20px #0009); }
@@ -743,7 +749,16 @@
       const leaves = [...overlay.querySelectorAll('.sasi-book-page')];
       // 기도문을 항목별로 새 장에 놓지 않고, 실제 종이 높이에 맞춰 연속 배치합니다.
       // 첫 독송은 정구업진언부터 시작하며 기존 자료 배열 자체는 수정하지 않습니다.
-      const readingItems = pages.slice(pages.findIndex(item => item[0].startsWith('정구업진언')));
+      const isCheonsuPreview = new URLSearchParams(location.search).get('book') === 'cheonsugyeong';
+      const readingItems = pages.slice(
+        pages.findIndex(item => item[0].startsWith('정구업진언')),
+        isCheonsuPreview ? pages.findIndex(item => item[0].startsWith('거불 · 삼보통청')) : undefined
+      );
+      if (isCheonsuPreview) {
+        overlay.setAttribute('aria-label', '천수경 사진형 기도책');
+        overlay.querySelector('.sasi-book-top strong').textContent = '📖 천수경 · 사진형 기도책';
+        overlay.querySelector('small').textContent = '보내주신 천수경 전문을 원문 그대로 조판한 시범판입니다. 좌우 버튼으로 한 장씩 넘기세요.';
+      }
       let spreads = [];
       let page = 0;
       const makeLine = (value, heading = false) => {
@@ -817,6 +832,11 @@
       paginate();
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (overlay.isConnected) paginate(); });
       return {close,flip};
+    }
+
+    if (new URLSearchParams(location.search).get('book') === 'cheonsugyeong') {
+      document.body.classList.add('cheonsu-preview');
+      openSasiBook();
     }
 
     function addSasiPrayerText(interior) {
