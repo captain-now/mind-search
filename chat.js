@@ -24,13 +24,12 @@ openLinkedPanel();
 function element(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
 function draw(m){const box=element('div',undefined,'bubble'+(m.user_id===canonicalId?' mine':''));box.dataset.id=m.id;
  const meta=element('div',undefined,'meta');
- if(m.guild_title)meta.append(element('span',m.guild_title,'guild-title'));
  meta.append(m.nickname+' · '+new Date(m.created_at).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
  box.append(meta,element('div',m.body));
  if(m.user_id===canonicalId){const b=element('button','삭제','danger');b.type='button';b.onclick=async()=>{if(!confirm(window.mindSearchCommunityText?.('이 메시지를 삭제할까요?') ?? '이 메시지를 삭제할까요?'))return;const r=await client.from('chat_messages').delete().eq('id',m.id).eq('user_id',canonicalId);if(r.error)status('삭제 실패: '+r.error.message);else box.remove()};box.append(b)}
  $('messages').append(box);$('messages').scrollTop=$('messages').scrollHeight;
 }
-async function refresh(){const r=await client.from('chat_messages').select('id,user_id,nickname,guild_title,body,created_at').order('created_at',{ascending:false}).limit(100);if(r.error)throw r.error;$('messages').replaceChildren();r.data.reverse().forEach(draw)}
+async function refresh(){const r=await client.from('chat_messages').select('id,user_id,nickname,body,created_at').order('created_at',{ascending:false}).limit(100);if(r.error)throw r.error;$('messages').replaceChildren();r.data.reverse().forEach(draw)}
 async function subscribe(){if(channel)await client.removeChannel(channel);channel=client.channel('mind-search-chat').on('postgres_changes',{event:'*',schema:'public',table:'chat_messages'},async payload=>{
  if(payload.eventType==='DELETE'){try{await refresh()}catch(e){status('대화 목록 갱신 실패: '+e.message)}return}
  if(payload.eventType==='INSERT'&&!$('messages').querySelector('[data-id="'+payload.new.id+'"]'))draw(payload.new);
