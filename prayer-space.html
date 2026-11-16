@@ -122,6 +122,10 @@
     .sasi-book-page:last-child { border-radius:0 14px 14px 0; box-shadow:inset 12px 0 20px #5b3b1926; }
     .sasi-book-page h3 { margin:0 0 5px; font-size:clamp(13px,2.3vw,21px); text-align:center; color:#704b27; }
     .sasi-book-page p { white-space:pre-line; font-size:clamp(11px,1.8vw,17px); line-height:1.3; margin:0; text-align:center; }
+    .sasi-book-page { overflow:hidden; }
+    .sasi-flow-heading { font-weight:700; color:#704b27; text-align:center; font-size:clamp(12px,2.1vw,19px); line-height:1.25; margin:4px 0 2px; }
+    .sasi-flow-line { font-size:clamp(11px,1.85vw,17px); line-height:1.3; text-align:center; overflow-wrap:anywhere; white-space:pre-wrap; }
+    @media(max-width:520px) { .sasi-flow-heading {font-size:14px;} .sasi-flow-line {font-size:12px;line-height:1.28;} }
     .sasi-book-sheet.turning .sasi-book-page:last-child { animation:sasi-flip .5s ease-in-out; transform-origin:left center; }
     @keyframes sasi-flip { 0%{transform:rotateY(0)} 50%{transform:rotateY(-40deg)} 100%{transform:rotateY(0)} }
     .sasi-book small { max-width:760px; text-align:center; color:#e7d4ae; }
@@ -745,37 +749,63 @@
       overlay.innerHTML = '<div class="sasi-book-top"><strong>🙏 대적광전 · 사시예불</strong><button type="button" data-close>✕ 닫기</button></div><div class="sasi-book-sheet"><article class="sasi-book-page"></article><article class="sasi-book-page"></article></div><div class="sasi-book-actions"><button type="button" data-prev>◀ 이전 장</button><span data-count></span><button type="button" data-next>다음 장 ▶</button></div><small>조계종 사시불공 의식 순서를 참고해 구성한 독송 보조문입니다. 사용자가 제공한 「우리말 천수경」 6쪽 본문을 수록했습니다. 사용자가 직접 책장을 넘길 수 있습니다.</small>';
       const sheet = overlay.querySelector('.sasi-book-sheet');
       const leaves = [...overlay.querySelectorAll('.sasi-book-page')];
+      // 기도문을 항목별로 새 장에 놓지 않고, 실제 종이 높이에 맞춰 연속 배치합니다.
+      // 첫 독송은 정구업진언부터 시작하며 기존 자료 배열 자체는 수정하지 않습니다.
+      const readingItems = pages.slice(pages.findIndex(item => item[0] === '정구업진언'));
+      let spreads = [];
       let page = 0;
-      const render = () => {
-        for(let side=0;side<2;side++){
-          const item=pages[page+side];
-          leaves[side].replaceChildren();
-          if(item){ const h=document.createElement('h3');h.textContent=item[0];const p=document.createElement('p');p.textContent=item[1];leaves[side].append(h,p); }
-        }
-        fitBookPages();
-        overlay.querySelector('[data-count]').textContent = Math.floor(page/2)+1+' / '+Math.ceil(pages.length/2);
+      const makeLine = (value, heading = false) => {
+        const node = document.createElement('div');
+        node.className = heading ? 'sasi-flow-heading' : 'sasi-flow-line';
+        node.textContent = value || '\u00a0';
+        return node;
       };
-      // 페이지마다 실제 공간을 측정하여 본문 전체가 스크롤 없이 보이도록 축소합니다.
-      const fitBookPages = () => {
-        for (const leaf of leaves) {
-          const heading = leaf.querySelector('h3');
-          const body = leaf.querySelector('p');
-          if (!heading || !body) continue;
-          body.style.fontSize = '';
-          body.style.lineHeight = '1.3';
-          heading.style.fontSize = '';
-          let size = parseFloat(getComputedStyle(body).fontSize);
-          while (leaf.scrollHeight > leaf.clientHeight && size > 5) {
-            size -= 0.5;
-            body.style.fontSize = size + 'px';
-            body.style.lineHeight = '1.12';
-            heading.style.fontSize = Math.max(10, size + 2) + 'px';
+      const paginate = () => {
+        const previousProgress = spreads.length ? page / Math.max(1, spreads.length - 1) : 0;
+        spreads = [];
+        const measure = leaves[0];
+        const allLines = [];
+        readingItems.forEach(([title, body]) => {
+          allLines.push([title, true]);
+          body.split('\\n').forEach(line => allLines.push([line, false]));
+        });
+        let current = [];
+        const flush = () => { if (current.length) { spreads.push(current); current = []; } };
+        measure.replaceChildren();
+        for (const [line, isHeading] of allLines) {
+          const node = makeLine(line, isHeading);
+          measure.append(node);
+          if (measure.scrollHeight > measure.clientHeight && current.length) {
+            node.remove();
+            flush();
+            measure.replaceChildren();
+            measure.append(node);
           }
+          current.push([line, isHeading]);
         }
+        flush();
+        measure.replaceChildren();
+        page = Math.min(Math.max(0, Math.floor(previousProgress * Math.max(0, spreads.length - 1) / 2) * 2), Math.max(0, spreads.length - 1));
+        render();
       };
-      const resizeBook = () => fitBookPages();
+      const render = () => {
+        leaves.forEach((leaf, side) => {
+          leaf.replaceChildren();
+          (spreads[page + side] || []).forEach(([line, heading]) => leaf.append(makeLine(line, heading)));
+        });
+        overlay.querySelector('[data-count]').textContent = (Math.floor(page / 2) + 1) + ' / ' + Math.ceil(spreads.length / 2);
+      };
+      const resizeBook = () => paginate();
       window.addEventListener('resize', resizeBook);
-      const flip = delta => {const next=Math.max(0,Math.min(pages.length-1,page+delta*2));if(next===page)return;page=next;sheet.classList.remove('turning');void sheet.offsetWidth;sheet.classList.add('turning');render();};
+      const flip = delta => {
+        const next = Math.max(0, Math.min(Math.max(0, spreads.length - 1), page + delta * 2));
+        if (next === page) return;
+        page = next;
+        sheet.classList.remove('turning');
+        void sheet.offsetWidth;
+        sheet.classList.add('turning');
+        render();
+      };
       if (audio) {
         const pause = document.createElement('button');
         pause.type = 'button';
@@ -793,8 +823,8 @@
       overlay.querySelector('[data-close]').addEventListener('click',close);
       document.addEventListener('keydown',onKey);
       document.body.append(overlay);
-      render();
-      requestAnimationFrame(fitBookPages);
+      paginate();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (overlay.isConnected) paginate(); });
       return {close,flip};
     }
 
