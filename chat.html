@@ -1,3 +1,58 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#477866"><title>NOW Mind Search | 실시간 마음 대화방</title><style>
-*{box-sizing:border-box}body{margin:0;background:#f5f5ee;color:#284b40;font-family:system-ui,-apple-system,'Noto Sans KR',sans-serif}button,input{font:inherit}button{cursor:pointer}a{color:#477866}.wrap{max-width:760px;margin:auto;padding:18px}.head{display:flex;align-items:center;justify-content:space-between;gap:12px}.head h1{font-size:23px;margin:10px 0}.card{background:#fff;border:1px solid #dbe4dc;border-radius:20px;padding:18px;box-shadow:0 5px 20px #1c4b3610}.muted{color:#617568;font-size:13px;line-height:1.6}.field{width:100%;padding:12px;border:1px solid #b5cabc;border-radius:12px;background:#fff}.btn{background:#477866;color:white;border:0;border-radius:12px;padding:12px 17px;font-weight:700}.btn:disabled{opacity:.55;cursor:wait}.messages{height:min(56vh,520px);min-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:14px 0}.bubble{max-width:90%;align-self:flex-start;background:#f0f5ef;border-radius:14px;padding:10px 13px;overflow-wrap:anywhere}.bubble.mine{align-self:flex-end;background:#d9eee0}.meta{font-size:11px;color:#607568;margin-bottom:5px}.guild-title{display:inline-block;margin-right:5px;padding:1px 5px;border:1px solid #bc9551;border-radius:5px;background:#fff1c2;color:#5b3316;font-weight:750}.compose{display:flex;gap:8px}.compose input{flex:1;min-width:0}.hidden{display:none!important}#status{min-height:22px}#captcha{margin:12px 0} .notice{background:#eaf3ec;border:1px solid #a9c9b5;border-radius:14px;padding:15px 17px;margin:16px 0;line-height:1.7}.notice strong{display:block;margin-bottom:5px}.notice a{font-weight:750;text-underline-offset:3px} .danger{border:0;background:transparent;color:#9d3b3b;font-size:12px;padding:4px}
-</style></head><body><main class="wrap"><div class="head"><h1>💬 NOW Mind Search 마음 대화방</h1><a href="./index.html">← 홈으로</a></div><p class="muted">공개 채팅방입니다. 모든 참여자가 메시지와 닉네임을 볼 수 있습니다. 개인정보를 올리지 말고 서로 존중해 주세요.</p><aside class="notice" id="nicknameNotice" role="note"><strong>📢 채팅방 이용 안내</strong><p>게시판에 고유 닉네임이 없는 분만 먼저 등록해 주세요. 이미 등록한 분은 자동으로 입장합니다. 게시판과 채팅방은 같은 닉네임을 사용합니다.</p><div><a href="./board.html">게시판에서 닉네임 등록하기 →</a></div></aside><section class="card"><p id="status" class="muted" role="status" aria-live="polite">연결 준비 중...</p><div id="join"><p class="muted">게시판의 고유 닉네임으로 자동 입장합니다.</p></div><div id="room" class="hidden"><div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions"></div><form id="compose" class="compose"><input class="field" id="message" maxlength="500" placeholder="메시지 입력 (최대 500자)" aria-label="메시지" required><button class="btn" id="send" type="submit">보내기</button></form><p class="muted">메시지 간 최소 5초 · 시간당 최대 60개 · 본인 메시지는 삭제할 수 있습니다.</p></div></section></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.10/dist/umd/supabase.min.js"></script><script src="./chat.js?v=guild-title"></script><script src="./ui-language.js?v=2" defer></script><script src="./extra-languages.js?v=3" defer></script><script src="./community-i18n.js?v=korean-label" defer></script></body></html>
+*{box-sizing:border-box}body{margin:0;background:#f5f5ee;color:#284b40;font-family:system-ui,-apple-system,'Noto Sans KR',sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}a{color:#477866}.wrap{max-width:760px;margin:auto;padding:18px}.head{display:flex;align-items:center;justify-content:space-between;gap:12px}.head h1{font-size:23px;margin:10px 0}.card{background:#fff;border:1px solid #dbe4dc;border-radius:20px;padding:18px;box-shadow:0 5px 20px #1c4b3610}.muted{color:#617568;font-size:13px;line-height:1.6}.field{width:100%;padding:12px;border:1px solid #b5cabc;border-radius:12px;background:#fff}.btn{background:#477866;color:white;border:0;border-radius:12px;padding:12px 17px;font-weight:700}.btn:disabled{opacity:.55;cursor:wait}.messages{height:min(56vh,520px);min-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:14px 0}.bubble{max-width:90%;align-self:flex-start;background:#f0f5ef;border-radius:14px;padding:10px 13px;overflow-wrap:anywhere}.bubble.mine{align-self:flex-end;background:#d9eee0}.meta{font-size:11px;color:#607568;margin-bottom:5px}.guild-title{display:inline-block;margin-right:5px;padding:1px 5px;border:1px solid #bc9551;border-radius:5px;background:#fff1c2;color:#5b3316;font-weight:750}.compose{display:flex;gap:8px}.compose input{flex:1;min-width:0}.hidden{display:none!important}#status{min-height:22px}#boardCaptcha{margin:12px 0;overflow:auto} .danger{border:0;background:transparent;color:#9d3b3b;font-size:12px;padding:4px}
+
+[hidden]{display:none!important}
+.head{flex-wrap:wrap}.head a{white-space:nowrap}.head h1{flex:1 1 220px}
+.community-tools{margin-top:14px}.community-tools>summary{cursor:pointer;font-weight:750;min-height:32px;padding:3px 0;color:#284b40}
+.board-nickname-register{margin:14px 0;padding:14px;border:1px solid #b9d3bf;border-radius:12px;background:#f3f9f4}
+.board-nickname-register form:not([hidden]),.board-form{display:grid;gap:10px}
+.board-nickname-register p{font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.board-guild-choice{display:flex;flex-wrap:wrap;gap:4px 16px;min-inline-size:0;margin:0;padding:4px 10px;border:1px solid #b9d3bf;border-radius:8px}
+.board-guild-choice label{display:inline-flex;align-items:center;gap:6px;min-height:44px;cursor:pointer}
+.board-guild-choice input{margin:0;accent-color:#477866}.board-guild-choice small{flex-basis:100%}
+.board-form{margin:18px 0}.board-form label{font-weight:700}.board-form textarea{min-height:100px;resize:vertical}
+.board-post{padding:16px 0;border-top:1px solid #e0e8df;overflow-wrap:anywhere}.board-post h3{margin:8px 0}.board-post p{white-space:pre-wrap}
+.board-nickname-badge{padding:2px 5px;border-radius:4px;background:#eaf3ec}
+.board-comments{padding:0 0 0 12px;border-left:3px solid #dbe8dc;margin-top:14px}.board-comment{padding:8px 0;border-bottom:1px solid #e9eee9}
+.board-comment-form,.board-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.board-comment-form input{flex:1 1 150px;min-width:0}
+.community-tools button:not(.btn){min-height:38px;padding:6px 11px;border:1px solid #b5cabc;border-radius:9px;background:#fff;color:#284b40}
+.community-tools button:disabled{opacity:.55;cursor:default}
+.admin-frame{display:block;width:100%;height:min(75vh,720px);min-height:410px;border:1px solid #dbe4dc;border-radius:12px;background:#f5f8f4}
+</style></head>
+<body><main class="wrap" id="community">
+<div class="head"><h1>💬 NOW Mind Search 마음 대화방</h1><a href="./index.html">← 홈으로</a></div>
+<p class="muted">공개 채팅방입니다. 모든 참여자가 메시지와 닉네임을 볼 수 있습니다. 개인정보를 올리지 말고 서로 존중해 주세요.</p>
+<section class="card" aria-label="실시간 채팅">
+<p id="status" class="muted" role="status">연결 준비 중...</p>
+<div id="join"><p class="muted">고유 닉네임이 있으면 자동으로 입장합니다.</p><a id="nickname-link" href="#nickname-registration">닉네임 등록 또는 연결하기</a></div>
+<div id="room" class="hidden"><div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions"></div><form id="compose" class="compose"><input class="field" id="message" maxlength="500" placeholder="메시지 입력 (최대 500자)" aria-label="메시지" required><button class="btn" id="send" type="submit">보내기</button></form><p class="muted">메시지 간 최소 5초 · 시간당 최대 60개 · 본인 메시지는 삭제할 수 있습니다.</p></div>
+</section>
+<details class="card community-tools" id="nickname-settings">
+<summary>닉네임 설정</summary>
+<div id="nickname-registration"><p id="profile-status" class="muted" role="status"></p></div>
+</details>
+<details class="card community-tools" id="posts">
+<summary>글과 댓글</summary>
+<p class="muted disclaimer">게시글과 댓글은 공개됩니다.</p>
+<p id="board-status" class="muted" role="status"></p>
+<form id="boardForm" class="board-form" hidden>
+<label for="boardName">고유 닉네임</label><input class="field" id="boardName" maxlength="30" required placeholder="고유 닉네임 등록 후 자동 입력" readonly>
+<label for="boardTitle">글 제목</label><input class="field" id="boardTitle" maxlength="100" required placeholder="제목을 입력하세요">
+<label for="boardBody">내용</label><textarea class="field" id="boardBody" maxlength="3000" required placeholder="자유롭게 이야기해 주세요"></textarea>
+<button class="btn" type="submit">글 작성</button></form>
+<div id="boardPosts" aria-live="polite"></div>
+</details>
+<details class="card community-tools" id="admin-tools">
+<summary id="admin-entry">🔐 운영자 관리실</summary>
+<p class="muted"><a href="./admin.html">운영자 관리실 새 페이지로 열기</a></p>
+<iframe class="admin-frame" id="admin-frame" title="운영자 신고 관리실" hidden></iframe>
+</details>
+</main>
+<script>window.MIND_SEARCH_BOARD_CONFIG={url:"https://iqohtsakhfnwtlbarjut.supabase.co",anonKey:"sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w",turnstileSiteKey:"0x4AAAAAAF4XQ_wl1XONk2be"};</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.10/dist/umd/supabase.min.js" defer></script>
+<script src="./chat.js?v=community-room" defer></script>
+<script src="./public-board.js?v=community-room" defer></script>
+<script src="./ui-language.js?v=2" defer></script>
+<script src="./extra-languages.js?v=3" defer></script>
+<script src="./community-i18n.js?v=community-room" defer></script>
+</body></html>
