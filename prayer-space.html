@@ -693,7 +693,24 @@
     function openSasiBook({ audio, onClose } = {}) {
       const pages = [
         ['보례진언', '시방삼세 모든 삼보님께\n지극한 마음으로 예경합니다.\n\n옴 바아라 믹 (세 번)'],
-        ['우리말 천수경 · 전체', '대한불교조계종이 공개한 우리말 천수경 원문을 아래 책자에서 직접 읽을 수 있습니다.'],
+        ["정구업진언","입으로 지은 허물을 맑히고, 진실하고 자비로운 말을 하겠습니다.\n\n수리수리 마하수리 수수리 사바하 (세 번)"],
+        ["오방내외안위제신진언","동서남북과 안팎의 모든 신중이 평안하기를 기원합니다.\n\n나무 사만다 못다남 옴 도로 도로 지미 사바하 (세 번)"],
+        ["개경게 · 개법장진언","깊고 미묘한 부처님의 가르침을 만나 듣고 지니게 되었으니, 그 참뜻을 깨닫기를 원합니다.\n\n옴 아라남 아라다 (세 번)"],
+        ["대비주 계청","천 손으로 중생을 돕고 천 눈으로 세상을 살피시는 관세음보살님, 끝없는 자비의 가르침을 청합니다."],
+        ["관세음보살 찬탄","관세음보살님의 크신 서원과 지혜를 생각합니다. 괴로움 속의 중생을 보살피고, 어둠을 밝히며, 모든 이에게 깨달음의 길을 열어 주소서."],
+        ["관세음보살 열 가지 발원","모든 이가 진리를 이해하고 지혜의 눈을 얻기를 바랍니다.\n\n중생을 건질 방편을 익히고 고통의 바다를 건너, 계율·선정·지혜를 닦아 깨달음에 이르겠습니다."],
+        ["육도 중생을 위한 발원","지옥의 고통이 사라지고 굶주림이 그치기를 바랍니다.\n\n분노가 자비로 바뀌고, 어리석음이 지혜로 바뀌어 모든 생명이 평안하기를 바랍니다."],
+        ["보살님께 귀의","관세음보살님과 대세지보살님, 여러 보살님께 귀의합니다.\n\n모든 중생을 구하려는 그 서원을 배우겠습니다."],
+        ["신묘장구대다라니 · 안내","신묘장구대다라니는 관세음보살님의 큰 자비를 염하는 긴 진언입니다.\n\n이 장은 독송의 의미를 설명한 우리말 안내이며, 진언 전문을 옮긴 것은 아닙니다."],
+        ["사방찬 · 도량찬","동서남북 모든 방향이 맑고 평안하기를 바랍니다.\n\n이 기도 도량이 청정해지고, 삼보의 가르침이 모든 곳에 두루하기를 바랍니다."],
+        ["참회게 · 십악참회","몸과 말과 마음으로 지은 허물을 돌아봅니다.\n\n생명을 해치고, 남의 것을 탐하고, 거짓말하며, 분노와 어리석음에 빠진 일을 참회합니다."],
+        ["참회진언","잘못을 숨기지 않고 뉘우치며, 다시는 같은 허물을 짓지 않도록 노력하겠습니다.\n\n옴 살바 못자모지 사다야 사바하 (세 번)"],
+        ["준제찬 · 준제보살","준제보살님의 지혜와 자비를 생각합니다.\n\n어려움 속에서도 바른 마음을 지키고, 깨달음의 길을 꾸준히 걷겠습니다."],
+        ["정법계진언 · 호신진언","법계가 청정하기를 기원합니다.\n\n옴 람 (세 번)\n\n몸과 마음을 바르게 보호하기를 발원합니다.\n\n옴 치림 (세 번)"],
+        ["육자대명왕진언","관세음보살님의 자비를 마음에 새깁니다.\n\n옴 마니 반메 훔 (세 번)"],
+        ["준제진언 · 발원","준제보살의 지혜를 배우며 깨달음의 마음을 일으킵니다.\n\n내가 닦은 선한 공덕이 모든 중생에게 이르기를 바랍니다."],
+        ["여래십대발원문","괴로운 길을 벗어나 탐욕·성냄·어리석음을 줄이겠습니다.\n\n삼보의 가르침을 듣고 계율·선정·지혜를 닦으며, 모든 중생과 함께 깨달음에 이르기를 서원합니다."],
+        ["사홍서원 · 삼보귀의","끝없는 중생을 건지고, 끝없는 번뇌를 끊으며, 한없는 가르침을 배우고, 위없는 깨달음을 이루겠습니다.\n\n부처님과 가르침과 수행 공동체에 귀의합니다."],
         ['거불 · 삼보통청', '나무 불타부중 광림법회\n나무 달마부중 광림법회\n나무 승가부중 광림법회\n\n부처님과 가르침과 승가를\n정성껏 모십니다.'],
         ['보소청진언', '나무 보보제리 가리다리 다타아다야\n(세 번)\n\n시방의 삼보님을 청정한 도량에 청합니다.'],
         ['유치 · 청사', '거룩하신 삼보님이시여.\n오늘 이 도량에서 지극한 정성으로\n공양을 올리고 기도하오니\n저희의 발원을 살펴주소서.'],
@@ -710,29 +727,17 @@
       overlay.setAttribute('role','dialog');
       overlay.setAttribute('aria-modal','true');
       overlay.setAttribute('aria-label','사시예불 기도문 책');
-      overlay.innerHTML = '<div class="sasi-book-top"><strong>🙏 대적광전 · 사시예불</strong><button type="button" data-close>✕ 닫기</button></div><div class="sasi-book-sheet"><article class="sasi-book-page"></article><article class="sasi-book-page"></article></div><div class="sasi-book-actions"><button type="button" data-prev>◀ 이전 장</button><span data-count></span><button type="button" data-next>다음 장 ▶</button></div><small>조계종 사시불공 의식 순서를 참고해 구성한 독송 보조문입니다. 천수경은 대한불교조계종 공개 원문을 책자 안에 표시합니다. 천수경 PDF의 페이지는 사용자가 직접 넘기며, 이후 사시불공 안내문도 직접 넘길 수 있습니다. 음성과 페이지의 정확한 시각은 미확인 상태입니다.</small>';
+      overlay.innerHTML = '<div class="sasi-book-top"><strong>🙏 대적광전 · 사시예불</strong><button type="button" data-close>✕ 닫기</button></div><div class="sasi-book-sheet"><article class="sasi-book-page"></article><article class="sasi-book-page"></article></div><div class="sasi-book-actions"><button type="button" data-prev>◀ 이전 장</button><span data-count></span><button type="button" data-next>다음 장 ▶</button></div><small>조계종 사시불공 의식 순서를 참고해 구성한 독송 보조문입니다. 대한불교조계종 우리말 천수경의 구성과 뜻을 참고하여 새로 쓴 우리말 독송 안내입니다. 조계종 공식 번역문 전문과 동일하지 않습니다. 사용자가 직접 책장을 넘길 수 있습니다.</small>';
       const sheet = overlay.querySelector('.sasi-book-sheet');
-      const officialPdf = document.createElement('iframe');
-      officialPdf.className = 'sasi-official-pdf';
-      officialPdf.title = '대한불교조계종 우리말 천수경 전체 기도문';
-      officialPdf.src = 'https://www.buddhism.or.kr/resources/data/pogyo/mp/%EC%B2%9C%EC%88%98%EA%B2%BD.pdf#toolbar=1&navpanes=0';
-      officialPdf.style.cssText = 'display:block;width:min(96vw,850px);height:min(70dvh,650px);margin:0 auto;border:1px solid #d8bb86;background:white';
-      sheet.after(officialPdf);
-
       const leaves = [...overlay.querySelectorAll('.sasi-book-page')];
       let page = 0;
       const render = () => {
-        const showingCheonsu = page <= 1;
-        sheet.hidden = showingCheonsu;
-        officialPdf.hidden = !showingCheonsu;
-        officialPdf.style.display = showingCheonsu ? 'block' : 'none';
-
         for(let side=0;side<2;side++){
           const item=pages[page+side];
           leaves[side].replaceChildren();
           if(item){ const h=document.createElement('h3');h.textContent=item[0];const p=document.createElement('p');p.textContent=item[1];leaves[side].append(h,p); }
         }
-        overlay.querySelector('[data-count]').textContent = page <= 1 ? '우리말 천수경 전체 · PDF 안에서 직접 넘기기' : Math.floor(page/2)+1+' / '+Math.ceil(pages.length/2);
+        overlay.querySelector('[data-count]').textContent = Math.floor(page/2)+1+' / '+Math.ceil(pages.length/2);
       };
       const flip = delta => {const next=Math.max(0,Math.min(pages.length-1,page+delta*2));if(next===page)return;page=next;sheet.classList.remove('turning');void sheet.offsetWidth;sheet.classList.add('turning');render();};
       if (audio) {
