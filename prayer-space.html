@@ -470,7 +470,7 @@
     const hallChants = {
       "daejeokgwangjeon": [
         ["om-nam", "옴남"],
-        [null, "이뭣고", "./assets/temple/seon-meditation-photoreal.mp4", { playOnce: true }]
+        [null, "이뭣고", "./assets/temple/seon-meditation-photoreal.mp4", { fullFrame: true }]
       ],
       "daeungjeon": [
         [null, "금강경 한문"],
@@ -590,7 +590,7 @@
         current.setPlaying(false);
       }
 
-      const buttons = tracks.map(([id, label, videoSource, { playOnce = false } = {}]) => {
+      const buttons = tracks.map(([id, label, videoSource, { fullFrame = false } = {}]) => {
         const button = document.createElement('button');
         const name = prayerText(label);
         const available = Boolean(id || videoSource);
@@ -614,16 +614,9 @@
           const media = videoSource ? document.createElement('video') : audio;
           if (videoSource) {
             media.className = 'chant-video';
-            media.loop = !playOnce;
+            media.loop = true;
             media.playsInline = true;
-            if (playOnce) {
-              media.classList.add('chant-video--full-frame');
-              media.addEventListener('ended', () => {
-                if (active?.media !== media) return;
-                stopActive();
-                status.textContent = prayerCopy('재생이 끝났습니다.', 'Playback completed.', '播放已结束。', '再生が終了しました。', 'Lecture terminée.');
-              }, { once: true });
-            }
+            if (fullFrame) media.classList.add('chant-video--full-frame');
             panel.before(media);
             media.src = videoSource;
           } else {
