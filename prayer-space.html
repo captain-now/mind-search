@@ -671,7 +671,6 @@
           active = { button, media, setPlaying };
           if (label.includes('사시예불')) {
             audio.loop = false;
-            openSasiBook({ audio, onClose: () => { audio.pause(); stopActive(); } });
           }
           setPlaying(true);
           try {
@@ -825,7 +824,8 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.textContent = '📖 사시예불 책 펼치기';
-      button.addEventListener('click', () => openSasiBook());
+      button.hidden = true;
+      button.disabled = true;
       button.setAttribute('aria-haspopup', 'dialog');
       const dialog = document.createElement('dialog');
       dialog.className = 'sasi-text-dialog';
