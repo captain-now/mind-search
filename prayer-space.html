@@ -492,7 +492,7 @@
     const hallChants = {
       "daejeokgwangjeon": [
         [null, "이뭣고", null, { audioSource: "./assets/temple/chant/now-hwadu.m4a" }],
-        [null, "🙏 사시예불", null, { youtubeId: "v7Kqer5F7wk" }]
+        [null, "🙏 사시예불", null, { audioSource: "https://raw.githubusercontent.com/captain-now/NOW-Mindfulness-Web/main/audio/%EC%82%AC%EC%8B%9C%EC%98%88%EB%B6%88_%EC%99%84%EC%A0%84%EC%95%95%EC%B6%95%EB%B3%B8_25MB%EC%9D%B4%ED%95%98.opus" }]
       ],
       "daeungjeon": [
         [null, "금강경 한문"],
@@ -665,6 +665,10 @@
             if (audio.getAttribute('src') !== source || audio.error) audio.src = source;
           }
           active = { button, media, setPlaying };
+          if (label.includes('사시예불')) {
+            audio.loop = false;
+            openSasiBook({ audio, onClose: () => { audio.pause(); stopActive(); } });
+          }
           setPlaying(true);
           try {
             if (!youtubeId) await media.play();
@@ -686,7 +690,7 @@
       panel.hidden = false;
     }
 
-    function openSasiBook() {
+    function openSasiBook({ audio, onClose } = {}) {
       const pages = [
         ['보례진언', '시방삼세 모든 삼보님께\n지극한 마음으로 예경합니다.\n\n옴 바아라 믹 (세 번)'],
         ['천수경 · 개경', '정구업진언\n수리수리 마하수리 수수리 사바하\n\n천수천안 관세음보살님의\n대자대비 원력을 받들어\n몸과 말과 마음을 청정히 합니다.'],
@@ -720,9 +724,19 @@
         overlay.querySelector('[data-count]').textContent = Math.floor(page/2)+1+' / '+Math.ceil(pages.length/2);
       };
       const flip = delta => {const next=Math.max(0,Math.min(pages.length-1,page+delta*2));if(next===page)return;page=next;sheet.classList.remove('turning');void sheet.offsetWidth;sheet.classList.add('turning');render();};
+      if (audio) {
+        const pause = document.createElement('button');
+        pause.type = 'button';
+        pause.textContent = '⏸ 일시정지';
+        pause.addEventListener('click', async () => {
+          if (audio.paused) { try { await audio.play(); pause.textContent = '⏸ 일시정지'; } catch { pause.textContent = '재생 실패 · 다시 누르세요'; } }
+          else { audio.pause(); pause.textContent = '▶ 계속 듣기'; }
+        });
+        overlay.querySelector('.sasi-book-actions').append(pause);
+      }
       overlay.querySelector('[data-prev]').addEventListener('click',()=>flip(-1));
       overlay.querySelector('[data-next]').addEventListener('click',()=>flip(1));
-      const close=()=>{overlay.remove();document.removeEventListener('keydown',onKey);};
+      const close=()=>{overlay.remove();document.removeEventListener('keydown',onKey);onClose?.();};
       const onKey=e=>{if(e.key==='Escape')close();if(e.key==='ArrowRight')flip(1);if(e.key==='ArrowLeft')flip(-1);};
       overlay.querySelector('[data-close]').addEventListener('click',close);
       document.addEventListener('keydown',onKey);
