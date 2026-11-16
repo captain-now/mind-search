@@ -5,16 +5,8 @@
 .head{flex-wrap:wrap}.head a{white-space:nowrap}.head h1{flex:1 1 220px}
 .community-tools{margin-top:14px}.community-tools>summary{cursor:pointer;font-weight:750;min-height:32px;padding:3px 0;color:#284b40}
 .board-nickname-register{margin:14px 0;padding:14px;border:1px solid #b9d3bf;border-radius:12px;background:#f3f9f4}
-.board-nickname-register form:not([hidden]),.board-form{display:grid;gap:10px}
+.board-nickname-register form:not([hidden]){display:grid;gap:10px}
 .board-nickname-register p{font-size:14px;line-height:1.6;overflow-wrap:anywhere}
-.board-guild-choice{display:flex;flex-wrap:wrap;gap:4px 16px;min-inline-size:0;margin:0;padding:4px 10px;border:1px solid #b9d3bf;border-radius:8px}
-.board-guild-choice label{display:inline-flex;align-items:center;gap:6px;min-height:44px;cursor:pointer}
-.board-guild-choice input{margin:0;accent-color:#477866}.board-guild-choice small{flex-basis:100%}
-.board-form{margin:18px 0}.board-form label{font-weight:700}.board-form textarea{min-height:100px;resize:vertical}
-.board-post{padding:16px 0;border-top:1px solid #e0e8df;overflow-wrap:anywhere}.board-post h3{margin:8px 0}.board-post p{white-space:pre-wrap}
-.board-nickname-badge{padding:2px 5px;border-radius:4px;background:#eaf3ec}
-.board-comments{padding:0 0 0 12px;border-left:3px solid #dbe8dc;margin-top:14px}.board-comment{padding:8px 0;border-bottom:1px solid #e9eee9}
-.board-comment-form,.board-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.board-comment-form input{flex:1 1 150px;min-width:0}
 .community-tools button:not(.btn){min-height:38px;padding:6px 11px;border:1px solid #b5cabc;border-radius:9px;background:#fff;color:#284b40}
 .community-tools button:disabled{opacity:.55;cursor:default}
 .admin-frame{display:block;width:100%;height:min(75vh,720px);min-height:410px;border:1px solid #dbe4dc;border-radius:12px;background:#f5f8f4}
@@ -31,17 +23,6 @@
 <summary>닉네임 설정</summary>
 <div id="nickname-registration"><p id="profile-status" class="muted" role="status"></p></div>
 </details>
-<details class="card community-tools" id="posts">
-<summary>글과 댓글</summary>
-<p class="muted disclaimer">게시글과 댓글은 공개됩니다.</p>
-<p id="board-status" class="muted" role="status"></p>
-<form id="boardForm" class="board-form" hidden>
-<label for="boardName">고유 닉네임</label><input class="field" id="boardName" maxlength="30" required placeholder="고유 닉네임 등록 후 자동 입력" readonly>
-<label for="boardTitle">글 제목</label><input class="field" id="boardTitle" maxlength="100" required placeholder="제목을 입력하세요">
-<label for="boardBody">내용</label><textarea class="field" id="boardBody" maxlength="3000" required placeholder="자유롭게 이야기해 주세요"></textarea>
-<button class="btn" type="submit">글 작성</button></form>
-<div id="boardPosts" aria-live="polite"></div>
-</details>
 <details class="card community-tools" id="admin-tools">
 <summary id="admin-entry">🔐 운영자 관리실</summary>
 <p class="muted"><a href="./admin.html">운영자 관리실 새 페이지로 열기</a></p>
@@ -50,9 +31,9 @@
 </main>
 <script>window.MIND_SEARCH_BOARD_CONFIG={url:"https://iqohtsakhfnwtlbarjut.supabase.co",anonKey:"sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w",turnstileSiteKey:"0x4AAAAAAF4XQ_wl1XONk2be"};</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.10/dist/umd/supabase.min.js" defer></script>
-<script src="./chat.js?v=community-room" defer></script>
-<script src="./public-board.js?v=community-room" defer></script>
+<script src="./chat.js?v=chat-only" defer></script>
+<script src="./chat-profile.js?v=chat-only" defer></script>
 <script src="./ui-language.js?v=2" defer></script>
 <script src="./extra-languages.js?v=3" defer></script>
-<script src="./community-i18n.js?v=community-room" defer></script>
+<script src="./community-i18n.js?v=chat-only" defer></script>
 </body></html>

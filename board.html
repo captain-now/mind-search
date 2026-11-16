@@ -3,12 +3,12 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NOW Mind Search 마음 대화방으로 이동</title>
 <link rel="canonical" href="https://captain-now.github.io/mind-search/chat.html">
-<noscript><meta http-equiv="refresh" content="0;url=./chat.html?v=community-room#posts"></noscript>
+<noscript><meta http-equiv="refresh" content="0;url=./chat.html?v=chat-only"></noscript>
 <script>
-const destination = new URL('./chat.html?v=community-room', location.href);
-destination.hash = location.hash === '#nickname-registration' ? 'nickname-registration' : 'posts';
+const destination = new URL('./chat.html?v=chat-only', location.href);
+if (location.hash === '#nickname-registration') destination.hash = location.hash;
 location.replace(destination.href);
 </script>
 </head>
-<body><p><a href="./chat.html?v=community-room#posts">마음 대화방에서 글과 댓글 보기</a></p></body>
+<body><p><a href="./chat.html?v=chat-only">마음 대화방으로 이동</a></p></body>
 </html>

@@ -5,7 +5,7 @@ const settings=$('nickname-settings');
 const adminTools=$('admin-tools');
 $('nickname-link').addEventListener('click',()=>{settings.open=true});
 function openLinkedPanel(){
- const panels={'#nickname-registration':settings,'#posts':$('posts'),'#admin-tools':adminTools};
+ const panels={'#nickname-registration':settings,'#admin-tools':adminTools};
  const panel=panels[location.hash];
  if(panel){
   panel.open=true;
@@ -15,7 +15,7 @@ function openLinkedPanel(){
 adminTools.addEventListener('toggle',()=>{
  const frame=$('admin-frame');
  if(adminTools.open&&!frame.hasAttribute('src')){
-  frame.src='./admin.html?v=community-room';
+  frame.src='./admin.html?v=chat-only';
   frame.hidden=false;
  }
 });
