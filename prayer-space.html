@@ -1223,7 +1223,7 @@
         enableSeatNames(plan, '좌복', memorial, fixedSeatsByHall.get(hallId));
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks, { middleButton });
-        if (hallId === 'daejeokgwangjeon') addSasiPrayerText(interior);
+
         if (hallId === 'jijangjeon') addJijangChapterPicker(interior);
         const backLink = seating.querySelector('.home-return');
         backLink.href = './temple.html?v=centered-sound-v2';
