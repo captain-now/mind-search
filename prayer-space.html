@@ -739,6 +739,18 @@
         ['축원', '모든 생명이 건강하고 평안하며\n서로를 존중하고 아끼기를 발원합니다.\n\n고통받는 이에게 위로를,\n길을 잃은 이에게 지혜를,\n모든 중생에게 자비를 주소서.'],
         ['반야심경 · 회향', '관자재보살 행심반야바라밀다시\n조견오온개공 도일체고액\n\n마하반야바라밀다\n\n오늘 기도의 공덕을\n일체 중생에게 회향합니다.']
       ];
+      // 원문 보존: 안내용 축약 페이지에도 기존 독송문 전문을 그대로 표시합니다.
+      const fullTextByTitle = new Map(pages.filter(item => item[0].startsWith('삼보통청 · ')).map(item => [item[0], item[1]]));
+      const originalSections = [
+        ['유치 · 청사', ['삼보통청 · 유치 독송문', '삼보통청 · 청사 독송문']],
+        ['향화청 · 가영 · 헌좌', ['삼보통청 · 향화청 독송문', '삼보통청 · 헌좌게와 헌좌진언']]
+      ];
+      for (const [shortTitle, fullTitles] of originalSections) {
+        const pageItem = pages.find(item => item[0] === shortTitle);
+        if (!pageItem) continue;
+        const originals = fullTitles.map(title => fullTextByTitle.get(title) ? title + '\\n' + fullTextByTitle.get(title) : '').filter(Boolean);
+        if (originals.length === fullTitles.length) pageItem[1] += '\\n\\n' + originals.join('\\n\\n');
+      }
       const overlay = document.createElement('div');
       overlay.className = 'sasi-book';
       overlay.setAttribute('role','dialog');
