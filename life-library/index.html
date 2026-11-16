@@ -309,12 +309,15 @@ function authorName(entry) {
 }
 function storyMeta(entry) {
   const author=authorName(entry);
-  return entry.id ? libraryText(entry.topic)+' · '+libraryText('내 이야기')+' · '+libraryText('작성자')+' '+author : author;
+  const raw=entry.createdAt||entry.publishedOn;
+  const date=raw ? new Date(entry.createdAt || entry.publishedOn+'T00:00:00+09:00') : null;
+  const stamp=date && !Number.isNaN(date.getTime()) ? new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',...(entry.createdAt?{hour:'2-digit',minute:'2-digit',hour12:false}:{})}).format(date) : '';
+  return (entry.id ? libraryText(entry.topic)+' · '+libraryText('내 이야기')+' · '+libraryText('작성자')+' '+author : author)+(stamp?' · '+stamp:'');
 }
 function render() {
   const term=search.value.trim().toLowerCase();
-  const newestStories=[...stories].sort((a,b)=>(b.publishedOn||'').localeCompare(a.publishedOn||''));
-  const visible=[...newestStories,...drafts].filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic,authorName(entry)].join(' ').toLowerCase().includes(term));
+  const timestamp=entry=>entry.createdAt ? Date.parse(entry.createdAt)||0 : entry.publishedOn ? Date.parse(entry.publishedOn+'T00:00:00+09:00')||0 : 0;
+  const visible=[...drafts,...stories].sort((a,b)=>timestamp(b)-timestamp(a)).filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic,authorName(entry)].join(' ').toLowerCase().includes(term));
   shelf.replaceChildren();
   for(const entry of visible) {
     const card=node('article','','card');
@@ -351,7 +354,8 @@ form.addEventListener('submit',async event=>{
   await loadBoardAuthor();
   submit.disabled=false;
   if(draftId!==editingId || (draftId && !drafts.some(entry=>entry.id===draftId))) return;
-  const item={id:draftId||crypto.randomUUID(),topic,authorId:boardAuthor?.id??null,title,body};
+  const previous=draftId?drafts.find(entry=>entry.id===draftId):null;
+  const item={id:draftId||crypto.randomUUID(),topic,authorId:boardAuthor?.id??null,title,body,createdAt:previous?.createdAt||new Date().toISOString()};
   const next=editingId?drafts.map(entry=>entry.id===editingId?item:entry):[item,...drafts];
   if(!save(next))return;
   editingId=null;
