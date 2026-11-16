@@ -112,6 +112,21 @@
       object-fit: contain;
       object-position: center;
     }
+    .sasi-book { position: fixed; inset: 0; z-index: 1000; background: radial-gradient(circle at center,#5a3d27,#160f0b); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 14px; box-sizing: border-box; color: #fff4d8; }
+    .sasi-book[hidden] { display: none; }
+    .sasi-book-top,.sasi-book-actions { width: min(96vw,760px); display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
+    .sasi-book button { border:1px solid #d8bb86; border-radius:10px; background:#382719; color:#fff2d9; padding:9px 13px; font:inherit; cursor:pointer; }
+    .sasi-book-sheet { position:relative; width:min(94vw,760px); height:min(66dvh,540px); min-height:260px; display:grid; grid-template-columns:1fr 1fr; perspective:1000px; filter:drop-shadow(0 14px 20px #0009); }
+    .sasi-book-page { background:linear-gradient(100deg,#e9d7b5,#fff9e9 15%,#f4e7cf); color:#37291b; padding:clamp(12px,3vw,32px); overflow:auto; border:1px solid #cbb58e; box-sizing:border-box; }
+    .sasi-book-page:first-child { border-radius:14px 0 0 14px; box-shadow:inset -12px 0 20px #5b3b1926; }
+    .sasi-book-page:last-child { border-radius:0 14px 14px 0; box-shadow:inset 12px 0 20px #5b3b1926; }
+    .sasi-book-page h3 { margin:0 0 16px; font-size:clamp(17px,2.6vw,25px); text-align:center; color:#704b27; }
+    .sasi-book-page p { white-space:pre-line; font-size:clamp(14px,2.2vw,20px); line-height:1.85; text-align:center; }
+    .sasi-book-sheet.turning .sasi-book-page:last-child { animation:sasi-flip .5s ease-in-out; transform-origin:left center; }
+    @keyframes sasi-flip { 0%{transform:rotateY(0)} 50%{transform:rotateY(-40deg)} 100%{transform:rotateY(0)} }
+    .sasi-book small { max-width:760px; text-align:center; color:#e7d4ae; }
+    .sasi-youtube-audio { position:fixed; width:1px; height:1px; opacity:0; pointer-events:none; left:-10px; top:-10px; }
+    @media(max-width:520px) { .sasi-book-sheet { height:65dvh; } .sasi-book-page { padding:12px 9px; } }
     .sasi-text-dialog { width: min(92vw, 680px); max-height: 82dvh; overflow: auto; border: 1px solid #a58b6e; border-radius: 16px; padding: 24px; background: #fffaf1; color: #263d36; line-height: 1.8; }
     .sasi-text-dialog::backdrop { background: rgba(0,0,0,.55); }
     .sasi-text-dialog h2 { font-size: 1.45rem; margin: 0 0 8px; }
@@ -671,11 +686,57 @@
       panel.hidden = false;
     }
 
+    function openSasiBook() {
+      const pages = [
+        ['보례진언', '시방삼세 모든 삼보님께\n지극한 마음으로 예경합니다.\n\n옴 바아라 믹 (세 번)'],
+        ['천수경 · 개경', '정구업진언\n수리수리 마하수리 수수리 사바하\n\n천수천안 관세음보살님의\n대자대비 원력을 받들어\n몸과 말과 마음을 청정히 합니다.'],
+        ['천수경 · 대비주', '관세음보살님의 자비를 생각하며\n천수경과 신묘장구대다라니를 독송합니다.\n\n모든 중생의 고통이 사라지고\n지혜와 자비가 자라기를 발원합니다.'],
+        ['거불 · 삼보통청', '나무 불타부중 광림법회\n나무 달마부중 광림법회\n나무 승가부중 광림법회\n\n부처님과 가르침과 승가를\n정성껏 모십니다.'],
+        ['보소청진언', '나무 보보제리 가리다리 다타아다야\n(세 번)\n\n시방의 삼보님을 청정한 도량에 청합니다.'],
+        ['유치 · 청사', '거룩하신 삼보님이시여.\n오늘 이 도량에서 지극한 정성으로\n공양을 올리고 기도하오니\n저희의 발원을 살펴주소서.'],
+        ['향화청 · 가영 · 헌좌', '향과 꽃으로 삼보님을 청하고\n한량없는 공덕을 찬탄합니다.\n\n청정하고 장엄한 자리를\n정성껏 올립니다.'],
+        ['관세음보살 정근', '나무 보문시현 원력홍심\n대자대비 구고구난 관세음보살\n\n나무 관세음보살\n나무 관세음보살\n나무 관세음보살\n\n관세음보살 (계속 정근)'],
+        ['정법계진언 · 공양게', '옴 람 (세 번)\n\n청정한 마음으로\n정성껏 마련한 공양을 올립니다.\n\n이 공양이 온 법계에 두루하기를 발원합니다.'],
+        ['진언권공 · 공양예참', '부처님과 보살님께 공양을 올리고\n몸과 말과 마음으로 지은 허물을 참회합니다.\n\n모든 중생과 함께\n깨달음의 길로 나아가기를 발원합니다.'],
+        ['보공양 · 보회향 · 원성취', '공양의 공덕을 널리 회향하고\n선한 발원이 원만히 성취되기를 기원합니다.\n\n부족한 정성도 자비로 받아주소서.'],
+        ['축원', '모든 생명이 건강하고 평안하며\n서로를 존중하고 아끼기를 발원합니다.\n\n고통받는 이에게 위로를,\n길을 잃은 이에게 지혜를,\n모든 중생에게 자비를 주소서.'],
+        ['반야심경 · 회향', '관자재보살 행심반야바라밀다시\n조견오온개공 도일체고액\n\n마하반야바라밀다\n\n오늘 기도의 공덕을\n일체 중생에게 회향합니다.']
+      ];
+      const overlay = document.createElement('div');
+      overlay.className = 'sasi-book';
+      overlay.setAttribute('role','dialog');
+      overlay.setAttribute('aria-modal','true');
+      overlay.setAttribute('aria-label','사시예불 기도문 책');
+      overlay.innerHTML = '<div class="sasi-book-top"><strong>🙏 대적광전 · 사시예불</strong><button type="button" data-close>✕ 닫기</button></div><div class="sasi-book-sheet"><article class="sasi-book-page"></article><article class="sasi-book-page"></article></div><div class="sasi-book-actions"><button type="button" data-prev>◀ 이전 장</button><span data-count></span><button type="button" data-next>다음 장 ▶</button></div><small>조계종 사시불공 의식 순서를 참고해 구성한 독송 보조문입니다. 정식 의식문 전문이나 검증된 음성 자막은 아닙니다. 음성과 페이지의 정확한 시각은 미확인 상태이며 직접 넘길 수 있습니다.</small>';
+      const sheet = overlay.querySelector('.sasi-book-sheet');
+      const leaves = [...overlay.querySelectorAll('.sasi-book-page')];
+      let page = 0;
+      const render = () => {
+        for(let side=0;side<2;side++){
+          const item=pages[page+side];
+          leaves[side].replaceChildren();
+          if(item){ const h=document.createElement('h3');h.textContent=item[0];const p=document.createElement('p');p.textContent=item[1];leaves[side].append(h,p); }
+        }
+        overlay.querySelector('[data-count]').textContent = Math.floor(page/2)+1+' / '+Math.ceil(pages.length/2);
+      };
+      const flip = delta => {const next=Math.max(0,Math.min(pages.length-1,page+delta*2));if(next===page)return;page=next;sheet.classList.remove('turning');void sheet.offsetWidth;sheet.classList.add('turning');render();};
+      overlay.querySelector('[data-prev]').addEventListener('click',()=>flip(-1));
+      overlay.querySelector('[data-next]').addEventListener('click',()=>flip(1));
+      const close=()=>{overlay.remove();document.removeEventListener('keydown',onKey);};
+      const onKey=e=>{if(e.key==='Escape')close();if(e.key==='ArrowRight')flip(1);if(e.key==='ArrowLeft')flip(-1);};
+      overlay.querySelector('[data-close]').addEventListener('click',close);
+      document.addEventListener('keydown',onKey);
+      document.body.append(overlay);
+      render();
+      return {close,flip};
+    }
+
     function addSasiPrayerText(interior) {
       const controls = interior.querySelector('.chant-controls');
       const button = document.createElement('button');
       button.type = 'button';
-      button.textContent = '📖 사시예불 기도문 보기';
+      button.textContent = '📖 사시예불 책 펼치기';
+      button.addEventListener('click', () => openSasiBook());
       button.setAttribute('aria-haspopup', 'dialog');
       const dialog = document.createElement('dialog');
       dialog.className = 'sasi-text-dialog';
@@ -718,7 +779,6 @@
       source.textContent = '조계종 표준 우리말 의례에 따른 사시불공 상단 의식문 원문 보기';
       dialog.append(source);
       document.body.append(dialog);
-      button.addEventListener('click', () => dialog.showModal());
       controls.append(button);
     }
 
