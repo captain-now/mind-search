@@ -112,6 +112,7 @@
       object-fit: contain;
       object-position: center;
     }
+    .chant-youtube { width: min(90%, 560px); height: min(45%, 315px); border: 0; z-index: 2; }
     .hall-chant {
       position: absolute;
       left: 50%;
@@ -470,7 +471,7 @@
     const hallChants = {
       "daejeokgwangjeon": [
         [null, "이뭣고", null, { audioSource: "./assets/temple/chant/now-hwadu.m4a" }],
-        [null, "🙏 사시예불"]
+        [null, "🙏 사시예불", null, { youtubeId: "v7Kqer5F7wk" }]
       ],
       "daeungjeon": [
         [null, "금강경 한문"],
@@ -596,17 +597,18 @@
         active = null;
         if (!current) return;
         if (current.media === audio) audio.pause();
+        else if (current.media.tagName === 'IFRAME') current.media.remove();
         else stopVideo(current.media);
         current.setPlaying(false);
       }
 
-      const buttons = tracks.map(([id, label, videoSource, { audioSource, fullFrame = false } = {}]) => {
+      const buttons = tracks.map(([id, label, videoSource, { audioSource, fullFrame = false, youtubeId } = {}]) => {
         const button = document.createElement('button');
         const name = prayerText(label);
-        const available = Boolean(id || audioSource || videoSource);
+        const available = Boolean(id || audioSource || videoSource || youtubeId);
         button.type = 'button';
         const caption = addSoundCaption(button, (available ? '▶ ' : '') + name);
-        const setPlaying = (playing) => setSoundCaption(button, caption, name, playing, Boolean(videoSource));
+        const setPlaying = (playing) => setSoundCaption(button, caption, name, playing, Boolean(videoSource || youtubeId));
         if (available) setPlaying(false);
         else caption.textContent = name;
 
@@ -622,8 +624,15 @@
           stopActive();
           if (toggledOff) return;
 
-          const media = videoSource ? document.createElement('video') : audio;
-          if (videoSource) {
+          const media = youtubeId ? document.createElement('iframe') : videoSource ? document.createElement('video') : audio;
+          if (youtubeId) {
+            media.className = 'chant-video chant-youtube';
+            media.title = name + ' 유튜브 재생';
+            media.allow = 'autoplay; encrypted-media; picture-in-picture';
+            media.allowFullscreen = true;
+            media.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(youtubeId) + '?autoplay=1&playsinline=1';
+            panel.before(media);
+          } else if (videoSource) {
             media.className = 'chant-video';
             media.loop = true;
             media.playsInline = true;
@@ -637,7 +646,7 @@
           active = { button, media, setPlaying };
           setPlaying(true);
           try {
-            await media.play();
+            if (!youtubeId) await media.play();
           } catch {
             if (currentAttempt !== attempt) return;
             stopActive();
