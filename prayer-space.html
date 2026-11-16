@@ -112,6 +112,12 @@
       object-fit: contain;
       object-position: center;
     }
+    .sasi-text-dialog { width: min(92vw, 680px); max-height: 82dvh; overflow: auto; border: 1px solid #a58b6e; border-radius: 16px; padding: 24px; background: #fffaf1; color: #263d36; line-height: 1.8; }
+    .sasi-text-dialog::backdrop { background: rgba(0,0,0,.55); }
+    .sasi-text-dialog h2 { font-size: 1.45rem; margin: 0 0 8px; }
+    .sasi-text-dialog h3 { font-size: 1.05rem; margin: 18px 0 4px; }
+    .sasi-text-dialog p { margin: 4px 0 12px; }
+    .sasi-text-dialog .sasi-close { float: right; padding: 6px 12px; cursor: pointer; }
     .chant-youtube { width: min(90%, 560px); height: min(45%, 315px); border: 0; z-index: 2; }
     .hall-chant {
       position: absolute;
@@ -665,6 +671,57 @@
       panel.hidden = false;
     }
 
+    function addSasiPrayerText(interior) {
+      const controls = interior.querySelector('.chant-controls');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = '📖 사시예불 기도문 보기';
+      button.setAttribute('aria-haspopup', 'dialog');
+      const dialog = document.createElement('dialog');
+      dialog.className = 'sasi-text-dialog';
+      const close = document.createElement('button');
+      close.className = 'sasi-close';
+      close.type = 'button';
+      close.textContent = '닫기 ✕';
+      close.addEventListener('click', () => dialog.close());
+      const heading = document.createElement('h2');
+      heading.textContent = '사시예불 · 삼보통청';
+      const note = document.createElement('p');
+      note.textContent = '대한불교조계종 표준 우리말 의례를 참고한 의식 순서와 안내입니다. 아래 설명은 정식 독송문 전문이 아니며, 영상 음성과 구절별 시간 동기화는 아직 적용되지 않았습니다. 정근은 요청하신 관세음보살 정근으로 표기했습니다.';
+      dialog.append(close, heading, note);
+      const sections = [
+        ['1. 보례진언', '시방삼세 삼보님께 지극한 마음으로 예경합니다.'],
+        ['2. 천수경', '관세음보살의 자비를 찬탄하고 참회와 발원을 올립니다.'],
+        ['3. 거불', '불·법·승 삼보의 명호를 받들어 부릅니다.'],
+        ['4. 보소청진언', '삼보님을 청정한 도량에 모시는 진언을 독송합니다.'],
+        ['5. 유치 · 청사', '불공을 올리는 뜻을 아뢰고 삼보님을 정중히 청합니다.'],
+        ['6. 향화청 · 가영', '향과 꽃으로 삼보님을 청하며 공덕을 찬탄합니다.'],
+        ['7. 헌좌진언', '삼보님께 청정한 법좌를 올립니다.'],
+        ['8. 관세음보살 정근', '나무 관세음보살. 관세음보살님의 대자대비를 염하며 명호를 정성껏 부릅니다.'],
+        ['9. 정법계진언 · 공양게 · 진언권공', '도량과 공양을 청정히 하고 정성스러운 공양을 올립니다.'],
+        ['10. 공양예참 · 보공양진언', '삼보님께 예경하고 참회하며 공양을 올립니다.'],
+        ['11. 보회향진언 · 원성취진언 · 보궐진언', '공덕을 널리 회향하고 원만한 성취를 발원합니다.'],
+        ['12. 탄백 · 축원', '모든 중생의 평안과 지혜, 자비를 발원합니다.'],
+        ['13. 반야심경 · 회향', '지혜의 가르침을 새기고 기도의 공덕을 일체 중생에게 회향합니다.']
+      ];
+      for (const [name, description] of sections) {
+        const title = document.createElement('h3');
+        title.textContent = name;
+        const body = document.createElement('p');
+        body.textContent = description;
+        dialog.append(title, body);
+      }
+      const source = document.createElement('a');
+      source.href = 'https://buddhaland.dongguk.edu/article?dataId=KBA0001141';
+      source.target = '_blank';
+      source.rel = 'noopener';
+      source.textContent = '조계종 표준 우리말 의례에 따른 사시불공 상단 의식문 원문 보기';
+      dialog.append(source);
+      document.body.append(dialog);
+      button.addEventListener('click', () => dialog.showModal());
+      controls.append(button);
+    }
+
     function formatMemorialName(value, suffix) {
       const name = value.trim().replace(new RegExp('(?:\\s*' + suffix + ')+$'), '').trim();
       return name ? name + ' ' + prayerText(suffix) : '';
@@ -1092,6 +1149,7 @@
         enableSeatNames(plan, '좌복', memorial, fixedSeatsByHall.get(hallId));
         const tracks = hallChants[hallId];
         if (tracks) addHallChants(interior, tracks, { middleButton });
+        if (hallId === 'daejeokgwangjeon') addSasiPrayerText(interior);
         if (hallId === 'jijangjeon') addJijangChapterPicker(interior);
         const backLink = seating.querySelector('.home-return');
         backLink.href = './temple.html?v=centered-sound-v2';
