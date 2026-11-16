@@ -469,7 +469,7 @@
 
     const hallChants = {
       "daejeokgwangjeon": [
-        [null, "이뭣고"]
+        [null, "이뭣고", null, { audioSource: "./assets/temple/chant/now-hwadu.m4a" }]
       ],
       "daeungjeon": [
         [null, "금강경 한문"],
@@ -589,10 +589,10 @@
         current.setPlaying(false);
       }
 
-      const buttons = tracks.map(([id, label, videoSource, { fullFrame = false } = {}]) => {
+      const buttons = tracks.map(([id, label, videoSource, { audioSource, fullFrame = false } = {}]) => {
         const button = document.createElement('button');
         const name = prayerText(label);
-        const available = Boolean(id || videoSource);
+        const available = Boolean(id || audioSource || videoSource);
         button.type = 'button';
         const caption = addSoundCaption(button, (available ? '▶ ' : '') + name);
         const setPlaying = (playing) => setSoundCaption(button, caption, name, playing, Boolean(videoSource));
@@ -620,7 +620,7 @@
             panel.before(media);
             media.src = videoSource;
           } else {
-            const source = audioDirectory + id + '.mp3';
+            const source = audioSource || (audioDirectory + id + '.mp3');
             if (audio.getAttribute('src') !== source || audio.error) audio.src = source;
           }
           active = { button, media, setPlaying };
