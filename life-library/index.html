@@ -313,7 +313,8 @@ function storyMeta(entry) {
 }
 function render() {
   const term=search.value.trim().toLowerCase();
-  const visible=[...drafts,...stories].filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic,authorName(entry)].join(' ').toLowerCase().includes(term));
+  const newestStories=[...stories].sort((a,b)=>(b.publishedOn||'').localeCompare(a.publishedOn||''));
+  const visible=[...newestStories,...drafts].filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic,authorName(entry)].join(' ').toLowerCase().includes(term));
   shelf.replaceChildren();
   for(const entry of visible) {
     const card=node('article','','card');
