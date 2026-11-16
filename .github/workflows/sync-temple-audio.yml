@@ -1,0 +1,34 @@
+name: Sync temple chant audio
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/sync-temple-audio.yml'
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Copy Shakyamuni chant into this website
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/temple/chant
+          curl --fail --location --retry 3 --silent --show-error \
+            'https://raw.githubusercontent.com/captain-now/NOW-Mindfulness-Web/main/audio/%EC%84%9D%EA%B0%80%EB%AA%A8%EB%8B%88%EB%B6%88%EC%A0%95%EA%B7%BC.m4a' \
+            -o assets/temple/chant/shakyamuni.m4a
+          test "$(wc -c < assets/temple/chant/shakyamuni.m4a)" -gt 10000
+      - name: Commit audio file
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/temple/chant/shakyamuni.m4a
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add local Shakyamuni chant audio for Daeungjeon'
+            git push
+          fi
