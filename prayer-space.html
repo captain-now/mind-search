@@ -469,7 +469,7 @@
 
     const hallChants = {
       "daejeokgwangjeon": [
-        [null, "이뭣고", "./assets/temple/seon-meditation-photoreal.mp4", { fullFrame: true }]
+        [null, "이뭣고"]
       ],
       "daeungjeon": [
         [null, "금강경 한문"],
@@ -596,7 +596,8 @@
         button.type = 'button';
         const caption = addSoundCaption(button, (available ? '▶ ' : '') + name);
         const setPlaying = (playing) => setSoundCaption(button, caption, name, playing, Boolean(videoSource));
-        setPlaying(false);
+        if (available) setPlaying(false);
+        else caption.textContent = name;
 
         button.addEventListener('click', async () => {
           status.textContent = '';
