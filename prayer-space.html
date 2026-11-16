@@ -744,7 +744,7 @@
       const leaves = [...overlay.querySelectorAll('.sasi-book-page')];
       // 기도문을 항목별로 새 장에 놓지 않고, 실제 종이 높이에 맞춰 연속 배치합니다.
       // 첫 독송은 정구업진언부터 시작하며 기존 자료 배열 자체는 수정하지 않습니다.
-      const readingItems = pages.slice(pages.findIndex(item => item[0] === '정구업진언'));
+      const readingItems = pages.slice(pages.findIndex(item => item[0].startsWith('정구업진언')));
       let spreads = [];
       let page = 0;
       const makeLine = (value, heading = false) => {
@@ -760,7 +760,7 @@
         const allLines = [];
         readingItems.forEach(([title, body]) => {
           allLines.push([title, true]);
-          body.split('\\n').forEach(line => allLines.push([line, false]));
+          body.split('\n').forEach(line => allLines.push([line, false]));
         });
         let current = [];
         const flush = () => { if (current.length) { spreads.push(current); current = []; } };
