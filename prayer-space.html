@@ -107,6 +107,11 @@
       object-fit: cover;
       object-position: center 40%;
     }
+    .foreground .chant-video--full-frame {
+      background: #21160d;
+      object-fit: contain;
+      object-position: center;
+    }
     .hall-chant {
       position: absolute;
       left: 50%;
@@ -465,7 +470,7 @@
     const hallChants = {
       "daejeokgwangjeon": [
         ["om-nam", "옴남"],
-        [null, "이뭣고", null, { audioSource: "https://captain-now.github.io/NOW-Mindfulness-Web/now_hwadu.m4a", durationMs: 60_000 }]
+        [null, "이뭣고", "./assets/temple/seon-meditation-photoreal.mp4", { playOnce: true }]
       ],
       "daeungjeon": [
         [null, "금강경 한문"],
@@ -515,8 +520,12 @@
       return caption;
     }
 
-    function setSoundCaption(button, caption, name, playing) {
-      const action = playing
+    function setSoundCaption(button, caption, name, playing, isVideo = false) {
+      const action = isVideo
+        ? (playing
+          ? prayerCopy('영상 끄기', 'Stop video', '停止视频', '動画を停止', 'Arrêter la vidéo')
+          : prayerCopy('영상 재생', 'Play video', '播放视频', '動画を再生', 'Lire la vidéo'))
+        : playing
         ? prayerCopy('소리 끄기', 'Sound off', '关闭声音', '音声オフ')
         : prayerCopy('소리 켜기', 'Sound on', '开启声音', '音声オン');
       caption.textContent = name + '\n' + action;
@@ -576,19 +585,18 @@
         const current = active;
         active = null;
         if (!current) return;
-        window.clearTimeout(current.timer);
         if (current.media === audio) audio.pause();
         else stopVideo(current.media);
         current.setPlaying(false);
       }
 
-      const buttons = tracks.map(([id, label, videoSource, { audioSource, durationMs } = {}]) => {
+      const buttons = tracks.map(([id, label, videoSource, { playOnce = false } = {}]) => {
         const button = document.createElement('button');
         const name = prayerText(label);
-        const available = Boolean(id || videoSource || audioSource);
+        const available = Boolean(id || videoSource);
         button.type = 'button';
         const caption = addSoundCaption(button, (available ? '▶ ' : '') + name);
-        const setPlaying = (playing) => setSoundCaption(button, caption, name, playing);
+        const setPlaying = (playing) => setSoundCaption(button, caption, name, playing, Boolean(videoSource));
         setPlaying(false);
 
         button.addEventListener('click', async () => {
@@ -606,25 +614,26 @@
           const media = videoSource ? document.createElement('video') : audio;
           if (videoSource) {
             media.className = 'chant-video';
-            media.loop = true;
+            media.loop = !playOnce;
             media.playsInline = true;
+            if (playOnce) {
+              media.classList.add('chant-video--full-frame');
+              media.addEventListener('ended', () => {
+                if (active?.media !== media) return;
+                stopActive();
+                status.textContent = prayerCopy('재생이 끝났습니다.', 'Playback completed.', '播放已结束。', '再生が終了しました。', 'Lecture terminée.');
+              }, { once: true });
+            }
             panel.before(media);
             media.src = videoSource;
           } else {
-            const source = audioSource ?? audioDirectory + id + '.mp3';
+            const source = audioDirectory + id + '.mp3';
             if (audio.getAttribute('src') !== source || audio.error) audio.src = source;
-            if (durationMs) audio.currentTime = 0;
           }
           active = { button, media, setPlaying };
           setPlaying(true);
           try {
             await media.play();
-            if (durationMs && currentAttempt === attempt) {
-              active.timer = window.setTimeout(() => {
-                stopActive();
-                status.textContent = prayerCopy('재생이 끝났습니다.', 'Playback completed.', '播放已结束。', '再生が終了しました。', 'Lecture terminée.');
-              }, durationMs);
-            }
           } catch {
             if (currentAttempt !== attempt) return;
             stopActive();
