@@ -748,8 +748,8 @@
       for (const [shortTitle, fullTitles] of originalSections) {
         const pageItem = pages.find(item => item[0] === shortTitle);
         if (!pageItem) continue;
-        const originals = fullTitles.map(title => fullTextByTitle.get(title) ? title + '\\n' + fullTextByTitle.get(title) : '').filter(Boolean);
-        if (originals.length === fullTitles.length) pageItem[1] += '\\n\\n' + originals.join('\\n\\n');
+        const originals = fullTitles.map(title => fullTextByTitle.get(title) ? title + '\n' + fullTextByTitle.get(title) : '').filter(Boolean);
+        if (originals.length === fullTitles.length) pageItem[1] += '\n\n' + originals.join('\n\n');
       }
       const overlay = document.createElement('div');
       overlay.className = 'sasi-book';
