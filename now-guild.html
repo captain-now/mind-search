@@ -69,6 +69,46 @@
       content: '';
       transform: rotate(45deg);
     }
+    .guild-header-top {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      width: 100%;
+    }
+    .guild-heading { grid-column: 2; }
+    .guild-heading h2 { margin-top: 4px; }
+    .guild-raid-button {
+      display: grid;
+      grid-column: 3;
+      justify-self: end;
+      place-items: center;
+      gap: 2px;
+      min-height: 44px;
+      max-width: 100%;
+      padding: 4px clamp(3px, 1.5vw, 9px);
+      border: 1px solid #ae874b;
+      border-radius: 6px;
+      background: #48341e;
+      color: #ffe4a2;
+      font: 700 clamp(10px, 2.8vw, 13px)/1.2 system-ui, sans-serif;
+      cursor: pointer;
+    }
+    .guild-raid-button:hover { background: #584127; }
+    .guild-raid-button:focus-visible { outline: 2px solid #6f3e1b; outline-offset: 2px; }
+    .guild-raid-icon { font-size: 18px; line-height: 1; }
+    .guild-raid-dialog {
+      max-width: min(320px, calc(100% - 32px));
+      padding: 20px;
+      border: 1px solid #8f5824;
+      border-radius: 12px;
+      background: #fff0ba;
+      color: #4b281a;
+      text-align: center;
+    }
+    .guild-raid-dialog::backdrop { background: #291508a8; }
+    .guild-raid-dialog h2 { font-size: 19px; }
+    .guild-raid-dialog p { margin: 10px 0 16px; font-size: 14px; }
+    .guild-raid-dialog .guild-raid-button { display: inline-grid; min-width: 72px; }
     h1 {
       margin: 0;
       color: #572a14;
@@ -222,10 +262,25 @@
 <body>
   <main>
     <header>
-      <h1>NOW길드</h1>
-      <h2>NOW길드 구성표</h2>
+      <div class="guild-header-top">
+        <div class="guild-heading">
+          <h1>NOW길드</h1>
+          <h2>NOW길드 구성표</h2>
+        </div>
+        <button class="guild-raid-button" id="guild-raid-open" type="button" aria-haspopup="dialog" aria-controls="guild-raid-dialog">
+          <span class="guild-raid-icon" aria-hidden="true">⚔︎</span>
+          <span>길드보스토벌</span>
+        </button>
+      </div>
       <p class="join-guide">NOW길드에 가입하시려면 <a href="./board.html#nickname-registration">게시판에서 NOW길드 가입</a></p>
     </header>
+    <dialog class="guild-raid-dialog" id="guild-raid-dialog" aria-labelledby="guild-raid-title">
+      <h2 id="guild-raid-title">길드보스토벌</h2>
+      <p>길드 보스전을 준비 중이에요.</p>
+      <form method="dialog">
+        <button class="guild-raid-button" type="submit" autofocus>닫기</button>
+      </form>
+    </dialog>
 
     <ol class="pyramid" aria-label="1~6단계 길드 직책">
       <li class="tier tier-leader">
@@ -306,6 +361,9 @@
     const guildFrench = {
   "NOW길드": "Guilde NOW",
   "NOW길드 구성표": "Rangs de la guilde NOW",
+  "길드보스토벌": "Raid de guilde",
+  "길드 보스전을 준비 중이에요.": "Le raid de guilde est en préparation.",
+  "닫기": "Fermer",
   "NOW길드에 가입하시려면": "Pour rejoindre la guilde NOW, ",
   "게시판에서 NOW길드 가입": "inscrivez-vous sur le forum",
   "1~6단계 길드 직책": "Rangs 1 à 6 de la guilde",
@@ -373,6 +431,9 @@
       }
       for (const item of document.querySelectorAll('main [aria-label]')) item.setAttribute('aria-label', guildText(item.getAttribute('aria-label')));
     }
+    document.getElementById('guild-raid-open').addEventListener('click', () => {
+      document.getElementById('guild-raid-dialog').showModal();
+    });
     async function loadGuildRoster() {
       const status = document.getElementById('roster-status');
       const list = document.getElementById('guild-roster');
