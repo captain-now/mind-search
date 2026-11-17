@@ -926,6 +926,14 @@ apply();observer.observe(document.body,{childList:true,subtree:true,characterDat
     const actionIndex = Math.floor(index/5), prefixIndex = index%5;
     const message = currentLang === 'ko' ? sayings[index] : localizedPrefixes[currentLang][prefixIndex] + localizedActions[currentLang][actionIndex];
     el.textContent = '“'+message+'”';
+    fetch('./daily-quote.json?date='+encodeURIComponent(date)+'&v='+Math.floor(Date.now()/60000),{cache:'no-store'})
+      .then(response=>{if(!response.ok)throw new Error('daily quote unavailable');return response.json();})
+      .then(entry=>{
+        const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+        if(entry.date!==today || typeof entry.text!=='string' || !entry.text.trim())return;
+        const translated=entry.translations && entry.translations[currentLang];
+        el.textContent='“'+(currentLang==='ko'?entry.text:(typeof translated==='string'&&translated.trim()?translated:message))+'”';
+      }).catch(()=>{});
     const dateEl = document.getElementById('daily-quote-date');
     if(dateEl){
       const parts = new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date());
