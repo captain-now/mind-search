@@ -108,6 +108,16 @@ body{background:#f4f1ea;color:var(--rebirth-ink)}
 .header-quick-links > .naver-blog-link{flex-direction:column;gap:2px}
 .header-quick-links .blog-brand{font-size:clamp(11px,3.85vw,18px);white-space:nowrap}
 .header-quick-links .blog-caption{font-size:.84em}
+
+/* Main practice navigation above community links */
+.top .container > .nav{order:2;flex:1 1 100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:14px 0 10px}
+.top .container > .nav .practice-nav-link{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;color:#315a4c;font-weight:750;min-width:0}
+.top .container > .nav .nav-icon{width:28px;height:28px}
+.top .container > .header-quick-links{order:3;justify-content:stretch;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.top .container > .header-quick-links a{display:flex;align-items:center;justify-content:center;min-width:0;text-align:center}
+.top .container > .live-board-banner{order:4;width:100%}
+.top .container > .status{order:5}
+@media(max-width:620px){.top .container > .nav{gap:2px;padding:12px 0 8px}.top .container > .nav .nav-icon{width:25px;height:25px}.top .container > .nav .nav-label{font-size:14px}.top .container > .header-quick-links{gap:8px}}
 </style><style>
 .home-banners{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
@@ -153,14 +163,14 @@ body{background:#f4f1ea;color:var(--rebirth-ink)}
   .home-banners .life-library-banner small,.home-banners .life-library-banner > span[aria-hidden]{display:none}
 }
 </style>
-</head><body><a class="skip" href="#main">본문 바로가기</a><header class="top"><div class="container"><div class="header-brand-row"><div class="header-brand-block"><div class="brand"><img class="brand-icon" src="./icons/now-192.png?v=now-clear-circle" alt="" width="28" height="28"> NOW Mind <i>Search</i></div><div class="sub">지금이 기적이다 · NOW 마음챙김 <span style="font-size:10px;color:#477866">V2.1 정식</span></div></div><div id="languageSlot"></div></div><div class="header-quick-links"><a class="naver-blog-link" href="https://m.blog.naver.com/PostList.naver?blogId=iou1558" target="_blank" rel="noopener noreferrer" aria-label="NOW Mind Search 공식블로그 새 창으로 열기"><span class="blog-brand">NOW Mind Search</span><span class="blog-caption">공식블로그</span></a><a class="now-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2" target="_blank" rel="noopener noreferrer" aria-label="NOW 마음챙김 홈페이지 새 창으로 열기"><span class="now-symbol" aria-hidden="true">🌿</span><span>NOW 마음챙김 ↗</span></a></div>
-<a class="live-board-banner" href="./chat.html?v=live-board" target="_blank" rel="noopener noreferrer" aria-label="NOW Mind Search 실시간 게시판 새 창으로 열기"><span aria-hidden="true">💬</span><span>실시간 게시판</span><span aria-hidden="true">↗</span></a>
-<nav class="nav" aria-label="주요 메뉴">
+</head><body><a class="skip" href="#main">본문 바로가기</a><header class="top"><div class="container"><div class="header-brand-row"><div class="header-brand-block"><div class="brand"><img class="brand-icon" src="./icons/now-192.png?v=now-clear-circle" alt="" width="28" height="28"> NOW Mind <i>Search</i></div><div class="sub">지금이 기적이다 · NOW 마음챙김 <span style="font-size:10px;color:#477866">V2.1 정식</span></div></div><div id="languageSlot"></div></div><nav class="nav" aria-label="주요 메뉴">
 <a class="practice-nav-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2#chant" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12a2 2 0 0 0 4 0"/></svg><span class="nav-label">염불</span></a>
 <a class="practice-nav-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2#meditate" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.8 2.8 4 5.8 3.1 8.8M12 3c-2.8 2.8-4 5.8-3.1 8.8M12 19C7 19 3.6 15.5 3 10c4.2.3 7.3 2 9 6 1.7-4 4.8-5.7 9-6-.6 5.5-4 9-9 9Zm-7 2h14"/></svg><span class="nav-label">참선</span></a>
 <a class="practice-nav-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2#quiet" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M10 2h4m-2 7v4l2.5 1.5m3.5-8 1-1"/></svg><span class="nav-label">명상</span></a>
 <a class="practice-nav-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=daily-practice#daily" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-7m0 1C6 15 3 12 3 6c6 0 9 3 9 9Zm0 0c0-5 3-8 9-8 0 5-3 8-9 8Z"/></svg><span class="nav-label">일상실천</span></a>
-</nav><span class="status">● REBIRTH 정식</span></div></header><main id="main">
+</nav><div class="header-quick-links"><a class="naver-blog-link" href="https://m.blog.naver.com/PostList.naver?blogId=iou1558" target="_blank" rel="noopener noreferrer" aria-label="NOW Mind Search 공식블로그 새 창으로 열기"><span class="blog-brand">NOW Mind Search</span><span class="blog-caption">공식블로그</span></a><a class="now-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2" target="_blank" rel="noopener noreferrer" aria-label="NOW 마음챙김 홈페이지 새 창으로 열기"><span class="now-symbol" aria-hidden="true">🌿</span><span>NOW 마음챙김 ↗</span></a></div>
+<a class="live-board-banner" href="./chat.html?v=live-board" target="_blank" rel="noopener noreferrer" aria-label="NOW Mind Search 실시간 게시판 새 창으로 열기"><span aria-hidden="true">💬</span><span>실시간 게시판</span><span aria-hidden="true">↗</span></a>
+<span class="status">● REBIRTH 정식</span></div></header><main id="main">
 <div class="home-banners">
 <a id="prayer-participation" class="prayer-banner" href="./prayer.html?v=centered-sound-v2" target="_blank" rel="noopener" aria-label="기도동참 새 창으로 열기">
   <span class="prayer-banner-art" aria-hidden="true">
