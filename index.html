@@ -914,7 +914,7 @@ apply();observer.observe(document.body,{childList:true,subtree:true,characterDat
     const startOfYear = Date.UTC(year,0,1);
     const dayOfYear = Math.floor((Date.UTC(year,month-1,dayOfMonth)-startOfYear)/86400000);
     const index = Math.min(dayOfYear,364); // 윤년 12월 31일은 365번째 문구 유지
-    const selected = (window.mindSearchLanguage && window.mindSearchLanguage.read ? window.mindSearchLanguage.read() : localStorage.getItem('mindSearchLanguage')) || document.documentElement.lang || 'ko';
+    const selected = document.documentElement.lang || 'ko';
     const currentLang = Object.prototype.hasOwnProperty.call(localizedActions,selected) ? selected : 'ko';
     const actionIndex = Math.floor(index/5), prefixIndex = index%5;
     const message = currentLang === 'ko' ? sayings[index] : localizedPrefixes[currentLang][prefixIndex] + localizedActions[currentLang][actionIndex];
