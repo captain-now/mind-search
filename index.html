@@ -170,6 +170,35 @@ html[lang="en"] .life-library-banner strong > span:first-child::after{content:""
 .daily-quote-below-hero{margin:18px auto 22px;max-width:760px}
 .daily-quote-below-hero .quote{width:100%;box-sizing:border-box}
 </style>
+<style>
+/* Compact mobile first-screen layout: show meditation photo and today's saying together. */
+@media (max-width:620px){
+  .top .container{padding-top:8px;padding-bottom:7px;gap:5px}
+  .top .container > .nav{padding:5px 0 3px;gap:2px}
+  .top .container > .nav .practice-nav-link{gap:2px}
+  .top .container > .nav .nav-icon{width:23px;height:23px}
+  .top .container > .nav .nav-label{font-size:12px}
+  .top .container > .header-quick-links{gap:6px}
+  .header-quick-links > :is(.naver-blog-link,.now-link){min-height:40px;padding:5px 4px;font-size:clamp(11px,3.3vw,15px)}
+  .live-board-banner{min-height:36px;padding:5px 10px;font-size:clamp(14px,4vw,18px)}
+  .home-banners{margin:5px auto;gap:6px}
+  .home-banners > a{min-height:54px}
+  .home-banners .life-library-banner{padding:4px 6px;grid-template-columns:58px minmax(0,1fr);gap:5px}
+  .home-banners .life-library-banner img{width:56px;height:45px}
+  .home-banners .life-library-banner strong{font-size:clamp(1rem,4vw,1.25rem)}
+  .hero{min-height:clamp(185px,29svh,255px);background-position:70% center}
+  .hero .container{padding-top:20px;padding-bottom:18px}
+  .hero h1{font-size:clamp(27px,7vw,36px);line-height:1.16;margin:4px 0 8px;letter-spacing:-1px}
+  .hero p{font-size:12px;line-height:1.5;margin:5px 0}
+  .hero small{font-size:12px}
+  .daily-quote-below-hero{margin:7px auto 10px}
+  .daily-quote-below-hero .quote{padding:11px 16px;border-radius:17px}
+  .daily-quote-below-hero .quote h2{font-size:15px;margin:0 0 5px}
+  .daily-quote-below-hero .quote blockquote{font-size:clamp(14px,3.8vw,17px);line-height:1.35;margin:5px 0}
+  .daily-quote-below-hero .quote .muted{font-size:11px;margin:5px 0 0}
+  .tiles{margin-top:5px}
+}
+</style>
 </head><body><a class="skip" href="#main">본문 바로가기</a><header class="top"><div class="container"><div class="header-brand-row"><div class="header-brand-block"><div class="brand"><img class="brand-icon" src="./icons/now-192.png?v=now-clear-circle" alt="" width="28" height="28"> NOW Mind <i>Search</i></div><div class="sub">지금이 기적이다 · NOW 마음챙김 <span style="font-size:10px;color:#477866">V2.1 정식</span></div></div><div id="languageSlot"></div></div><nav class="nav" aria-label="주요 메뉴">
 <a class="practice-nav-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2#chant" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12a2 2 0 0 0 4 0"/></svg><span class="nav-label">염불</span></a>
 <a class="practice-nav-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2#meditate" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.8 2.8 4 5.8 3.1 8.8M12 3c-2.8 2.8-4 5.8-3.1 8.8M12 19C7 19 3.6 15.5 3 10c4.2.3 7.3 2 9 6 1.7-4 4.8-5.7 9-6-.6 5.5-4 9-9 9Zm-7 2h14"/></svg><span class="nav-label">참선</span></a>
