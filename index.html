@@ -219,7 +219,7 @@ const pairs=[
 ["살면서 배운 것을 한 편씩.","Lessons from life, one story at a time."],
 ['홈','Home'],['수행','Practice'],['일지','Journal'],['실천','Daily'],['소개','About'],
 ['본문 바로가기','Skip to content'],['지금이 기적이다 · NOW 마음챙김','The present is a miracle · NOW Mindfulness'],
-['NOW 마음챙김 ↗','NOW Mindfulness ↗'],['NOW Mind Search · 마음의 탐구','NOW Mind Search · explore your mind'],
+['NOW 마음챙김 ↗','NOW Mindfulness ↗'],['실시간 게시판 ↗','Live Board ↗'],['NOW Mind Search · 마음의 탐구','NOW Mind Search · explore your mind'],
 ['지금, 여기…','Here and now…'],['그것이 전부입니다.','That is enough.'],
 ['답을 찾기보다, 물음에 머무르는 순간.','Stay with the question, rather than chasing answers.'],
 ['당신의 삶은 이미 진행형입니다.','Your life is already unfolding.'],
@@ -286,6 +286,7 @@ const extras={...window.MIND_SEARCH_EXTRA_LANG,
 "공식블로그":["官方博客","公式ブログ"],
 "NOW Mind Search 공식블로그 새 창으로 열기":["在新标签页打开 NOW Mind Search 官方博客","NOW Mind Search 公式ブログを新しいタブで開く"],
 "실시간 게시판":["实时留言板","リアルタイム掲示板"],
+"실시간 게시판 ↗":["实时留言板 ↗","リアルタイム掲示板 ↗"],
 "NOW Mind Search 실시간 게시판 새 창으로 열기":["在新标签页打开 NOW Mind Search 实时留言板","NOW Mind Search リアルタイム掲示板を新しいタブで開く"],
 "전통 사찰 전각":["传统佛寺殿堂","伝統的な寺院の堂宇"],
 "경매봉과 미술품 액자":["拍卖槌与装裱的艺术品","競売用の木槌と額装された美術品"],
@@ -376,6 +377,7 @@ const french = {
   "30분 수행을 마쳤습니다.": "Votre séance de 30 minutes est terminée.",
   "공식블로그": "Blog officiel",
   "실시간 게시판": "Forum en direct",
+  "실시간 게시판 ↗": "Forum en direct ↗",
   "● REBIRTH 정식": "● Version officielle REBIRTH",
   "“정답을 버리면,": "« Lâchez prise sur la réponse,",
   "새로운 물음이 시작됩니다.”": "et une nouvelle question apparaît. »",
@@ -439,7 +441,7 @@ function apply(){
  const title=document.querySelector('title');if(title)title.textContent=lang==='fr'?'NOW Mind Search | Pleine conscience et méditation':lang==='ko'?'NOW Mind Search | 마음챙김 명상 타이머와 마음 일지':lang==='en'?'NOW Mind Search | Mindfulness meditation timer and journal':lang==='zh'?'NOW Mind Search | 正念冥想计时器与心灵日记':'NOW Mind Search | マインドフルネス瞑想タイマーと心の日記';
  const area=document.getElementById('journalArea');
  area.placeholder=({fr:'Que se passe-t-il dans votre esprit…',ko:'지금 나의 마음은...',en:'What is on your mind...',zh:'写下此刻的心情...',ja:'今の気持ちを書いてください...'})[lang];
- for(const link of document.querySelectorAll('a.now-link,a.practice-nav-link')){const url=new URL(link.href);if(lang==='fr')url.searchParams.set('lang','fr');else url.searchParams.delete('lang');if(link.href!==url.href)link.href=url.href}
+ for(const link of document.querySelectorAll('a.now-link,a.practice-nav-link')){const url=new URL(link.href);if(link.classList.contains('practice-nav-link')){if(lang==='fr')url.searchParams.set('lang','fr');else url.searchParams.delete('lang');}if(link.href!==url.href)link.href=url.href}
  if(document.documentElement.lang!==lang)document.documentElement.lang=lang;btn.value=lang;
  translating=false;
 }
