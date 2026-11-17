@@ -402,7 +402,8 @@ form.addEventListener('submit',async event=>{
   const previous=draftId?drafts.find(entry=>entry.id===draftId):null;
   const item={id:draftId||crypto.randomUUID(),topic,authorId:boardAuthor?.id??null,title,body,createdAt:previous?.createdAt||new Date().toISOString()};
   const next=editingId?drafts.map(entry=>entry.id===editingId?item:entry):[item,...drafts];
-  if(!save(next))return;\n  if(storyOwnerId) await publishLocalStories();
+  if(!save(next))return;
+  if(storyOwnerId) await publishLocalStories();
   editingId=null;
   form.reset();
   authorInput.value=boardAuthor?.name ?? libraryText('익명');
