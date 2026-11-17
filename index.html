@@ -211,6 +211,28 @@ html[lang="en"] .life-library-banner strong > span:first-child::after{content:""
   .tiles .tile strong{font-size:clamp(10px,3vw,13px);line-height:1.15}
 }
 </style>
+<style>
+/* Mobile viewport: finish the initial view at Today's Saying; service tiles remain below scroll. */
+@media(max-width:620px){
+  .top .container{padding-top:5px;padding-bottom:4px;gap:3px}
+  .top .container > .nav{padding:3px 0 2px}
+  .top .container > .header-quick-links{gap:4px}
+  .header-quick-links > :is(.naver-blog-link,.now-link){min-height:35px;padding:4px}
+  .live-board-banner{min-height:32px;padding:4px 8px}
+  .home-banners{margin:4px auto}
+  .home-banners > a{min-height:49px}
+  .hero{min-height:clamp(155px,24svh,210px)}
+  .hero .container{padding-top:13px;padding-bottom:10px}
+  .hero h1{font-size:clamp(25px,6.7vw,34px);margin:3px 0 5px}
+  .hero p{font-size:11px;line-height:1.35;margin:3px 0}
+  .daily-quote-below-hero{margin:5px auto 6px}
+  .daily-quote-below-hero .quote{padding:9px 13px}
+  .daily-quote-below-hero .quote h2{margin:0 0 3px}
+  .daily-quote-below-hero .quote blockquote{margin:3px 0;line-height:1.25}
+  .daily-quote-below-hero .quote .muted{margin:3px 0 0}
+  .tiles{margin-top:12px}
+}
+</style>
 </head><body><a class="skip" href="#main">본문 바로가기</a><header class="top"><div class="container"><div class="header-brand-row"><div class="header-brand-block"><div class="brand"><img class="brand-icon" src="./icons/now-192.png?v=now-clear-circle" alt="" width="28" height="28"> NOW Mind <i>Search</i></div><div class="sub">지금이 기적이다 · NOW 마음챙김 <span style="font-size:10px;color:#477866">V2.1 정식</span></div></div><div id="languageSlot"></div></div><nav class="nav" aria-label="주요 메뉴">
 <a class="practice-nav-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2#chant" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12a2 2 0 0 0 4 0"/></svg><span class="nav-label">염불</span></a>
 <a class="practice-nav-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2#meditate" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.8 2.8 4 5.8 3.1 8.8M12 3c-2.8 2.8-4 5.8-3.1 8.8M12 19C7 19 3.6 15.5 3 10c4.2.3 7.3 2 9 6 1.7-4 4.8-5.7 9-6-.6 5.5-4 9-9 9Zm-7 2h14"/></svg><span class="nav-label">참선</span></a>
