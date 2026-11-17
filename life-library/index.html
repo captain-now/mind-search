@@ -214,9 +214,10 @@ const libraryFrench = {
   "이야기를 지웠어요.": "Histoire supprimée.",
   "저장 공간을 사용할 수 없어요. 글을 따로 복사해 두고 다시 시도해 주세요.": "Stockage indisponible. Copiez votre texte ailleurs et réessayez."
 };
-const libraryLanguage = window.mindSearchLanguage?.read();
-const libraryText = value => libraryLanguage === 'fr' ? libraryFrench[value] ?? value : value;
-if (libraryLanguage === 'fr') {
+const libraryTranslations = {"삶의 도서관":["Life Library","人生图书馆","人生の図書館"],"주요 메뉴":["Main menu","主菜单","メインメニュー"],"이야기 읽기":["Read stories","阅读故事","物語を読む"],"내 이야기 쓰기":["Write my story","写下我的故事","自分の物語を書く"],"나우써치 홈으로 돌아가기":["Back to Mind Search","返回 Mind Search 首页","Mind Search ホームへ戻る"],"살면서 배운 것을":["Lessons from life,","人生所学，","人生で学んだことを"],"한 편씩.":["one story at a time.","一篇篇记录。","一編ずつ。"],"이야기 펼쳐보기":["Explore stories","浏览故事","物語を見る"],"나의 이야기 남기기":["Write my story","写下我的故事","自分の物語を残す"],"책 발행 공고":["Book publication notice","图书出版公告","書籍出版のお知らせ"],"이야기 서가":["Story shelves","故事书架","物語の書架"],"이야기 검색":["Search stories","搜索故事","物語を検索"],"검색어 입력":["Search keywords","输入关键词","検索キーワード"],"주제":["Topic","主题","テーマ"],"모든 주제":["All topics","所有主题","すべてのテーマ"],"다시 시작":["New beginnings","重新开始","再出発"],"관계":["Relationships","关系","人間関係"],"일상":["Everyday life","日常","日常"],"기억":["Memories","回忆","記憶"],"선택":["Choices","选择","選択"],"실패":["Setbacks","失败","失敗"],"용기":["Courage","勇气","勇気"],"놓아주기":["Letting go","放下","手放す"],"고마움":["Gratitude","感恩","感謝"],"변화":["Change","变化","変化"],"수행":["Practice","修行","修行"],"질문 선택":["Choose a question","选择问题","質問を選ぶ"],"질문을 선택하세요":["Select a question","请选择问题","質問を選択"],"작성자명":["Author","作者","投稿者"],"게시판 닉네임 등록":["Register board nickname","注册论坛昵称","掲示板のニックネーム登録"],"제목":["Title","标题","タイトル"],"이야기":["Story","故事","物語"],"내 서가에 저장":["Save to my shelf","保存到我的书架","自分の書架に保存"],"닫기":["Close","关闭","閉じる"],"수정하기":["Edit","编辑","編集"],"지우기":["Delete","删除","削除"],"펼쳐 읽기 →":["Read more →","展开阅读 →","続きを読む →"],"펼쳐 읽기":["Read story","阅读故事","物語を読む"],"익명":["Anonymous","匿名","匿名"],"내 이야기":["My story","我的故事","私の物語"],"작성자":["Author","作者","投稿者"],"수정 내용 저장":["Save changes","保存修改","変更を保存"],"이야기를 지웠어요.":["Story deleted.","故事已删除。","物語を削除しました。"],"찾는 이야기가 없어요. 다른 말로 검색해 보세요.":["No matching stories. Try another search.","没有找到故事，请换个关键词。","物語が見つかりません。別の言葉で検索してください。"],"제목과 이야기를 적어주세요.":["Enter a title and story.","请输入标题和故事。","タイトルと物語を入力してください。"],"이야기를 내 서가에 저장했어요.":["Story saved to your shelf.","故事已保存到书架。","物語を自分の書架に保存しました。"],"이 브라우저에서 이 이야기를 지울까요?":["Delete this story from this browser?","要从此浏览器删除这个故事吗？","このブラウザーから物語を削除しますか？"],"저장한 글은 이 브라우저의 서가에서만 볼 수 있어요.":["Saved stories are available only in this browser.","保存的故事仅在此浏览器中可见。","保存した物語はこのブラウザーでのみ閲覧できます。"],"제목·내용·작성자명으로 찾을 수 있어요.":["Search by title, content, or author.","可按标题、内容或作者搜索。","タイトル・内容・投稿者名で検索できます。"],"질문 하나를 고르고, 떠오르는 장면부터 적어보세요.":["Choose a question and write about the first scene that comes to mind.","选择一个问题，从浮现的画面开始写。","質問を一つ選び、思い浮かぶ場面から書いてみましょう。"],"이 칸을 눌러 질문 10개 중 하나를 골라보세요.":["Choose one of the ten questions.","请从十个问题中选择一个。","10個の質問から一つ選んでください。"]};
+const libraryLanguage = window.mindSearchLanguage?.read() || 'ko';
+const libraryText = value => libraryLanguage === 'fr' ? (libraryFrench[value] ?? value) : (libraryTranslations[value]?.[({en:0,zh:1,ja:2})[libraryLanguage]] ?? value);
+if (libraryLanguage !== 'ko') {
   document.documentElement.lang = 'fr';
   document.title = libraryText('삶의 도서관');
   for (const option of document.querySelectorAll('#filter option:not([value])')) option.value = option.textContent;
@@ -233,6 +234,15 @@ if (libraryLanguage === 'fr') {
     }
   }
 }
+// Use the same language preference as the main site. The selector reloads only this page.
+const librarySelector=document.createElement('select');
+librarySelector.id='library-language';
+librarySelector.setAttribute('aria-label','Language / 언어 선택');
+librarySelector.style.cssText='position:fixed;right:12px;bottom:14px;z-index:50;max-width:135px;padding:9px;border:1px solid #b9b09f;border-radius:18px;background:#fffaf0;color:#17352c;font:600 13px system-ui;box-shadow:0 3px 14px #0002';
+for(const [code,label] of [['ko','🇰🇷 한국어'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français']]){const option=document.createElement('option');option.value=code;option.textContent=label;librarySelector.append(option)}
+librarySelector.value=libraryLanguage;
+librarySelector.addEventListener('change',()=>{try{localStorage.setItem(window.mindSearchLanguage.key,librarySelector.value)}catch{}location.reload()});
+document.body.append(librarySelector);
 const stories=[
  {"topic":"기억","title":"우산을 접던 자리","body":"중학교를 마치던 날, 비가 아주 많이 왔습니다. 교문 앞 처마 밑에서 우산을 접는데 담임 선생님이 제 옆에 서서 말씀하셨습니다.\n\n“잘 가는 것보다, 네가 가는 길을 잘 보렴.”\n\n그때는 무슨 뜻인지 몰랐습니다. 어디로 진학할지, 무엇이 될지만 중요하다고 생각했으니까요. 그런데 살다 보니 같은 길도 마음이 급하면 돌부리를 못 보고, 누군가 곁에 있어도 인사를 놓치더군요.\n\n새로운 일을 앞두면 아직도 그날의 젖은 운동장 냄새가 납니다. 그러면 잠깐 속도를 늦추고 묻습니다. 나는 지금 어디로 가려는가. 그리고 가는 동안 무엇을 보고 있는가.","publishedOn":"2026-11-16"},
  {"topic":"실패","title":"깨진 화분의 다음 자리","body":"베란다에서 키우던 화분을 옮기다가 놓쳤다. 아끼던 거였다. 바닥에 흙이 쏟아지고 화분은 세 조각이 났다.\n\n처음엔 흙부터 버리려고 했다. 어차피 다 망쳤다고 생각했으니까. 그런데 흙 속에 뿌리가 단단히 엉켜 있는 게 보였다. 급히 빈 통을 찾아 옮겨 심었다. 모양은 우스웠다. 과자 통 옆면에 구멍을 뚫어 만든 화분이라니.\n\n며칠 뒤 새잎이 올라왔다. 그걸 보고 알았다. 깨진 건 화분이지, 자라려는 마음까지는 아니었다.\n\n요즘 일이 어그러지면 이렇게 구분해 본다. 정말 끝난 게 뭔지, 아직 살아 있는 게 뭔지. 실패 뒤에 할 일은 나를 통째로 버리는 게 아니라, 남아 있는 뿌리가 머물 다음 자리를 찾는 것.","publishedOn":"2026-11-16"},
