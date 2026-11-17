@@ -316,6 +316,32 @@ function save(next) {
   drafts=next;
   return true;
 }
+let publicStories=[];
+let storyOwnerId=null;
+async function refreshPublicStories(){
+  try {
+    if(!window.supabase) return;
+    boardClient??=window.supabase.createClient("https://iqohtsakhfnwtlbarjut.supabase.co","sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w");
+    const {data,error}=await boardClient.from('life_library_stories').select('id,owner_id,topic,title,body,author_name,created_at').order('created_at',{ascending:false}).limit(500);
+    if(error) throw error;
+    publicStories=(data||[]).map(x=>({id:x.id,authorId:x.owner_id,authorName:x.author_name,topic:x.topic,title:x.title,body:x.body,createdAt:x.created_at,published:true}));
+    render();
+  }catch(e){console.warn('Public library load failed',e);}
+}
+async function publishLocalStories(){
+  if(!window.supabase) return;
+  boardClient??=window.supabase.createClient("https://iqohtsakhfnwtlbarjut.supabase.co","sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w");
+  const {data:{user}}=await boardClient.auth.getUser();
+  if(!user){feedback.textContent=libraryText('공개하려면 먼저 게시판에 로그인해 주세요. 이 브라우저의 글은 그대로 보관됩니다.');return;}
+  storyOwnerId=user.id;
+  const pending=drafts.filter(x=>!publicStories.some(y=>y.id===x.id));
+  if(!pending.length){feedback.textContent=libraryText('공개할 새 글이 없습니다.');return;}
+  const rows=pending.map(x=>({id:x.id,owner_id:user.id,topic:x.topic,title:x.title,body:x.body,author_name:boardAuthor?.name||'익명',created_at:x.createdAt||new Date().toISOString()}));
+  const {error}=await boardClient.from('life_library_stories').upsert(rows,{onConflict:'id'});
+  if(error){feedback.textContent=libraryText('공개 저장에 실패했습니다. 원래 글은 보관되어 있습니다.');console.warn(error);return;}
+  feedback.textContent=libraryText('이야기를 공개 도서관에 저장했습니다.');
+  await refreshPublicStories();
+}
 function node(tag,text,style) {
   const element=document.createElement(tag);
   element.textContent=text;
@@ -324,7 +350,7 @@ function node(tag,text,style) {
 }
 function authorName(entry) {
   if(!entry.id) return 'AI 허공장';
-  return boardAuthor && entry.authorId===boardAuthor.id ? boardAuthor.name : libraryText('익명');
+  return entry.authorName || (boardAuthor && entry.authorId===boardAuthor.id ? boardAuthor.name : libraryText('익명'));
 }
 function storyMeta(entry) {
   const author=authorName(entry);
@@ -336,7 +362,7 @@ function storyMeta(entry) {
 function render() {
   const term=search.value.trim().toLowerCase();
   const timestamp=entry=>entry.createdAt ? Date.parse(entry.createdAt)||0 : entry.publishedOn ? Date.parse(entry.publishedOn+'T00:00:00+09:00')||0 : 0;
-  const visible=[...drafts,...stories].sort((a,b)=>timestamp(b)-timestamp(a)).filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic,authorName(entry)].join(' ').toLowerCase().includes(term));
+  const visible=[...drafts.filter(x=>!publicStories.some(y=>y.id===x.id)),...publicStories,...stories].sort((a,b)=>timestamp(b)-timestamp(a)).filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic,authorName(entry)].join(' ').toLowerCase().includes(term));
   shelf.replaceChildren();
   for(const entry of visible) {
     const card=node('article','','card');
@@ -355,7 +381,7 @@ function read(entry) {
   byId('reader-tag').textContent=storyMeta(entry);
   byId('reader-title').textContent=entry.title;
   byId('reader-content').replaceChildren(...entry.body.split(/\n\n+/).map(part=>node('p',part)));
-  byId('reader-actions').hidden=!entry.id;
+  byId('reader-actions').hidden=!entry.id || (entry.published && entry.authorId!==storyOwnerId);
   reader.showModal();
 }
 search.addEventListener('input',render);
@@ -376,7 +402,7 @@ form.addEventListener('submit',async event=>{
   const previous=draftId?drafts.find(entry=>entry.id===draftId):null;
   const item={id:draftId||crypto.randomUUID(),topic,authorId:boardAuthor?.id??null,title,body,createdAt:previous?.createdAt||new Date().toISOString()};
   const next=editingId?drafts.map(entry=>entry.id===editingId?item:entry):[item,...drafts];
-  if(!save(next))return;
+  if(!save(next))return;\n  if(storyOwnerId) await publishLocalStories();
   editingId=null;
   form.reset();
   authorInput.value=boardAuthor?.name ?? libraryText('익명');
@@ -404,9 +430,17 @@ byId('remove').onclick=()=>{
   render();
   feedback.textContent=libraryText('이야기를 지웠어요.');
 };
+const publishButton=document.createElement('button');
+publishButton.type='button';
+publishButton.textContent='내 글 공개 도서관에 올리기';
+publishButton.style.margin='12px 0';
+publishButton.onclick=publishLocalStories;
+form.insertAdjacentElement('afterend',publishButton);
 render();
 loadBoardAuthor();
-window.addEventListener('focus',loadBoardAuthor);
+refreshPublicStories();
+boardClient && boardClient.auth.getUser().then(({data})=>{storyOwnerId=data?.user?.id||null;render();}).catch(()=>{});
+window.addEventListener('focus',()=>{loadBoardAuthor();refreshPublicStories();});
 </script>
 </body>
 </html>
