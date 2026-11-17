@@ -144,7 +144,8 @@ body{background:#f4f1ea;color:var(--rebirth-ink)}
   background-repeat:no-repeat;
 }
 .life-library-banner img{width:80px;height:60px;display:block;object-fit:cover;border:1px solid #bc985f;border-radius:5px}
-.life-library-banner strong{display:block;font-size:1rem;font-weight:800}
+.life-library-banner strong{display:flex;flex-direction:column;align-items:flex-start;font-size:1.35rem;font-weight:850;line-height:1.12;letter-spacing:-.04em}
+.life-library-banner strong > span{display:block;white-space:nowrap}
 .life-library-banner small{display:block;color:#67543c;margin-top:3px;font-size:.74rem}
 .life-library-banner:hover strong,.life-library-banner:focus-visible strong{text-decoration:underline;text-underline-offset:.2em}
 .life-library-banner:focus-visible{outline:2px solid #80571b;outline-offset:2px}
@@ -158,7 +159,7 @@ body{background:#f4f1ea;color:var(--rebirth-ink)}
   }
   .life-library-banner::before{border-radius:7px}
   .home-banners .life-library-banner img{width:70px;height:55px}
-  .home-banners .life-library-banner strong{font-size:clamp(.78rem,3.2vw,1rem);overflow-wrap:anywhere}
+  .home-banners .life-library-banner strong{font-size:clamp(1.2rem,4.7vw,1.55rem);line-height:1.13;overflow-wrap:normal}
   html:not([lang="ko"]) .home-banners .life-library-banner strong{line-height:1.12}
   .home-banners .life-library-banner small,.home-banners .life-library-banner > span[aria-hidden]{display:none}
 }
@@ -174,7 +175,7 @@ body{background:#f4f1ea;color:var(--rebirth-ink)}
 <div class="home-banners">
 <a class="life-library-banner" href="./life-library/" target="_blank" rel="noopener noreferrer">
   <img src="data:image/webp;base64,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" width="52" height="40" alt="">
-  <span><strong>삶의 도서관</strong><small>살면서 배운 것을 한 편씩.</small></span>
+  <span><strong><span>삶의</span><span>도서관</span></strong><small>살면서 배운 것을 한 편씩.</small></span>
   <span aria-hidden="true">↗</span>
 </a>
 <a id="prayer-participation" class="prayer-banner" href="./prayer.html?v=centered-sound-v2" target="_blank" rel="noopener" aria-label="기도동참 새 창으로 열기">
