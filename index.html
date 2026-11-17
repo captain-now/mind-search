@@ -144,12 +144,13 @@ body{background:#f4f1ea;color:var(--rebirth-ink)}
   background-repeat:no-repeat;
 }
 .life-library-banner img{width:80px;height:60px;display:block;object-fit:cover;border:1px solid #bc985f;border-radius:5px}
-.life-library-banner strong{display:flex;flex-direction:column;align-items:flex-start;font-size:1.35rem;font-weight:850;line-height:1.12;letter-spacing:-.04em}
+.life-library-banner strong{display:flex;flex-direction:column;align-items:center;text-align:center;font-size:1.35rem;font-weight:850;line-height:1.12;letter-spacing:-.04em}
 .life-library-banner strong > span{display:block;white-space:nowrap}
 .life-library-banner small{display:block;color:#67543c;margin-top:3px;font-size:.74rem}
 .life-library-banner:hover strong,.life-library-banner:focus-visible strong{text-decoration:underline;text-underline-offset:.2em}
 .life-library-banner:focus-visible{outline:2px solid #80571b;outline-offset:2px}
 .home-banners .life-library-banner span{overflow-wrap:anywhere}
+.life-library-banner > span:not([aria-hidden]){text-align:center;justify-self:center}
 @media (max-width:600px){
   .home-banners{gap:6px}
   .home-banners > a{min-height:64px;border-radius:11px}
