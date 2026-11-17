@@ -164,6 +164,7 @@ body{background:#f4f1ea;color:var(--rebirth-ink)}
   html:not([lang="ko"]) .home-banners .life-library-banner strong{line-height:1.12}
   .home-banners .life-library-banner small,.home-banners .life-library-banner > span[aria-hidden]{display:none}
 }
+html[lang="en"] .life-library-banner strong > span:first-child::after{content:""}
 </style>
 </head><body><a class="skip" href="#main">본문 바로가기</a><header class="top"><div class="container"><div class="header-brand-row"><div class="header-brand-block"><div class="brand"><img class="brand-icon" src="./icons/now-192.png?v=now-clear-circle" alt="" width="28" height="28"> NOW Mind <i>Search</i></div><div class="sub">지금이 기적이다 · NOW 마음챙김 <span style="font-size:10px;color:#477866">V2.1 정식</span></div></div><div id="languageSlot"></div></div><nav class="nav" aria-label="주요 메뉴">
 <a class="practice-nav-link" href="https://captain-now.github.io/NOW-Mindfulness-Web/?v=language-fr-v2#chant" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12a2 2 0 0 0 4 0"/></svg><span class="nav-label">염불</span></a>
@@ -216,6 +217,7 @@ const pairs=[
 ["NOW Mind Search 실시간 게시판 새 창으로 열기","Open the NOW Mind Search live board in a new tab"],
 ["주요 메뉴","Main navigation"],
 ["삶의 도서관","Life Library"],
+["삶의","Life"],["도서관","Library"],
 ["살면서 배운 것을 한 편씩.","Lessons from life, one story at a time."],
 ['홈','Home'],['수행','Practice'],['일지','Journal'],['실천','Daily'],['소개','About'],
 ['본문 바로가기','Skip to content'],['지금이 기적이다 · NOW 마음챙김','The present is a miracle · NOW Mindfulness'],
@@ -294,12 +296,14 @@ const extras={...window.MIND_SEARCH_EXTRA_LANG,
 "시외버스 그림":["城际巴士插图","都市間バスのイラスト"],
 "염불":["念佛","念仏"],"참선":["参禅","参禅"],"명상":["冥想","瞑想"],"일상실천":["日常练习","日常の実践"],
 
-"삶의 도서관":["人生图书馆","人生の図書館"],"살면서 배운 것을 한 편씩.":["把人生所学写成一个个故事。","人生で学んだことを、一編ずつ。"]};
+"삶의 도서관":["人生图书馆","人生の図書館"],"삶의":["人生","人生の"],"도서관":["图书馆","図書館"],"살면서 배운 것을 한 편씩.":["把人生所学写成一个个故事。","人生で学んだことを、一編ずつ。"]};
 const french = {
   "전통 사찰 전각": "Pavillon traditionnel d’un temple bouddhiste",
   "경매봉과 미술품 액자": "Marteau de commissaire-priseur et œuvre encadrée",
   "코레일 고속열차": "Train à grande vitesse de KORAIL",
   "삶의 도서관": "Bibliothèque de la vie",
+  "삶의": "Bibliothèque",
+  "도서관": "de la vie",
   "살면서 배운 것을 한 편씩.": "Les leçons de la vie, une histoire à la fois.",
   "홈": "Accueil",
   "수행": "Pratique",
