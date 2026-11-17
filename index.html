@@ -920,7 +920,7 @@ apply();observer.observe(document.body,{childList:true,subtree:true,characterDat
     const [year,month,dayOfMonth] = date.split('-').map(Number);
     const startOfYear = Date.UTC(year,0,1);
     const dayOfYear = Math.floor((Date.UTC(year,month-1,dayOfMonth)-startOfYear)/86400000);
-    const index = Math.min(dayOfYear,364); // 윤년 12월 31일은 365번째 문구 유지
+    const index = (Math.min(dayOfYear,364)*71)%365; // 365개를 모두 한 번씩 사용하며 연속 날짜에 서로 다른 주제를 배치
     const selected = document.documentElement.lang || 'ko';
     const currentLang = Object.prototype.hasOwnProperty.call(localizedActions,selected) ? selected : 'ko';
     const actionIndex = Math.floor(index/5), prefixIndex = index%5;
