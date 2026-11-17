@@ -130,8 +130,8 @@ html[lang="fr"] #author-hint[data-unavailable]::after{content:" Pseudo indisponi
       </a>
       <label>제목<input id="entry-title" maxlength="80" required></label>
       <label>이야기<textarea id="entry-body" maxlength="6000" required></textarea></label>
-      <p class="quiet">저장한 글은 이 브라우저의 서가에서만 볼 수 있어요.</p>
-      <button class="button" type="submit">내 서가에 저장</button><p class="status" id="feedback" role="status"></p>
+      <p class="quiet">작성한 글은 공개 도서관에 올라갑니다. 전송에 실패하면 이 브라우저에 임시 보관됩니다.</p>
+      <button class="button" type="submit">공개 도서관에 글 올리기</button><p class="status" id="feedback" role="status"></p>
     </form>
   </div></section>
 </main>
@@ -329,18 +329,19 @@ async function refreshPublicStories(){
   }catch(e){console.warn('Public library load failed',e);}
 }
 async function publishLocalStories(){
-  if(!window.supabase){feedback.textContent='공개 저장 연결 프로그램을 불러오지 못했습니다.';return;}
+  if(!window.supabase){feedback.textContent='공개 저장 연결 프로그램을 불러오지 못했습니다.';return false;}
   boardClient??=window.supabase.createClient("https://iqohtsakhfnwtlbarjut.supabase.co","sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w");
   const {data:{user}}=await boardClient.auth.getUser();
-  if(!user){feedback.textContent='게시판 로그인 연결이 필요합니다. 게시판에서 닉네임을 확인한 뒤 이 페이지로 돌아와 다시 눌러주세요. 기존 글은 보존됩니다.';return;}
+  if(!user){feedback.textContent='게시판 로그인 연결이 필요합니다. 게시판에서 닉네임을 확인한 뒤 이 페이지로 돌아와 다시 눌러주세요. 기존 글은 보존됩니다.';return false;}
   storyOwnerId=user.id;
   const pending=drafts.filter(x=>!publicStories.some(y=>y.id===x.id));
-  if(!pending.length){feedback.textContent=libraryText('공개할 새 글이 없습니다.');return;}
+  if(!pending.length){feedback.textContent=libraryText('공개할 새 글이 없습니다.');return true;}
   const rows=pending.map(x=>({id:x.id,owner_id:user.id,topic:x.topic,title:x.title,body:x.body,author_name:boardAuthor?.name||'익명',created_at:x.createdAt||new Date().toISOString()}));
   const {error}=await boardClient.from('life_library_stories').upsert(rows,{onConflict:'id'});
-  if(error){feedback.textContent='공개 저장 실패: '+error.message+' (기존 글은 보존됩니다)';console.warn(error);return;}
+  if(error){feedback.textContent='공개 저장 실패: '+error.message+' (기존 글은 보존됩니다)';console.warn(error);return false;}
   feedback.textContent=libraryText('이야기를 공개 도서관에 저장했습니다.');
   await refreshPublicStories();
+  return true;
 }
 function node(tag,text,style) {
   const element=document.createElement(tag);
@@ -403,12 +404,12 @@ form.addEventListener('submit',async event=>{
   const item={id:draftId||crypto.randomUUID(),topic,authorId:boardAuthor?.id??null,title,body,createdAt:previous?.createdAt||new Date().toISOString()};
   const next=editingId?drafts.map(entry=>entry.id===editingId?item:entry):[item,...drafts];
   if(!save(next))return;
-  if(storyOwnerId) await publishLocalStories();
+  const published=await publishLocalStories();
   editingId=null;
   form.reset();
   authorInput.value=boardAuthor?.name ?? libraryText('익명');
-  submit.textContent=libraryText('내 서가에 저장');
-  if(!storyOwnerId) feedback.textContent='이 브라우저에 글을 보관했습니다. 다른 브라우저에서도 보려면 아래 공개 도서관 올리기 버튼을 누르세요.';
+  submit.textContent='공개 도서관에 글 올리기';
+  if(!published && !feedback.textContent) feedback.textContent='공개 저장에 실패했습니다. 글은 이 브라우저에 보관되어 있습니다.';
   search.value='';
   filter.value='';
   render();
@@ -426,7 +427,7 @@ byId('edit').onclick=()=>{
 byId('remove').onclick=()=>{
   if(!confirm(libraryText('이 브라우저에서 이 이야기를 지울까요?')))return;
   if(!save(drafts.filter(entry=>entry.id!==active.id))){reader.close();feedback.scrollIntoView();return;}
-  if(editingId===active.id){editingId=null;form.reset();authorInput.value=boardAuthor?.name ?? libraryText('익명');form.querySelector('[type=submit]').textContent=libraryText('내 서가에 저장');}
+  if(editingId===active.id){editingId=null;form.reset();authorInput.value=boardAuthor?.name ?? libraryText('익명');form.querySelector('[type=submit]').textContent='공개 도서관에 글 올리기';}
   reader.close();
   render();
   feedback.textContent=libraryText('이야기를 지웠어요.');
