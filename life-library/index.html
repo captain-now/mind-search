@@ -432,12 +432,6 @@ byId('remove').onclick=()=>{
   render();
   feedback.textContent=libraryText('이야기를 지웠어요.');
 };
-const publishButton=document.createElement('button');
-publishButton.type='button';
-publishButton.textContent='내 글 공개 도서관에 올리기';
-publishButton.style.margin='12px 0';
-publishButton.onclick=publishLocalStories;
-form.insertAdjacentElement('afterend',publishButton);
 render();
 loadBoardAuthor();
 refreshPublicStories();
