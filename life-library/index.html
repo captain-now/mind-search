@@ -332,13 +332,13 @@ async function publishLocalStories(){
   if(!window.supabase) return;
   boardClient??=window.supabase.createClient("https://iqohtsakhfnwtlbarjut.supabase.co","sb_publishable_MZU5P4iF3BmY27FSee2ntw_mVO9Lf5w");
   const {data:{user}}=await boardClient.auth.getUser();
-  if(!user){feedback.textContent=libraryText('공개하려면 먼저 게시판에 로그인해 주세요. 이 브라우저의 글은 그대로 보관됩니다.');return;}
+  if(!user){feedback.textContent='게시판 로그인 연결이 필요합니다. 게시판에서 닉네임을 확인한 뒤 이 페이지로 돌아와 다시 눌러주세요. 기존 글은 보존됩니다.';return;}
   storyOwnerId=user.id;
   const pending=drafts.filter(x=>!publicStories.some(y=>y.id===x.id));
   if(!pending.length){feedback.textContent=libraryText('공개할 새 글이 없습니다.');return;}
   const rows=pending.map(x=>({id:x.id,owner_id:user.id,topic:x.topic,title:x.title,body:x.body,author_name:boardAuthor?.name||'익명',created_at:x.createdAt||new Date().toISOString()}));
   const {error}=await boardClient.from('life_library_stories').upsert(rows,{onConflict:'id'});
-  if(error){feedback.textContent=libraryText('공개 저장에 실패했습니다. 원래 글은 보관되어 있습니다.');console.warn(error);return;}
+  if(error){feedback.textContent='공개 저장 실패: '+error.message+' (기존 글은 보존됩니다)';console.warn(error);return;}
   feedback.textContent=libraryText('이야기를 공개 도서관에 저장했습니다.');
   await refreshPublicStories();
 }
@@ -407,7 +407,7 @@ form.addEventListener('submit',async event=>{
   form.reset();
   authorInput.value=boardAuthor?.name ?? libraryText('익명');
   submit.textContent=libraryText('내 서가에 저장');
-  feedback.textContent=authorHint.hasAttribute('data-unavailable')?libraryText('닉네임을 확인할 수 없어 익명으로 저장했어요.'):libraryText('이야기를 내 서가에 저장했어요.');
+  if(!storyOwnerId) feedback.textContent='이 브라우저에 글을 보관했습니다. 다른 브라우저에서도 보려면 아래 공개 도서관 올리기 버튼을 누르세요.';
   search.value='';
   filter.value='';
   render();
