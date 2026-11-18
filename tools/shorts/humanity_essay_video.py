@@ -53,18 +53,18 @@ def image_prompt(ko, index):
             "Scene "+str(index+1)+" of 15, illustrate this excerpt faithfully: "+ko[:400]+". "
             "Natural lighting, emotional visual storytelling, consistent realistic people, no text, no lettering, no watermark.")
 
-def generate_images(chunks, directory):
+def generate_images(plan, directory):
     import requests
     key=os.environ.get("OPENAI_API_KEY")
     if not key: raise RuntimeError("OPENAI_API_KEY required for photorealistic image generation")
     directory.mkdir(parents=True,exist_ok=True)
-    for i,chunk in enumerate(chunks):
+    from story_scene_planner import scene_prompt, verify_scene\n    for i,scene in enumerate(plan['scenes']):
         dst=directory/f"{i+1:02}.png"
         if dst.exists():
             raise FileExistsError(f"Refusing to reuse an existing scene image: {dst}. Use a fresh empty images directory.")
         resp=requests.post("https://api.openai.com/v1/images/generations",
             headers={"Authorization":"Bearer "+key},
-            json={"model":os.getenv("HEOGONGJANG_IMAGE_MODEL","gpt-image-1"),"prompt":image_prompt(chunk,i),
+            json={"model":os.getenv("HEOGONGJANG_IMAGE_MODEL","gpt-image-1"),"prompt":scene_prompt(plan,scene),
                   "size":"1024x1536","n":1},timeout=240)
         resp.raise_for_status()
         data=resp.json()["data"][0]
@@ -72,7 +72,7 @@ def generate_images(chunks, directory):
         elif "url" in data:
             rr=requests.get(data["url"],timeout=90);rr.raise_for_status();dst.write_bytes(rr.content)
         else:raise RuntimeError("Image API returned no image")
-        print("Generated",dst,flush=True)
+        try:\n            verdict=verify_scene(dst,plan,scene)\n        except Exception:\n            dst.unlink(missing_ok=True)\n            raise\n        print("Generated and verified",dst,verdict,flush=True)
 
 def synth_music(path, seconds=90, sample_rate=22050):
     """Original procedural cinematic-orchestral approximation, not live orchestra samples.
@@ -185,7 +185,7 @@ def main():
         raise RuntimeError("This essay profile requires 15 freshly generated story-specific images. Pass --generate-images and use a new empty --images-dir.")
     if a.images_dir.exists() and any(a.images_dir.iterdir()):
         raise FileExistsError("Image directory must be empty: reusing previous photos is prohibited.")
-    generate_images(split_paragraphs(story["ko"]),a.images_dir)
+    from story_scene_planner import plan_story\n    a.output_dir.mkdir(parents=True,exist_ok=True)\n    plan=plan_story(story,a.output_dir)\n    generate_images(plan,a.images_dir)
     a.output_dir.mkdir(parents=True,exist_ok=True)
     render(story,a.images_dir,a.output_dir)
 
