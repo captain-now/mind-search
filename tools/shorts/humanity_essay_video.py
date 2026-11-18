@@ -105,8 +105,7 @@ def render(story,images_dir,out):
         for second in range(6):
             im=base.copy()
             overlay=Image.new("RGBA",(w,h),(0,0,0,0));d=ImageDraw.Draw(overlay)
-            # Single bilingual caption area; text kept readable over any photo.
-            d.rounded_rectangle((14,38,w-14,450),radius=18,fill=(0,0,0,174))
+            # Transparent subtitle background: no box; text outline and shadow only.
             ko_txt=ko[i];en_txt=en[i]
             ksize=24;esize=17
             while True:
@@ -121,10 +120,12 @@ def render(story,images_dir,out):
                 esize-=1
             y=58
             for line in klines:
-                d.text((w//2,y),line,font=kfont,anchor="mt",fill="white",stroke_width=1,stroke_fill="black");y+=ksize+7
+                d.text((w//2+2,y+2),line,font=kfont,anchor="mt",fill=(0,0,0,180))
+                d.text((w//2,y),line,font=kfont,anchor="mt",fill="white",stroke_width=2,stroke_fill="black");y+=ksize+7
             y=max(y+15,250)
             for line in elines:
-                d.text((w//2,y),line,font=efont,anchor="mt",fill="#F5E7C9",stroke_width=1,stroke_fill="black");y+=esize+6
+                d.text((w//2+2,y+2),line,font=efont,anchor="mt",fill=(0,0,0,180))
+                d.text((w//2,y),line,font=efont,anchor="mt",fill="#F5E7C9",stroke_width=2,stroke_fill="black");y+=esize+6
             if y>435:raise ValueError(f"Scene {i+1} has too much text for readable captions; extend duration or reduce text")
             im=Image.alpha_composite(im.convert("RGBA"),overlay).convert("RGB")
             im.save(frames/f"{i*6+second:03}.jpg",quality=88)
