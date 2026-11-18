@@ -8,7 +8,11 @@ window.mindSearchLanguage = (() => {
       const code = localStorage.getItem(key);
       if (Object.hasOwn(locales, code)) return code;
     } catch {}
-    return 'ko';
+    const browser = (navigator.languages && navigator.languages[0]) || navigator.language || 'ko';
+    const code = browser.toLowerCase();
+    if (code.startsWith('zh')) return 'zh';
+    for (const lang of ['ko', 'en', 'ja', 'fr']) if (code.startsWith(lang)) return lang;
+    return 'en';
   }
   function sourceText(translate) {
     const sources = new WeakMap();
