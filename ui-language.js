@@ -1,8 +1,8 @@
 /* Shared language preference for the public Mind Search pages. */
 window.mindSearchLanguage = (() => {
   const key = 'mindsearch-ui-language';
-  const locales = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP', fr: 'fr-FR' };
-  const labels = { ko: '언어 선택', en: 'Language', zh: '选择语言', ja: '言語を選択', fr: 'Langue' };
+  const locales = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP', fr: 'fr-FR', hi: 'hi-IN', ru: 'ru-RU', de: 'de-DE' };
+  const labels = { ko: '언어 선택', en: 'Language', zh: '选择语言', ja: '言語を選択', fr: 'Langue', hi: 'भाषा', ru: 'Язык', de: 'Sprache' };
   function read() {
     try {
       const code = localStorage.getItem(key);
@@ -11,7 +11,7 @@ window.mindSearchLanguage = (() => {
     const browser = (navigator.languages && navigator.languages[0]) || navigator.language || 'ko';
     const code = browser.toLowerCase();
     if (code.startsWith('zh')) return 'zh';
-    for (const lang of ['ko', 'en', 'ja', 'fr']) if (code.startsWith(lang)) return lang;
+    for (const lang of ['ko', 'en', 'ja', 'fr', 'hi', 'ru', 'de']) if (code.startsWith(lang)) return lang;
     return 'en';
   }
   function sourceText(translate) {
