@@ -74,26 +74,57 @@ def generate_images(chunks, directory):
         else:raise RuntimeError("Image API returned no image")
         print("Generated",dst,flush=True)
 
-def synth_music(path,seconds=90,sample_rate=22050):
-    """Deterministic original, quiet piano/string-like instrumental; no copyrighted samples."""
-    chords=[(220.0,261.63,329.63),(174.61,220.0,261.63),(196.0,246.94,293.66),
-            (164.81,196.0,246.94),(220.0,261.63,329.63),(196.0,246.94,329.63)]
-    notes=[0,1,2,1,0,2,1,0]
-    with wave.open(str(path),"wb") as wf:
-        wf.setnchannels(1);wf.setsampwidth(2);wf.setframerate(sample_rate)
-        block=4096
-        for start in range(0,seconds*sample_rate,block):
-            vals=[]
-            for idx in range(start,min(start+block,seconds*sample_rate)):
-                t=idx/sample_rate
-                ci=int(t//5)%len(chords); chord=chords[ci]
-                beat=t%0.625; ni=int(t/0.625)%len(notes)
-                f=chord[notes[ni]]
-                pluck=math.exp(-3.0*beat)*(math.sin(2*math.pi*f*t)+0.25*math.sin(4*math.pi*f*t))
-                pad=sum(math.sin(2*math.pi*x*t)*0.08 for x in chord)
-                fade=min(1,t/2,(seconds-t)/3)
-                vals.append(struct.pack("<h",int(11000*max(0,fade)*(0.38*pluck+pad))))
-            wf.writeframes(b"".join(vals))
+def synth_music(path, seconds=90, sample_rate=22050):
+    """Original procedural cinematic-orchestral approximation, not live orchestra samples.
+
+    0-30s gentle piano/cello; 30-60s strings/flute build;
+    60-80s layered orchestral climax; 80-90s soft string resolution.
+    """
+    chords = [
+        (220.00, 261.63, 329.63),  # Am
+        (174.61, 220.00, 261.63),  # F
+        (196.00, 246.94, 293.66),  # G
+        (164.81, 196.00, 246.94),  # Em
+    ]
+    def sine(freq, t):
+        return math.sin(2 * math.pi * freq * t)
+    def envelope(t):
+        return max(0.0, min(1.0, t / 2.0, (seconds-t) / 4.0))
+    with wave.open(str(path), "wb") as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(sample_rate)
+        block = 4096
+        for start in range(0, seconds * sample_rate, block):
+            samples = bytearray()
+            for idx in range(start, min(start+block, seconds*sample_rate)):
+                t = idx / sample_rate
+                chord = chords[int(t//7.5) % len(chords)]
+                bass = chord[0] / 2
+                beat = t % 0.625
+                note = chord[int(t / 0.625) % 3]
+                piano = math.exp(-5 * beat) * (sine(note,t) + 0.23*sine(note*2,t))
+                cello = 0.5*sine(bass,t) + 0.16*sine(bass*2,t)
+                vibrato = 1 + 0.003*sine(5.2,t)
+                strings = sum((sine(f*vibrato,t)+0.20*sine(f*2*vibrato,t)) for f in chord) / 3
+                flute = sine(chord[2]*2,t) + 0.08*sine(chord[2]*4,t)
+                horn = 0.7*sine(chord[0],t) + 0.22*sine(chord[0]*2,t) + 0.1*sine(chord[0]*3,t)
+                # Rounded percussion pulse; deliberately gentle under subtitles.
+                pulse = math.exp(-18*(t%2.5)) * (sine(70,t)+0.3*sine(110,t))
+                if t < 30:
+                    value = 0.27*piano + 0.17*cello + 0.07*strings
+                elif t < 60:
+                    k = (t-30)/30
+                    value = 0.20*piano + 0.18*cello + (0.13+0.12*k)*strings + (0.04+0.07*k)*flute
+                elif t < 80:
+                    k = min(1.0,(t-60)/7)
+                    value = 0.12*piano + 0.16*cello + (0.26+0.07*k)*strings + 0.10*flute + 0.15*k*horn + 0.07*k*pulse
+                else:
+                    k = (seconds-t)/10
+                    value = 0.10*piano + 0.14*cello + 0.20*max(0,k)*strings + 0.04*max(0,k)*flute
+                amp = max(-0.95, min(0.95, value * envelope(t)))
+                samples.extend(struct.pack("<h", int(18000*amp)))
+            wf.writeframes(samples)
 
 def render(story,images_dir,out):
     ko=split_paragraphs(story["ko"]);en=split_paragraphs(story["en"])
