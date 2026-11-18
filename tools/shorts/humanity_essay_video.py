@@ -54,25 +54,62 @@ def image_prompt(ko, index):
             "Natural lighting, emotional visual storytelling, consistent realistic people, no text, no lettering, no watermark.")
 
 def generate_images(plan, directory):
+    """Generate each new scene and retry only that scene on a visual mismatch."""
     import requests
+    from story_scene_planner import scene_prompt, verify_scene
     key=os.environ.get("OPENAI_API_KEY")
-    if not key: raise RuntimeError("OPENAI_API_KEY required for photorealistic image generation")
+    if not key:
+        raise RuntimeError("OPENAI_API_KEY required for photorealistic image generation")
     directory.mkdir(parents=True,exist_ok=True)
-    from story_scene_planner import scene_prompt, verify_scene\n    for i,scene in enumerate(plan['scenes']):
+    max_attempts=int(CFG.get("images",{}).get("max_generation_attempts_per_scene",3))
+    if not 1<=max_attempts<=5:
+        raise ValueError("max_generation_attempts_per_scene must be between 1 and 5")
+    report=[]
+    for i,scene in enumerate(plan["scenes"]):
         dst=directory/f"{i+1:02}.png"
         if dst.exists():
-            raise FileExistsError(f"Refusing to reuse an existing scene image: {dst}. Use a fresh empty images directory.")
-        resp=requests.post("https://api.openai.com/v1/images/generations",
-            headers={"Authorization":"Bearer "+key},
-            json={"model":os.getenv("HEOGONGJANG_IMAGE_MODEL","gpt-image-1"),"prompt":scene_prompt(plan,scene),
-                  "size":"1024x1536","n":1},timeout=240)
-        resp.raise_for_status()
-        data=resp.json()["data"][0]
-        if "b64_json" in data: dst.write_bytes(base64.b64decode(data["b64_json"]))
-        elif "url" in data:
-            rr=requests.get(data["url"],timeout=90);rr.raise_for_status();dst.write_bytes(rr.content)
-        else:raise RuntimeError("Image API returned no image")
-        try:\n            verdict=verify_scene(dst,plan,scene)\n        except Exception:\n            dst.unlink(missing_ok=True)\n            raise\n        print("Generated and verified",dst,verdict,flush=True)
+            raise FileExistsError(f"Refusing to reuse existing image: {dst}")
+        failures=[]
+        for attempt in range(1,max_attempts+1):
+            prompt=scene_prompt(plan,scene)
+            if failures:
+                prompt+=(" Previous image was rejected for these reasons: "+
+                         "; ".join(failures[-2:])+
+                         ". Correct those specific visual mismatches; do not change the story.")
+            resp=requests.post("https://api.openai.com/v1/images/generations",
+                headers={"Authorization":"Bearer "+key},
+                json={"model":os.getenv("HEOGONGJANG_IMAGE_MODEL","gpt-image-1"),
+                      "prompt":prompt,"size":"1024x1536","n":1},timeout=240)
+            resp.raise_for_status()
+            data=resp.json()["data"][0]
+            if "b64_json" in data:
+                dst.write_bytes(base64.b64decode(data["b64_json"]))
+            elif "url" in data:
+                rr=requests.get(data["url"],timeout=90)
+                rr.raise_for_status()
+                dst.write_bytes(rr.content)
+            else:
+                raise RuntimeError("Image API returned no image")
+            try:
+                verdict=verify_scene(dst,plan,scene)
+            except ValueError as exc:
+                failures.append(str(exc))
+                dst.unlink(missing_ok=True)
+                print(f"Scene {i+1} rejected ({attempt}/{max_attempts}): {exc}",flush=True)
+                continue
+            except Exception:
+                dst.unlink(missing_ok=True)
+                raise
+            report.append({"scene":i+1,"attempts":attempt,"passed":True})
+            print(f"Scene {i+1} verified after {attempt} attempt(s)",flush=True)
+            break
+        else:
+            report.append({"scene":i+1,"attempts":max_attempts,"passed":False,"reasons":failures})
+            (directory/"verification_report.json").write_text(
+                json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
+            raise RuntimeError(f"Scene {i+1} failed {max_attempts} checks; MP4 rendering blocked")
+    (directory/"verification_report.json").write_text(
+        json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
 
 def synth_music(path, seconds=90, sample_rate=22050):
     """Original procedural cinematic-orchestral approximation, not live orchestra samples.
