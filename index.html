@@ -937,14 +937,14 @@ apply();observer.observe(document.body,{childList:true,subtree:true,characterDat
         const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
         if(entry.date!==today || typeof entry.text!=='string' || !entry.text.trim())return;
         const translated=entry.translations && entry.translations[currentLang];
-        el.textContent='“'+(currentLang==='ko'?entry.text:(typeof translated==='string'&&translated.trim()?translated:message))+'”';
+        el.textContent='“'+(currentLang==='ko'?entry.text:(typeof translated==='string'&&translated.trim()?translated:entry.text))+'”';
       }).catch(()=>{});
     const dateEl = document.getElementById('daily-quote-date');
     if(dateEl){
       const parts = new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date());
       const get = type => Number(parts.find(p=>p.type===type).value);
       const yy=get('year'), mm=get('month'), dd=get('day');
-      const locale = ({ko:'ko-KR',en:'en-US',zh:'zh-CN',ja:'ja-JP',fr:'fr-FR'})[currentLang]||'ko-KR';
+      const locale = ({ko:'ko-KR',en:'en-US',zh:'zh-CN',ja:'ja-JP',fr:'fr-FR',hi:'hi-IN',ru:'ru-RU',de:'de-DE'})[currentLang]||'ko-KR';
       dateEl.textContent = new Intl.DateTimeFormat(locale,{timeZone:'Asia/Seoul',year:'numeric',month:'long',day:'numeric'}).format(new Date(Date.UTC(yy,mm-1,dd,12)));
       dateEl.dateTime = [yy,String(mm).padStart(2,'0'),String(dd).padStart(2,'0')].join('-');
     }
