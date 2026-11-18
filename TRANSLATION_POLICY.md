@@ -38,3 +38,15 @@
 이 문서는 사용자 요청으로 유지하는 프로젝트 운영 기준이며, 외부 번역 서비스의 안정성을 보장하지 않는다.
 
 - 2026-11-18: 힌디어·러시아어·독일어를 추가했다. 글 페이지는 외부 번역 위젯을 사용하며, 메인 페이지에서 이 언어를 선택하면 Google 번역 페이지를 새 탭으로 연다. 이는 자체 번역문 저장이나 전체 번역 검증을 뜻하지 않는다.
+
+
+## 6. 자동번역 파이프라인 (2026-11-18 추가)
+- GitHub Actions `.github/workflows/translate-public-content.yml`은 `heogongjang-posts.json` 또는 `daily-quote.json`이 main 브랜치에 변경될 때 실행한다. 매일 00:20 UTC에도 누락분을 재확인하며 수동 실행도 가능하다.
+- `scripts/translate_public_content.py`는 공개 글의 제목·본문과 오늘의 한마디를 Google Cloud Translation API로 번역하여 **같은 JSON 파일에 저장**한다.
+- 번역 대상 언어는 `en, zh, ja, fr, hi, ru, de`이다. 한국어 원문은 변경하지 않으며 이미 완성된 번역은 보존한다.
+- GitHub 저장소 Settings → Secrets and variables → Actions에 **`GOOGLE_TRANSLATE_API_KEY`** 저장소 비밀값을 등록해야 실행된다. Google Cloud Translation API 활성화 및 결제 설정이 필요할 수 있다. 키를 코드나 채팅에 공개하지 않는다.
+- API 키가 없거나 번역이 실패하면 작업이 실패하며 성공한 것처럼 표시하지 않는다. GitHub Actions 실행 기록을 점검한다.
+- 글 페이지는 외부 Google 번역 위젯 대신 저장된 번역문을 우선 표시한다. 번역이 없는 글은 한국어 원문을 표시하며 누락 개수를 안내한다.
+- 오늘의 한마디는 `daily-quote.json.translations[lang]`을 읽는다. 번역이 없으면 다른 문구를 대신 보여주지 않고 원문을 표시한다.
+- 기존 글 20편의 7개 번역이 모두 채워지는 것은 API 키 등록 후 작업 성공에 달려 있다. 이 문서는 번역 완료를 보증하지 않는다.
+- 고정 홈페이지 UI의 번역은 현재 별도 번역 사전이 담당한다. **모든 UI 문구가 완전 번역된 상태는 아니며**, 새 문구는 사전에 추가해야 한다.
