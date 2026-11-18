@@ -1,9 +1,8 @@
 const CACHE_PREFIX = 'mind-search-pwa-';
-const CACHE = CACHE_PREFIX + 'homepage-v3-0-20261118';
+const CACHE = CACHE_PREFIX + 'homepage-v3-0-ko-only-20261118-b';
 const HOME_PAGES = ['./', './index.html'];
 const ASSETS = [
-  './ui-language.js?v=2',
-  './extra-languages.js?v=3',
+  './ui-language.js?v=ko-only-1',
   './manifest.webmanifest?v=now-mind-search',
   './favicon.ico?v=now-clear-circle',
   './icons/now-32.png?v=now-clear-circle',
