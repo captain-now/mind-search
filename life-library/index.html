@@ -329,7 +329,9 @@ async function publishLocalStories(){
   storyOwnerId=user.id;
   const pending=drafts.filter(x=>!publicStories.some(y=>y.id===x.id));
   if(!pending.length){feedback.textContent=libraryText('공개할 새 글이 없습니다.');return true;}
-  const rows=pending.map(x=>({id:x.id,owner_id:user.id,topic:x.topic,title:x.title,body:x.body,author_name:boardAuthor?.name||'익명',created_at:x.createdAt||new Date().toISOString()}));
+  const publicationTime=Date.now();
+  // Give each newly published story a distinct publication time, preserving newest-first draft order.
+  const rows=pending.map((x,index)=>({id:x.id,owner_id:user.id,topic:x.topic,title:x.title,body:x.body,author_name:boardAuthor?.name||'익명',created_at:new Date(publicationTime-index*1000).toISOString()}));
   const {error}=await boardClient.from('life_library_stories').upsert(rows,{onConflict:'id'});
   if(error){feedback.textContent='공개 저장 실패: '+error.message+' (기존 글은 보존됩니다)';console.warn(error);return false;}
   feedback.textContent=libraryText('이야기를 공개 도서관에 저장했습니다.');
