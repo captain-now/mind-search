@@ -165,7 +165,15 @@ def synth_music(path, seconds=90, sample_rate=22050):
 
 def render(story,images_dir,out):
     ko=split_paragraphs(story["ko"]);en=split_paragraphs(story["en"])
-    files=sorted([p for p in images_dir.iterdir() if p.suffix.lower() in (".png",".jpg",".jpeg",".webp")])
+    files=[images_dir/f"{i:02}.png" for i in range(1,16)]
+    if any(not p.is_file() for p in files):
+        raise ValueError("All 15 individually generated PNG images are required")
+    report_path=images_dir/"verification_report.json"
+    if not report_path.is_file():
+        raise ValueError("Missing scene verification report")
+    report=json.loads(report_path.read_text(encoding="utf-8"))
+    if len(report)!=15 or any(row.get("scene")!=i or row.get("passed") is not True for i,row in enumerate(report,1)):
+        raise ValueError("All 15 scenes must pass verification before MP4 rendering")
     if len(files)!=15:raise ValueError(f"Expected 15 photorealistic photos; found {len(files)}")
     frames=out/"frames";frames.mkdir(parents=True,exist_ok=True)
     w,h=CFG["width"],CFG["height"]
@@ -225,6 +233,8 @@ def main():
         raise FileExistsError("Image directory must be empty: reusing previous photos is prohibited.")
     from story_scene_planner import plan_story\n    a.output_dir.mkdir(parents=True,exist_ok=True)\n    plan=plan_story(story,a.output_dir)\n    generate_images(plan,a.images_dir)
     a.output_dir.mkdir(parents=True,exist_ok=True)
-    render(story,a.images_dir,a.output_dir)
+    video=render(story,a.images_dir,a.output_dir)
+    if not video.is_file() or video.stat().st_size==0:
+        raise RuntimeError("MP4 output missing or empty")
 
 if __name__=="__main__":main()
