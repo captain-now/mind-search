@@ -133,7 +133,8 @@ def render(story,images_dir,out):
     frames=out/"frames";frames.mkdir(parents=True,exist_ok=True)
     w,h=CFG["width"],CFG["height"]
     for i,path in enumerate(files):
-        base=ImageOps.fit(Image.open(path).convert("RGB"),(w,h),method=Image.Resampling.LANCZOS)
+        # Fill the entire 9:16 phone frame: crop-to-cover, never letterbox.
+        base=ImageOps.fit(Image.open(path).convert("RGB"),(w,h),method=Image.Resampling.LANCZOS,centering=(0.5,0.5))
         for second in range(6):
             im=base.copy()
             overlay=Image.new("RGBA",(w,h),(0,0,0,0));d=ImageDraw.Draw(overlay)
@@ -150,7 +151,7 @@ def render(story,images_dir,out):
                 elines=wrap(en_txt,efont,w-62,d)
                 if len(elines)*24<=157 or esize<=11:break
                 esize-=1
-            y=58
+            y=CFG.get("subtitles",{}).get("top_margin_px",58)
             for line in klines:
                 d.text((w//2+2,y+2),line,font=kfont,anchor="mt",fill=(0,0,0,180))
                 d.text((w//2,y),line,font=kfont,anchor="mt",fill="white",stroke_width=2,stroke_fill="black");y+=ksize+7
