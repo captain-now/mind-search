@@ -42,7 +42,7 @@ def plan_story(story,out):
 
 def scene_prompt(plan,scene):
     return (
-      "Photorealistic cinematic 9:16 vertical film still, no text, no typography, no watermark. "
+      "Photorealistic cinematic 9:16 vertical full-screen smartphone film still, no borders, no letterbox, no text, no typography, no watermark. Compose characters and main action in center and lower two-thirds, leaving the top area visually calm for transparent Korean and English subtitle overlays. "
       "You MUST portray the scene from the original Korean essay, NOT a generic inspirational story. "
       "Full story synopsis: "+str(plan.get("synopsis",""))[:1000]+". "
       "Established location and season: "+str(plan.get("setting",""))[:500]+". "
