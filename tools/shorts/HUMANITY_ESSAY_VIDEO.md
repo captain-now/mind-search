@@ -27,3 +27,14 @@ OpenAI 이미지 API 키가 필수이며 **15장 이미지 API 호출에는 별�
 - 원문 전체와 영어 번역을 90초 안에 표시하므로 글 길이에 따라 자막이 빠르게 넘어갈 수 있습니다.
 - 이미지 자동 생성은 API 키·결제·모델 접근 권한에 따라 실패할 수 있습니다.
 - 현재 이 스크립트는 **수동 실행용**이며, 매일 글 발행과 자동으로 연결하거나 YouTube에 게시하지 않습니다.
+
+## 새로운 오케스트라 음악 생성엔진
+- `tools/shorts/orchestra_composer.py`: 글의 내용으로 분위기를 판정하고 오리지널 7트랙 MIDI 악보를 생성합니다.
+- 출력: `original_orchestra_90s.mid`, `original_orchestra_90s.wav`, `music_manifest.json`.
+- 0~30초 피아노·첼로, 30~60초 현악기·플루트, 60~80초 호른·팀파니 절정, 80~90초 여운.
+- 고품질 악기 음색: FluidSynth 설치 및 합법적으로 사용 가능한 SoundFont 파일을 준비한 뒤 `HEOGONGJANG_SOUNDFONT=/path/to/soundfont.sf2` 환경변수 지정.
+- SoundFont/FluidSynth가 없으면 자체 파형 합성으로 자동 대체합니다. 대체 음색은 실제 오케스트라와 다릅니다.
+- 단독 실행: `python tools/shorts/orchestra_composer.py --story story.json --output-dir music_output`.
+- 영상 제작 코드에서도 새 음악 생성기를 자동 호출합니다. 영상에 사용된 음악은 90초 WAV입니다.
+- MIDI 및 음악은 글에 따라 새로 구성됩니다. 기존 상용 음원이나 녹음은 포함하지 않습니다.
+- **상태**: GitHub 코드 통합 완료. 실제 실행 및 음질 검증은 배포 환경에서 별도로 필요합니다.
