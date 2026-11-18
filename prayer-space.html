@@ -431,6 +431,12 @@
     <p class="seat-entry-status" role="status"></p>
   </dialog>
   <script>
+    // Keep prayer rooms functional even when the shared language helper is unavailable.
+    const prayerLanguage = window.prayerLanguage || {
+      text: value => String(value ?? ''),
+      choose: (ko) => ko,
+      title: name => name + ' | NOW Mind Search'
+    };
     const { text: prayerText, choose: prayerCopy, title: prayerTitle } = prayerLanguage;
     const galleryCaptions = {
       cathedral: [
