@@ -245,11 +245,11 @@ if (libraryLanguage !== 'ko') {
 const librarySelector=document.createElement('select');
 librarySelector.id='library-language';
 librarySelector.setAttribute('aria-label','Language / 언어 선택');
-librarySelector.style.cssText='position:fixed;right:12px;bottom:14px;z-index:50;max-width:135px;padding:9px;border:1px solid #b9b09f;border-radius:18px;background:#fffaf0;color:#17352c;font:600 13px system-ui;box-shadow:0 3px 14px #0002';
+librarySelector.style.cssText='position:absolute;right:14px;top:16px;z-index:50;max-width:135px;padding:9px;border:1px solid #b9b09f;border-radius:18px;background:#fffaf0;color:#17352c;font:600 13px system-ui;box-shadow:0 3px 14px #0002';
 for(const [code,label] of [['ko','🇰🇷 한국어'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français'],['hi','🇮🇳 हिन्दी'],['ru','🇷🇺 Русский'],['de','🇩🇪 Deutsch']]){const option=document.createElement('option');option.value=code;option.textContent=label;librarySelector.append(option)}
 librarySelector.value=libraryLanguage;
 librarySelector.addEventListener('change',()=>{try{localStorage.setItem(window.mindSearchLanguage.key,librarySelector.value)}catch{}location.reload()});
-document.body.append(librarySelector);
+const libraryHeader=document.querySelector('header')||document.body;libraryHeader.style.position='relative';libraryHeader.append(librarySelector);
 const stories=[
  {"topic":"놓아주기","title":"완성하지 않은 목도리","body":"서랍 맨 아래에는 삼 년째 끝나지 않은 목도리가 있었다. 겨울마다 꺼내 놓고는 두어 단을 뜨다가 다시 넣었다. 버리자니 들인 시간이 아깝고, 계속하자니 손이 가지 않았다.\n\n오늘은 바늘에서 실을 빼고 천천히 풀었다. 매듭이 걸릴 때마다 내가 실패를 되감는 것 같아 잠깐씩 멈췄다. 다 풀고 나니 목도리는 사라졌지만 실은 그대로 한 타래 남았다.\n\n그 실로 작은 컵받침을 하나 떴다. 저녁 찻잔을 올리니 크기가 꼭 맞았다.\n\n끝내지 못한 것을 놓아준 뒤 달라진 건, 시간이 돌아온 게 아니었다. 그 시간을 실패라고 부르던 마음이 풀렸다. 어떤 재료는 처음 생각한 모양이 아니어도 다시 쓰일 수 있었다.","publishedOn":"2026-11-17","createdAt":"2026-11-17T08:06:10.267Z"},
  {"topic":"일상","title":"빨래가 마르는 소리","body":"비가 그친 오후였습니다. 베란다 문을 열어 두니 셔츠 소매들이 바람에 서로 스쳤습니다. 사각, 사각. 늘 듣던 소리였는데 그날은 이상하게도 누군가 책장을 넘기는 소리처럼 들렸습니다.\n\n저는 의자를 가져와 그 앞에 앉았습니다. 해야 할 일은 그대로였고, 싱크대에는 씻을 그릇도 남아 있었습니다. 그래도 십 분 동안은 바람이 한 장씩 넘겨 주는 하루를 가만히 보았습니다.\n\n해가 기울자 젖어 무겁던 옷들이 조금 가벼워졌습니다. 사람의 마음도 저렇게 마를 수 있을까요. 억지로 짜내는 대신, 볕과 바람이 드나들 자리를 열어 두면서요.\n\n그 뒤로 비 갠 날이면 빨래를 널고 문을 조금 더 오래 열어 둡니다. 평범한 집안일이 가끔은 오늘을 읽는 시간이 됩니다.","publishedOn":"2026-11-17","createdAt":"2026-11-17T08:06:10.267Z"},
