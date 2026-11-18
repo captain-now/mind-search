@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'mind-search-pwa-';
-const CACHE = CACHE_PREFIX + 'homepage-cleanup-v1';
+const CACHE = CACHE_PREFIX + 'homepage-v3-0-20261118';
 const HOME_PAGES = ['./', './index.html'];
 const ASSETS = [
   './ui-language.js?v=2',
