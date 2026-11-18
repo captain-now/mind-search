@@ -28,5 +28,9 @@
     "requires_approval": true
   },
   "scope": "essay_video_only",
-  "notes": "Existing daily Shorts workflow and NOW Mind Search V3.0 must remain unchanged. Image generation requires an image-capable API and may incur charges."
+  "notes": "Existing daily Shorts workflow and NOW Mind Search V3.0 must remain unchanged. Image generation requires an image-capable API and may incur charges.",
+  "subtitle_background": "transparent",
+  "subtitle_background_opacity": 0,
+  "subtitle_text_outline": true,
+  "subtitle_text_shadow": true
 }
