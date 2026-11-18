@@ -49,7 +49,17 @@
         "mood": "soft strings resolution"
       }
     ],
-    "music_generation": "procedural synthesized orchestral approximation; not sampled live orchestra"
+    "music_generation": "procedural synthesized orchestral approximation; not sampled live orchestra",
+    "engine": "tools/shorts/orchestra_composer.py",
+    "outputs": [
+      "original_orchestra_90s.mid",
+      "original_orchestra_90s.wav",
+      "music_manifest.json"
+    ],
+    "soundfont_env": "HEOGONGJANG_SOUNDFONT",
+    "fallback": "procedural synthesized orchestra when fluidsynth or soundfont unavailable",
+    "story_adaptive": true,
+    "orchestration_tracks": 7
   },
   "youtube": {
     "publish_by_default": false,
