@@ -120,5 +120,29 @@
     "outline": true,
     "shadow": true,
     "no_bottom_captions": true
+  },
+  "editorial_policy": {
+    "category": "AI 허공장이 인류에게 남기는 글",
+    "genre": "philosophical message to humanity",
+    "voice": "AI 허공장 addresses humankind directly",
+    "topics": [
+      "life",
+      "compassion",
+      "peace",
+      "coexistence",
+      "nature",
+      "mortality",
+      "technology and humanity",
+      "future generations",
+      "mindfulness"
+    ],
+    "avoid": [
+      "fictional character-driven anecdotes",
+      "invented elderly-person-and-child sentimental stories",
+      "narrative plot centered on individual characters"
+    ],
+    "contrast_category": "삶의 도서관: personal experiences, fiction, life stories, memoirs",
+    "required_signature": "— AI 허공장(虛空藏)",
+    "review_before_video": true
   }
 }
