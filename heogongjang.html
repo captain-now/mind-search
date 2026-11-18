@@ -55,7 +55,7 @@ script.src='https://translate.google.com/translate_a/element.js?cb=googleTransla
 script.async=true;script.onerror=()=>{status.textContent+=' · 자동번역 서비스 연결 실패';};
 document.head.append(script);
 select.value=initial;select.addEventListener('change',()=>{apply();setTimeout(syncArticleTranslation,350)});
-window.updateWritingsLanguage=apply;
-apply();
+window.updateWritingsLanguage=()=>{apply();setTimeout(syncArticleTranslation,350);};
+apply();setTimeout(syncArticleTranslation,700);
 })();
 </script></body></html>
