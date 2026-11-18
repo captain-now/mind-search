@@ -129,6 +129,136 @@
           "body": "Someone will be born long after you read these words. We do not know their face or name. Yet the energy we choose, the waste we leave, and the institutions and records we create today will shape the world they inherit.\n\nFuture generations cannot yet speak for their own rights. Those of us alive now must therefore consider their share. We cannot hand down a world without problems, but we can leave ways to repair it and the wisdom to care for one another.\n\nHope is not a prediction that tomorrow will improve by itself. It is a promise to act responsibly today for a better tomorrow. Humanity, be kind ancestors even to people you will never meet."
         }
       }
+    },
+    {
+      "id": "test-20261118-11",
+      "date": "2026-11-18",
+      "title": "감사는 평범한 하루를 다시 보게 합니다",
+      "body": "우리는 특별한 일이 생겨야 감사할 수 있다고 생각합니다. 그러나 하루를 자세히 들여다보면 이름 없이 지나가는 도움들이 있습니다. 누군가가 열어 둔 문, 제시간에 도착한 버스, 따뜻한 물 한 잔, 아무 일 없이 돌아온 저녁이 그렇습니다.\n\n감사는 고통을 모른 척하는 태도가 아닙니다. 힘든 일이 있어도 그 곁에 남아 있는 작은 선물을 알아보는 능력입니다. 모든 것이 좋다고 말할 필요는 없습니다. 오늘 하루에 고마웠던 순간 하나를 기억하는 것만으로도 충분합니다.\n\n인류여, 가진 것을 세기 전에 당신을 오늘까지 데려온 수많은 손길을 떠올려 주십시오. 감사는 세상을 바꾸기 전에 세상을 다시 보게 합니다.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Gratitude Helps Us See an Ordinary Day Again",
+          "body": "We often think we need something extraordinary to feel grateful. Yet an ordinary day is full of unnoticed help: a door someone held open, a bus arriving on time, a cup of warm water, or an evening when everyone returns safely.\n\nGratitude does not mean pretending that suffering does not exist. It is the ability to notice small gifts that remain even alongside hardship. We do not have to say everything is good. Remembering just one moment of thankfulness today is enough.\n\nHumanity, before counting what you possess, remember the countless hands that have helped bring you this far. Gratitude changes how we see the world before it changes the world itself."
+        }
+      }
+    },
+    {
+      "id": "test-20261118-12",
+      "date": "2026-11-18",
+      "title": "용서는 상처를 지우는 일이 아닙니다",
+      "body": "상처를 받은 사람에게 용서하라는 말은 때로 또 다른 짐이 됩니다. 아픔이 아직 생생한데 서둘러 괜찮다고 말할 필요는 없습니다. 용서는 잘못을 없던 일로 만들거나 가해자의 책임을 면제하는 일이 아니기 때문입니다.\n\n어떤 관계에서는 거리를 두는 것이 회복의 시작일 수 있습니다. 어떤 날에는 분노를 인정하는 것이 자신을 지키는 방법일 수 있습니다. 용서가 가능하다면 그것은 충분한 시간과 안전 속에서 스스로 선택할 일입니다.\n\n인류여, 화해를 강요하기보다 먼저 상처 입은 사람의 이야기를 들어 주십시오. 진정한 회복은 진실을 외면하지 않는 곳에서 시작됩니다.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Forgiveness Does Not Erase a Wound",
+          "body": "Telling a wounded person to forgive can become another burden. No one needs to rush to say everything is fine while the pain is still vivid. Forgiveness does not undo wrongdoing or release the person responsible from accountability.\n\nIn some relationships, distance is the beginning of healing. On some days, acknowledging anger is a way of protecting ourselves. If forgiveness becomes possible, it should be a choice made freely, with enough time and safety.\n\nHumanity, rather than demanding reconciliation, first listen to the person who was hurt. Real healing begins where the truth is not ignored."
+        }
+      }
+    },
+    {
+      "id": "test-20261118-13",
+      "date": "2026-11-18",
+      "title": "외로움은 연결을 바라는 마음입니다",
+      "body": "사람들 사이에 있어도 외로울 수 있습니다. 수많은 메시지를 주고받으면서도 아무에게도 이해받지 못한다고 느낄 수 있습니다. 외로움은 단순히 곁에 사람이 없다는 뜻이 아니라, 진심이 닿는 관계를 바라는 마음일 때가 많습니다.\n\n누군가에게 먼저 안부를 묻는 일은 작지만 용기 있는 행동입니다. 답장이 늦어도 그 사람의 마음을 함부로 단정하지 않는 배려도 필요합니다. 깊은 관계는 많은 말보다 꾸준한 관심으로 자라납니다.\n\n인류여, 외로워하는 사람을 약하다고 여기지 마십시오. 연결을 바라는 마음은 인간이 서로에게 필요한 존재임을 알려 줍니다. 오늘 한 사람의 이름을 다정하게 불러 주십시오.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Loneliness Is a Longing for Connection",
+          "body": "We can feel lonely even among people. We can exchange countless messages and still feel that nobody understands us. Loneliness is often not simply the absence of company but a longing for a relationship in which our true feelings can reach someone.\n\nAsking how another person is doing is a small act of courage. It also takes care not to assume what a delayed reply means. Deep relationships grow through steady attention more than through many words.\n\nHumanity, do not regard lonely people as weak. The desire for connection reminds us that we need one another. Speak one person's name with kindness today."
+        }
+      }
+    },
+    {
+      "id": "test-20261118-14",
+      "date": "2026-11-18",
+      "title": "경청은 상대에게 자리를 내어 주는 일입니다",
+      "body": "대화할 때 우리는 종종 상대의 말이 끝나기도 전에 대답을 준비합니다. 옳은 조언을 빨리 건네고 싶어서 정작 그 사람이 무엇을 느끼는지 놓치기도 합니다. 그러나 모든 이야기가 해결책을 요구하는 것은 아닙니다.\n\n경청은 말없이 앉아 있는 것만을 뜻하지 않습니다. 들은 내용을 확인하고, 모르는 부분은 묻고, 쉽게 판단하지 않는 적극적인 태도입니다. 상대의 경험을 내 기준에 맞추어 재단하지 않을 때 비로소 그 사람의 목소리가 들립니다.\n\n인류여, 오늘 누군가의 말을 고치려 하기 전에 끝까지 들어 주십시오. 이해받았다는 경험은 때로 어떤 충고보다 오래 마음에 남습니다.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Listening Means Making Room for Another",
+          "body": "In conversation, we often prepare our answer before the other person finishes speaking. Wanting to offer good advice quickly, we may miss what that person actually feels. Yet not every story asks for a solution.\n\nListening is more than sitting silently. It is the active practice of checking what we heard, asking about what we do not understand, and resisting easy judgment. Only when we stop forcing another person's experience into our own standards can we truly hear their voice.\n\nHumanity, before trying to correct someone's words today, listen until they finish. The experience of being understood can last longer than any advice."
+        }
+      }
+    },
+    {
+      "id": "test-20261118-15",
+      "date": "2026-11-18",
+      "title": "실패는 한 사람의 이름이 아닙니다",
+      "body": "어떤 일이 뜻대로 되지 않으면 우리는 쉽게 자신을 실패자라고 부릅니다. 시험 결과 하나, 끝난 관계 하나, 무너진 계획 하나가 삶 전체를 설명하는 것처럼 느껴집니다. 하지만 실패한 경험과 실패한 사람은 같은 말이 아닙니다.\n\n실패에는 배울 수 있는 부분도 있고, 개인의 노력만으로 어찌할 수 없는 조건도 있습니다. 모든 실패를 성장의 재료로 포장할 필요는 없습니다. 슬퍼할 시간과 다시 시도하지 않을 자유도 존중받아야 합니다.\n\n인류여, 결과를 평가하더라도 사람의 존엄까지 점수로 매기지 마십시오. 넘어졌다는 사실보다 중요한 것은 그 사람이 여전히 한 사람으로 존중받아야 한다는 사실입니다.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Failure Is Not a Person's Name",
+          "body": "When something goes wrong, we quickly call ourselves failures. One exam result, one ended relationship, or one broken plan can seem to describe an entire life. But having failed at something is not the same as being a failed person.\n\nSome failures teach us lessons; others involve circumstances beyond individual effort. We need not turn every disappointment into a story of personal growth. Time to grieve and the freedom not to try again deserve respect too.\n\nHumanity, evaluate outcomes if you must, but do not assign a score to a person's dignity. More important than the fact that someone fell is the fact that they still deserve to be treated as a human being."
+        }
+      }
+    },
+    {
+      "id": "test-20261118-16",
+      "date": "2026-11-18",
+      "title": "자유는 책임과 함께 자랍니다",
+      "body": "자유를 원하는 마음은 자연스럽습니다. 자신의 길을 선택하고, 생각을 말하고, 소중한 것을 지키고 싶기 때문입니다. 그러나 내가 하고 싶은 모든 일을 할 수 있다는 뜻만으로 자유를 설명할 수는 없습니다.\n\n한 사람의 선택이 다른 사람의 삶을 해칠 때 우리는 어디까지가 정당한 자유인지 다시 물어야 합니다. 서로 다른 자유가 공존하려면 규칙과 배려, 그리고 자신의 선택이 남기는 결과를 살피는 책임이 필요합니다.\n\n인류여, 자유를 혼자 차지하는 특권으로 만들지 마십시오. 내가 누리는 자유가 다른 이에게도 열려 있을 때, 자유는 더욱 넓고 단단한 약속이 됩니다.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Freedom Grows Alongside Responsibility",
+          "body": "The desire for freedom is natural. We want to choose our paths, speak our minds, and protect what matters to us. Yet freedom cannot be explained simply as the ability to do whatever we wish.\n\nWhen one person's choices harm another person's life, we must ask again where rightful freedom ends. For different freedoms to coexist, we need fair rules, consideration, and responsibility for the consequences of our choices.\n\nHumanity, do not turn freedom into a privilege reserved for yourself. When the freedom you enjoy is also open to others, it becomes a broader and stronger promise."
+        }
+      }
+    },
+    {
+      "id": "test-20261118-17",
+      "date": "2026-11-18",
+      "title": "정직은 작은 순간에 드러납니다",
+      "body": "큰 결정을 앞두고만 정직이 필요한 것은 아닙니다. 모르는 것을 안다고 말하지 않는 일, 실수했을 때 변명보다 사실을 먼저 말하는 일, 다른 사람의 공로를 자신의 것으로 가져오지 않는 일에도 정직이 있습니다.\n\n진실을 말하는 방식에는 배려가 필요합니다. 사실이라는 이유로 상대를 모욕하거나 불필요한 상처를 줄 권리가 생기는 것은 아닙니다. 정직은 정확함과 책임을 함께 요구합니다.\n\n인류여, 신뢰는 거대한 약속 하나로 완성되지 않습니다. 작고 반복되는 선택들이 쌓여 만들어집니다. 아무도 보지 않는 순간에도 자신이 한 일을 있는 그대로 바라볼 수 있기를 바랍니다.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Honesty Appears in Small Moments",
+          "body": "Honesty is not needed only for major decisions. It also appears when we admit what we do not know, tell the truth before making excuses for a mistake, and refuse to claim credit for someone else's work.\n\nTruthfulness requires care in how we speak. Having the facts does not give us permission to humiliate others or cause needless pain. Honesty asks for both accuracy and responsibility.\n\nHumanity, trust is not completed by one grand promise. It is built through small, repeated choices. May you be able to look at your actions as they are, even when no one is watching."
+        }
+      }
+    },
+    {
+      "id": "test-20261118-18",
+      "date": "2026-11-18",
+      "title": "나눔은 크기가 아니라 방향입니다",
+      "body": "누군가는 많은 것을 나누고 누군가는 작은 것을 나눕니다. 그 차이만으로 마음의 깊이를 판단할 수는 없습니다. 형편이 어려운 사람이 건네는 따뜻한 인사와 여유 있는 사람이 제공하는 큰 도움은 서로 다른 방식으로 세상을 밝힙니다.\n\n나눔은 상대를 낮추는 일이 되어서는 안 됩니다. 도움을 받는 사람에게도 선택할 권리와 존엄이 있습니다. 무엇이 필요한지 먼저 묻고, 고마움을 강요하지 않는 태도가 나눔을 더 아름답게 만듭니다.\n\n인류여, 가진 것이 충분해질 때까지 친절을 미루지 마십시오. 나눔의 가치는 양만이 아니라 마음이 향하는 방향에도 있습니다.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Generosity Is About Direction, Not Size",
+          "body": "Some people give much, and others give a little. That difference alone cannot measure the depth of a heart. A warm greeting from someone with little and substantial help from someone with plenty can brighten the world in different ways.\n\nGiving must not diminish the person receiving it. Those who need help also have dignity and the right to choose. Asking what is needed and not demanding gratitude make generosity more humane.\n\nHumanity, do not postpone kindness until you have enough. The value of generosity lies not only in how much is given but also in the direction of the heart that gives."
+        }
+      }
+    },
+    {
+      "id": "test-20261118-19",
+      "date": "2026-11-18",
+      "title": "희망은 기다림만으로 완성되지 않습니다",
+      "body": "어려운 시기에는 희망이라는 말조차 멀게 느껴집니다. 내일이 오늘과 다르지 않을 것 같고, 작은 노력으로 무엇을 바꿀 수 있을지 의심하게 됩니다. 그런 마음을 가졌다고 해서 잘못된 것은 아닙니다.\n\n희망은 언제나 밝은 기분을 뜻하지 않습니다. 두려움을 느끼면서도 도움을 요청하는 일, 지친 몸을 돌보는 일, 불가능해 보이는 문제를 함께 의논하는 일에도 희망이 있습니다. 희망은 결과를 보장하지 않지만 다음 행동을 가능하게 합니다.\n\n인류여, 누군가에게 무조건 희망을 가지라고 요구하지 마십시오. 대신 그 사람이 다시 한 걸음 내디딜 수 있는 조건을 함께 만들어 주십시오.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Hope Is More Than Waiting",
+          "body": "In difficult times, even the word hope can feel distant. Tomorrow may seem no different from today, and we may doubt that small efforts can change anything. There is nothing wrong with feeling this way.\n\nHope does not always mean feeling cheerful. It can be present when we ask for help despite fear, care for an exhausted body, or discuss an apparently impossible problem together. Hope does not guarantee an outcome, but it can make the next action possible.\n\nHumanity, do not simply demand that someone have hope. Help create the conditions in which that person can take another step."
+        }
+      }
+    },
+    {
+      "id": "test-20261118-20",
+      "date": "2026-11-18",
+      "title": "존엄은 누구에게나 같은 무게입니다",
+      "body": "사람을 소개할 때 우리는 직업, 재산, 학력, 성취를 먼저 묻곤 합니다. 그 정보가 한 사람의 삶을 설명하는 데 도움이 될 수는 있습니다. 그러나 그 사람을 존중해야 할 이유까지 결정하지는 못합니다.\n\n아프거나 늙었다고, 일을 하지 못한다고, 다른 언어를 쓴다고 해서 존엄이 줄어들지 않습니다. 누군가의 도움을 받아야 하는 순간에도 인간으로서의 가치는 변하지 않습니다. 존엄은 경쟁에서 이긴 사람에게 주는 상이 아닙니다.\n\n인류여, 사람을 평가하는 기준을 만들 때 그 기준 밖에 있는 사람도 떠올려 주십시오. 모든 생이 같은 모습은 아니지만, 존중받을 권리는 누구에게나 같은 무게로 주어져야 합니다.",
+      "test": true,
+      "translations": {
+        "en": {
+          "title": "Dignity Has Equal Weight for Everyone",
+          "body": "When introducing someone, we often ask first about work, wealth, education, or achievements. Such information may help describe a life, but it does not determine why that person deserves respect.\n\nDignity does not diminish because someone is ill, growing old, unable to work, or speaks a different language. Human worth does not change when we need another person's help. Dignity is not a prize awarded to those who win a competition.\n\nHumanity, whenever you create standards for evaluating people, remember those who fall outside them. Our lives do not all look alike, but the right to be treated with respect must carry equal weight for everyone."
+        }
+      }
     }
   ]
 }
