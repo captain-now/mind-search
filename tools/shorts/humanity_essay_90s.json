@@ -81,7 +81,8 @@
     "require_image_generation": true,
     "fail_if_generation_unavailable": true,
     "planner": "tools/shorts/story_scene_planner.py",
-    "validate_generated_image_against_scene": true
+    "validate_generated_image_against_scene": true,
+    "prompt_composition": "Vertical 9:16 full-screen mobile composition; keep essential characters and action visible after center crop; reserve upper area for overlaid subtitles; no text in generated image"
   },
   "story_first_pipeline": {
     "mandatory": true,
@@ -96,5 +97,28 @@
     "reject_collage_or_poster": true,
     "fail_on_mismatch": true,
     "manual_review_recommended": true
+  },
+  "mobile_video": {
+    "orientation": "portrait",
+    "aspect_ratio": "9:16",
+    "fit": "cover",
+    "full_screen_image": true,
+    "no_letterbox": true,
+    "one_scene_image_at_a_time": true,
+    "keep_important_subject_in_safe_area": true
+  },
+  "subtitles": {
+    "placement": "top",
+    "language_order": [
+      "ko",
+      "en"
+    ],
+    "background": "transparent",
+    "overlay_on_image": true,
+    "top_margin_px": 58,
+    "horizontal_safe_margin_px": 31,
+    "outline": true,
+    "shadow": true,
+    "no_bottom_captions": true
   }
 }
