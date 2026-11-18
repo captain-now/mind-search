@@ -246,7 +246,7 @@ const librarySelector=document.createElement('select');
 librarySelector.id='library-language';
 librarySelector.setAttribute('aria-label','Language / 언어 선택');
 librarySelector.style.cssText='position:fixed;right:12px;bottom:14px;z-index:50;max-width:135px;padding:9px;border:1px solid #b9b09f;border-radius:18px;background:#fffaf0;color:#17352c;font:600 13px system-ui;box-shadow:0 3px 14px #0002';
-for(const [code,label] of [['ko','🇰🇷 한국어'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français']]){const option=document.createElement('option');option.value=code;option.textContent=label;librarySelector.append(option)}
+for(const [code,label] of [['ko','🇰🇷 한국어'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français'],['hi','🇮🇳 हिन्दी'],['ru','🇷🇺 Русский'],['de','🇩🇪 Deutsch']]){const option=document.createElement('option');option.value=code;option.textContent=label;librarySelector.append(option)}
 librarySelector.value=libraryLanguage;
 librarySelector.addEventListener('change',()=>{try{localStorage.setItem(window.mindSearchLanguage.key,librarySelector.value)}catch{}location.reload()});
 document.body.append(librarySelector);
@@ -367,9 +367,9 @@ function render() {
   shelf.replaceChildren();
   visible.forEach((entry,index)=>{
     const card=node('article','','card');
-    const open=node('button',(index+1)+'. '+entry.title,'story-title-button');
+    const localizedEntry=libraryLanguage==='ko'?null:entry.translations?.[libraryLanguage];const displayTitle=localizedEntry?.title||entry.title;const open=node('button',(index+1)+'. '+displayTitle,'story-title-button');
     open.type='button';
-    open.setAttribute('aria-label',(index+1)+'번 '+entry.title+' · '+libraryText('펼쳐 읽기'));
+    open.setAttribute('aria-label',(index+1)+' · '+displayTitle+' · '+libraryText('펼쳐 읽기'));
     open.onclick=()=>read(entry);
     const author=node('span',authorName(entry),'story-list-author');
     card.append(open,author);
@@ -381,7 +381,7 @@ function read(entry) {
   active=entry;
   byId('reader-tag').textContent=storyMeta(entry);
   byId('reader-title').textContent=entry.title;
-  byId('reader-content').replaceChildren(...entry.body.split(/\n\n+/).map(part=>node('p',part)));
+  const translation=libraryLanguage==='ko'?null:entry.translations?.[libraryLanguage];const localizedTitle=translation?.title||entry.title;const localizedBody=translation?.body||entry.body;byId('reader-title').textContent=localizedTitle;byId('reader-content').replaceChildren(...localizedBody.split(/\n\n+/).map(part=>node('p',part)));if(libraryLanguage!=='ko'&&(!translation?.title||!translation?.body)){const a=node('a','🌐 '+({en:'Translate this story',zh:'翻译这篇故事',ja:'この物語を翻訳',fr:'Traduire cette histoire',hi:'इस कहानी का अनुवाद करें',ru:'Перевести рассказ',de:'Diese Geschichte übersetzen'}[libraryLanguage]||'Translate'),'');a.href='https://translate.google.com/?sl=ko&tl='+encodeURIComponent(libraryLanguage)+'&text='+encodeURIComponent(entry.title+'\n\n'+entry.body)+'&op=translate';a.target='_blank';a.rel='noopener noreferrer';a.style.cssText='display:block;margin-top:18px;text-decoration:underline;color:#356c53';byId('reader-content').append(a);}
   byId('reader-actions').hidden=!entry.id || (entry.published && entry.authorId!==storyOwnerId);
   reader.showModal();
 }
