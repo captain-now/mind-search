@@ -738,9 +738,9 @@ const french = {
 const allReverse=new Map(Object.entries(french).map(([ko,fr])=>[fr,ko]));for(const [ko,en] of pairs){allReverse.set(en,ko);const extra=extras[ko];if(extra){allReverse.set(extra[0],ko);allReverse.set(extra[1],ko)}}
 const language=mindSearchLanguage;
 let lang=language.read();if(!['ko','en','zh','ja','fr','hi','ru','de'].includes(lang)){lang='ko';try{localStorage.setItem(language.key,'ko')}catch(e){}}
-const btn=document.createElement('select');btn.id='languageToggle';btn.setAttribute('aria-label','언어 선택');btn.style.cssText='border:1px solid #cbdacf;background:white;color:#355a48;border-radius:24px;padding:8px 9px;font-weight:750;cursor:pointer;max-width:125px';
+const btn=document.createElement('select');btn.id='languageToggle';btn.hidden=true;btn.setAttribute('aria-label','언어 선택');btn.style.cssText='border:1px solid #cbdacf;background:white;color:#355a48;border-radius:24px;padding:8px 9px;font-weight:750;cursor:pointer;max-width:125px';
 for(const [code,label] of [['ko','🇰🇷 한국어'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français'],['hi','🇮🇳 हिन्दी'],['ru','🇷🇺 Русский'],['de','🇩🇪 Deutsch']]){const o=document.createElement('option');o.value=code;o.textContent=label;btn.append(o)}
-const languageSlot=document.getElementById('languageSlot');if(languageSlot)languageSlot.appendChild(btn);else{const nav=document.querySelector('.nav');nav.parentNode.insertBefore(btn,nav)}
+const languageSlot=document.getElementById('languageSlot');/* Korean-only: do not insert the language selector. */
 function translate(value){
  const match=value.match(/^(\s*)([\s\S]*?)(\s*)$/);if(!match)return value;
  let core=match[2],prefix='';if(!core)return value;
