@@ -161,7 +161,7 @@ def render(story,images_dir,out):
             if y>435:raise ValueError(f"Scene {i+1} has too much text for readable captions; extend duration or reduce text")
             im=Image.alpha_composite(im.convert("RGBA"),overlay).convert("RGB")
             im.save(frames/f"{i*6+second:03}.jpg",quality=88)
-    music=out/"original_instrumental_90s.wav";synth_music(music)
+    from orchestra_composer import generate as generate_orchestra\n    music_info=generate_orchestra(story,out,os.getenv("HEOGONGJANG_SOUNDFONT"))\n    music=Path(music_info["wav"])
     video=out/"humanity_essay_90s_1fps.mp4"
     subprocess.run(["ffmpeg","-y","-hide_banner","-loglevel","error","-framerate","1","-i",str(frames/"%03d.jpg"),
                     "-i",str(music),"-t","90","-c:v","libx264","-pix_fmt","yuv420p",
