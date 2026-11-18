@@ -26,5 +26,18 @@ window.mindSearchLanguage = (() => {
       return translated;
     };
   }
-  return { key, locales, labels, read, sourceText };
+  const options = [['ko','🇰🇷 한국어'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français'],['hi','🇮🇳 हिन्दी'],['ru','🇷🇺 Русский'],['de','🇩🇪 Deutsch']];
+  function write(code) {
+    if (!Object.hasOwn(locales, code)) return false;
+    try { localStorage.setItem(key, code); } catch {}
+    window.dispatchEvent(new CustomEvent('mindsearch:language', { detail: { language: code } }));
+    return true;
+  }
+  function syncAcrossTabs() {
+    window.addEventListener('storage', event => {
+      if (event.key === key && event.newValue && Object.hasOwn(locales, event.newValue) && document.documentElement.lang !== event.newValue) location.reload();
+    });
+  }
+  syncAcrossTabs();
+  return { key, locales, labels, options, read, write, sourceText };
 })();
