@@ -32,5 +32,15 @@
   "subtitle_background": "transparent",
   "subtitle_background_opacity": 0,
   "subtitle_text_outline": true,
-  "subtitle_text_shadow": true
+  "subtitle_text_shadow": true,
+  "images": {
+    "count": 15,
+    "source": "newly_generated_for_current_essay_only",
+    "reuse_previous_images": false,
+    "generate_after_story_review": true,
+    "match_each_scene_to_story": true,
+    "consistent_characters_and_setting": true,
+    "require_image_generation": true,
+    "fail_if_generation_unavailable": true
+  }
 }
