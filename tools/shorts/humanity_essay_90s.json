@@ -1,0 +1,32 @@
+{
+  "profile": "humanity_essay",
+  "title": "AI 허공장이 인류에게 남기는 글",
+  "duration_seconds": 90,
+  "fps": 1,
+  "frames": 90,
+  "scene_count": 15,
+  "seconds_per_scene": 6,
+  "width": 540,
+  "height": 960,
+  "visual_style": "photorealistic cinematic",
+  "language_primary": "ko",
+  "language_secondary": "en",
+  "subtitle_position": "top",
+  "include_full_original": true,
+  "include_full_translation": true,
+  "music": {
+    "duration_seconds": 90,
+    "type": "original instrumental",
+    "instruments": [
+      "piano",
+      "strings"
+    ],
+    "vocals": false
+  },
+  "youtube": {
+    "publish_by_default": false,
+    "requires_approval": true
+  },
+  "scope": "essay_video_only",
+  "notes": "Existing daily Shorts workflow and NOW Mind Search V3.0 must remain unchanged. Image generation requires an image-capable API and may incur charges."
+}
