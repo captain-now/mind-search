@@ -79,6 +79,22 @@
     "match_each_scene_to_story": true,
     "consistent_characters_and_setting": true,
     "require_image_generation": true,
-    "fail_if_generation_unavailable": true
+    "fail_if_generation_unavailable": true,
+    "planner": "tools/shorts/story_scene_planner.py",
+    "validate_generated_image_against_scene": true
+  },
+  "story_first_pipeline": {
+    "mandatory": true,
+    "read_complete_korean_essay_before_images": true,
+    "analyze_characters_setting_events_props": true,
+    "create_chronological_scene_plan": true,
+    "scene_plan_count": 15,
+    "scene_plan_file": "story_scene_plan.json",
+    "generate_images_from_scene_plan_only": true,
+    "visual_story_match_check": true,
+    "reject_unrelated_narrative": true,
+    "reject_collage_or_poster": true,
+    "fail_on_mismatch": true,
+    "manual_review_recommended": true
   }
 }
