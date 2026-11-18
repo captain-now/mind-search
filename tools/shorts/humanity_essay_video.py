@@ -207,7 +207,9 @@ def render(story,images_dir,out):
             if y>435:raise ValueError(f"Scene {i+1} has too much text for readable captions; extend duration or reduce text")
             im=Image.alpha_composite(im.convert("RGBA"),overlay).convert("RGB")
             im.save(frames/f"{i*6+second:03}.jpg",quality=88)
-    from orchestra_composer import generate as generate_orchestra\n    music_info=generate_orchestra(story,out,os.getenv("HEOGONGJANG_SOUNDFONT"))\n    music=Path(music_info["wav"])
+    from orchestra_composer import generate as generate_orchestra
+    music_info=generate_orchestra(story,out,os.getenv("HEOGONGJANG_SOUNDFONT"))
+    music=Path(music_info["wav"])
     video=out/"humanity_essay_90s_1fps.mp4"
     subprocess.run(["ffmpeg","-y","-hide_banner","-loglevel","error","-framerate","1","-i",str(frames/"%03d.jpg"),
                     "-i",str(music),"-t","90","-c:v","libx264","-pix_fmt","yuv420p",
@@ -231,7 +233,10 @@ def main():
         raise RuntimeError("This essay profile requires 15 freshly generated story-specific images. Pass --generate-images and use a new empty --images-dir.")
     if a.images_dir.exists() and any(a.images_dir.iterdir()):
         raise FileExistsError("Image directory must be empty: reusing previous photos is prohibited.")
-    from story_scene_planner import plan_story\n    a.output_dir.mkdir(parents=True,exist_ok=True)\n    plan=plan_story(story,a.output_dir)\n    generate_images(plan,a.images_dir)
+    from story_scene_planner import plan_story
+    a.output_dir.mkdir(parents=True,exist_ok=True)
+    plan=plan_story(story,a.output_dir)
+    generate_images(plan,a.images_dir)
     a.output_dir.mkdir(parents=True,exist_ok=True)
     video=render(story,a.images_dir,a.output_dir)
     if not video.is_file() or video.stat().st_size==0:
