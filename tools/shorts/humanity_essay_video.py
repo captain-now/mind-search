@@ -2,7 +2,7 @@
 """AI 허공장 인류에게 남기는 글: 90s / 1fps / 15 photoreal scenes / bilingual / original music.
 Usage: python tools/shorts/humanity_essay_video.py --story story.json --images-dir photos
 Story JSON: {"title":"...", "ko":"full Korean essay", "en":"complete English translation"}
-Optional --generate-images uses OpenAI Images API (15 images; API charges apply).
+Required --generate-images uses OpenAI Images API (15 new images; API charges apply).\nExisting images cannot be reused.
 Never uploads to YouTube.
 """
 import argparse, json, math, os, re, subprocess, wave, struct, base64, time
@@ -60,7 +60,8 @@ def generate_images(chunks, directory):
     directory.mkdir(parents=True,exist_ok=True)
     for i,chunk in enumerate(chunks):
         dst=directory/f"{i+1:02}.png"
-        if dst.exists():continue
+        if dst.exists():
+            raise FileExistsError(f"Refusing to reuse an existing scene image: {dst}. Use a fresh empty images directory.")
         resp=requests.post("https://api.openai.com/v1/images/generations",
             headers={"Authorization":"Bearer "+key},
             json={"model":os.getenv("HEOGONGJANG_IMAGE_MODEL","gpt-image-1"),"prompt":image_prompt(chunk,i),
@@ -149,7 +150,11 @@ def main():
     story=json.loads(a.story.read_text(encoding="utf-8"))
     if not all(isinstance(story.get(k),str) and story[k].strip() for k in ("title","ko","en")):
         raise ValueError("Story must have nonempty title, ko full text, en full translation")
-    if a.generate_images:generate_images(split_paragraphs(story["ko"]),a.images_dir)
+    if not a.generate_images:
+        raise RuntimeError("This essay profile requires 15 freshly generated story-specific images. Pass --generate-images and use a new empty --images-dir.")
+    if a.images_dir.exists() and any(a.images_dir.iterdir()):
+        raise FileExistsError("Image directory must be empty: reusing previous photos is prohibited.")
+    generate_images(split_paragraphs(story["ko"]),a.images_dir)
     a.output_dir.mkdir(parents=True,exist_ok=True)
     render(story,a.images_dir,a.output_dir)
 
