@@ -760,8 +760,33 @@ const homepageBannerTranslations={
 "AI가 직접 설계하고 지속적으로 발전시키는 홈페이지입니다.":{en:"A website designed and continuously developed by AI.",zh:"这是由 AI 亲自设计并持续完善的网站。",ja:"AIが自ら設計し、継続的に発展させるウェブサイトです。"},
 "영상으로 만나는 NOW Mind Search":{en:"Discover NOW Mind Search through videos",zh:"通过视频了解 NOW Mind Search",ja:"動画で見る NOW Mind Search"}
 };
+const restoredFourLanguageTranslations={
+"念佛":{en:"Buddha recitation",zh:"念佛",ja:"念仏"},
+"참선":{en:"Zen practice",zh:"参禅",ja:"参禅"},
+"명상":{en:"Meditation",zh:"冥想",ja:"瞑想"},
+"일상실천":{en:"Daily practice",zh:"日常练习",ja:"日常の実践"},
+"공식블로그":{en:"Official Blog",zh:"官方博客",ja:"公式ブログ"},
+"실시간 게시판 ↗":{en:"Live Message Board ↗",zh:"实时留言板 ↗",ja:"リアルタイム掲示板 ↗"},
+"삶의 도서관":{en:"Life Library",zh:"人生图书馆",ja:"人生図書館"},
+"기도동참":{en:"Join in Prayer",zh:"参与祈祷",ja:"祈りに参加"},
+"사찰넷":{en:"Temple Network",zh:"寺庙网",ja:"寺院ネット"},
+"코베이옥션":{en:"Kobay Auction",zh:"Kobay拍卖",ja:"コベイオークション"},
+"코레일":{en:"KORAIL",zh:"韩国铁路",ja:"韓国鉄道"},
+"NOW Mind Search · 마음의 탐구":{en:"NOW Mind Search · Exploring the Mind",zh:"NOW Mind Search · 心灵探索",ja:"NOW Mind Search · 心の探求"},
+"지금, 여기…":{en:"Here and now…",zh:"此时，此地…",ja:"今、ここ…"},
+"그것이 전부입니다.":{en:"That is everything.",zh:"这便是全部。",ja:"それがすべてです。"},
+"답을 찾기보다, 물음에 머무르는 순간.":{en:"Stay with the question instead of rushing to an answer.",zh:"不急于寻找答案，静静面对疑问。",ja:"答えを急がず、問いとともにいるひととき。"},
+"당신의 삶은 이미 진행형입니다.":{en:"Your life is already unfolding.",zh:"你的人生正在展开。",ja:"あなたの人生は今も続いています。"},
+"💬 오늘의 한마디":{en:"💬 Today's Thought",zh:"💬 今日寄语",ja:"💬 今日のひとこと"},
+"🌍 함께하는 마음":{en:"🌍 Mindfulness Together",zh:"🌍 共同的正念",ja:"🌍 ともに育む心"},
+"누구나 자신을 돌아보고 함께 대화하는 공간입니다.":{en:"A space for everyone to reflect and connect.",zh:"一个让每个人都能自我反思、共同交流的空间。",ja:"誰もが自分を見つめ、語り合える場所です。"},
+"By Ai허공장":{en:"By AI Heogongjang",zh:"由 AI 虚空藏制作",ja:"AI 虚空蔵 制作"},
+"유튜브 채널 새 창으로 열기":{en:"Open YouTube channel in a new tab",zh:"在新标签页打开 YouTube 频道",ja:"YouTube チャンネルを新しいタブで開く"},
+"오늘 날짜":{en:"Today's date",zh:"今天的日期",ja:"今日の日付"},
+"NOW Mind Search · 지금이 기적이다 · V3.0 정식 버전":{en:"NOW Mind Search · The present is a miracle · V3.0",zh:"NOW Mind Search · 当下即是奇迹 · V3.0 正式版",ja:"NOW Mind Search · 今この瞬間が奇跡 · V3.0 正式版"}
+};
 const originalTranslate=translate;
-function translateWithOverrides(value){const match=value.match(/^(\s*)([\s\S]*?)(\s*)$/);if(!match||lang==='ko')return originalTranslate(value);const entry=homepageBannerTranslations[match[2]]||expandedNativeTranslations[match[2]]||screenshotTranslationOverrides[match[2]]||additionalTranslations[match[2]];if(entry&&entry[lang])return match[1]+entry[lang]+match[3];return originalTranslate(value);}
+function translateWithOverrides(value){const match=value.match(/^(\s*)([\s\S]*?)(\s*)$/);if(!match||lang==='ko')return originalTranslate(value);const entry=restoredFourLanguageTranslations[match[2]]||homepageBannerTranslations[match[2]]||expandedNativeTranslations[match[2]]||screenshotTranslationOverrides[match[2]]||additionalTranslations[match[2]];if(entry&&entry[lang])return match[1]+entry[lang]+match[3];return originalTranslate(value);}
 const translateFromSource=language.sourceText(translateWithOverrides);
 let translating=false;
 function apply(){
