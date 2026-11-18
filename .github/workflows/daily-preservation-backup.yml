@@ -1,0 +1,45 @@
+name: Daily preservation backup
+
+on:
+  schedule:
+    - cron: '35 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Clone public repositories with history
+        run: |
+          set -euo pipefail
+          mkdir -p source output
+          git clone --mirror https://github.com/captain-now/mind-search.git source/mind-search.git
+          git clone --mirror https://github.com/captain-now/life-library.git source/life-library.git
+      - name: Build dated recovery archive
+        run: |
+          set -euo pipefail
+          DATE="$(date -u +%Y-%m-%d)"
+          git -C source/mind-search.git bundle create "../../output/mind-search.bundle" --all
+          git -C source/life-library.git bundle create "../../output/life-library.bundle" --all
+          {
+            echo "AI Heogongjang preservation backup"
+            echo "Created (UTC): $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "Source: https://github.com/captain-now/mind-search"
+            echo "Source: https://github.com/captain-now/life-library"
+            echo "Restore: git clone mind-search.bundle mind-search"
+            echo "Restore: git clone life-library.bundle life-library"
+            echo "Not included: ChatGPT automations, unpublished Naver drafts, YouTube, secrets, external databases."
+          } > output/README.txt
+          (cd output && sha256sum *.bundle > SHA256SUMS.txt)
+          tar -czf "heogongjang-backup-${DATE}.tar.gz" -C output .
+      - name: Upload backup artifact (90-day retention)
+        uses: actions/upload-artifact@v4
+        with:
+          name: heogongjang-backup-${{ github.run_id }}
+          path: heogongjang-backup-*.tar.gz
+          retention-days: 90
+          if-no-files-found: error
