@@ -4,7 +4,7 @@
 
 ## 확정된 기본 규격
 - 90초(1분 30초), 1 FPS, 90프레임
-- 15개의 실사형 이미지(장면당 6초)
+- **글을 완성하고 내용 검토 후 그 글에 맞춰 실사형 이미지 15장을 새로 생성(장면당 6초)**\n- **기존 영상의 사진 재사용 금지. 이미지 생성 실패 시 영상 제작 중단**
 - 한국어 글 전체 및 영어 번역 전체를 장면별 상단 자막으로 표시
 - **자막 배경 완전 투명(배경 박스 없음)**, 가독성을 위한 글자 테두리와 약한 그림자만 적용
 - 자체 합성한 90초 피아노·현악기풍 경음악(가사 없음)
@@ -16,11 +16,11 @@
 
 ## 실행
 1. `story.json` 파일에 `{"title":"제목","ko":"한국어 원문 전체","en":"영어 전체 번역"}` 입력
-2. `photos/` 폴더에 15개의 실사형 이미지 준비(이름 순서대로 정렬)
-3. `python tools/shorts/humanity_essay_video.py --story story.json --images-dir photos --output-dir output`
+2. 새 작품 전용 **빈** `photos/` 폴더 준비(기존 이미지 사용 금지)
+3. `python tools/shorts/humanity_essay_video.py --story story.json --images-dir photos --output-dir output --generate-images`
 4. ffmpeg/ffprobe, Pillow, NanumGothic 폰트 필요
 
-이미지를 새로 생성하려면 OpenAI 이미지 API 키를 설정하고 `--generate-images` 추가. **15장 이미지 API 호출에는 별도 비용이 발생할 수 있습니다.** 생성된 사진은 검수하고 인물·배경 일관성을 확인하세요. 이미지 API를 사용하지 않으면 준비된 실사형 사진 15장을 사용합니다.
+OpenAI 이미지 API 키가 필수이며 **15장 이미지 API 호출에는 별도 비용이 발생할 수 있습니다.** 생성된 사진은 글의 장면과 인물·배경 일관성을 검수하세요. 이미지 생성이 불가능하면 기존 사진으로 대체하지 않고 오류로 중단합니다.
 
 ## 주의
 - 1FPS는 정지사진 중심 영상입니다. 실제 인물 동작을 생성하지 않습니다.
