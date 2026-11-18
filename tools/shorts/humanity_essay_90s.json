@@ -82,7 +82,12 @@
     "fail_if_generation_unavailable": true,
     "planner": "tools/shorts/story_scene_planner.py",
     "validate_generated_image_against_scene": true,
-    "prompt_composition": "Vertical 9:16 full-screen mobile composition; keep essential characters and action visible after center crop; reserve upper area for overlaid subtitles; no text in generated image"
+    "prompt_composition": "Vertical 9:16 full-screen mobile composition; keep essential characters and action visible after center crop; reserve upper area for overlaid subtitles; no text in generated image",
+    "max_generation_attempts_per_scene": 3,
+    "retry_only_failed_scene": true,
+    "retry_with_failure_reason": true,
+    "block_mp4_if_any_scene_fails": true,
+    "verification_report": "verification_report.json"
   },
   "story_first_pipeline": {
     "mandatory": true,
