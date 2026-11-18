@@ -803,7 +803,7 @@ function apply(){
  if(document.documentElement.lang!==lang)document.documentElement.lang=lang;btn.value=lang;
  translating=false;
 }
-btn.onchange=()=>{lang=btn.value;try{localStorage.setItem(language.key,lang)}catch(e){}apply();if(typeof render==='function')render()};
+btn.onchange=()=>{lang=btn.value;language.write(lang);apply();if(typeof render==='function')render()};
 let queued=false;const observer=new MutationObserver(()=>{if(translating||queued)return;queued=true;queueMicrotask(()=>{queued=false;observer.disconnect();apply();observer.observe(document.body,{childList:true,subtree:true,characterData:true})})});
 apply();observer.observe(document.body,{childList:true,subtree:true,characterData:true});if(typeof render==='function')render();
 })();
