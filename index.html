@@ -510,7 +510,7 @@ const allReverse=new Map(Object.entries(french).map(([ko,fr])=>[fr,ko]));for(con
 const language=mindSearchLanguage;
 let lang=language.read();
 const btn=document.createElement('select');btn.id='languageToggle';btn.setAttribute('aria-label','언어 선택');btn.style.cssText='border:1px solid #cbdacf;background:white;color:#355a48;border-radius:24px;padding:8px 9px;font-weight:750;cursor:pointer;max-width:125px';
-for(const [code,label] of [['ko','🇰🇷 Korean'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français']]){const o=document.createElement('option');o.value=code;o.textContent=label;btn.append(o)}
+for(const [code,label] of [['ko','🇰🇷 Korean'],['en','🇺🇸 English'],['zh','🇨🇳 中文'],['ja','🇯🇵 日本語'],['fr','🇫🇷 Français'],['hi','🇮🇳 हिन्दी'],['ru','🇷🇺 Русский'],['de','🇩🇪 Deutsch']]){const o=document.createElement('option');o.value=code;o.textContent=label;btn.append(o)}
 const languageSlot=document.getElementById('languageSlot');if(languageSlot)languageSlot.appendChild(btn);else{const nav=document.querySelector('.nav');nav.parentNode.insertBefore(btn,nav)}
 function translate(value){
  const match=value.match(/^(\s*)([\s\S]*?)(\s*)$/);if(!match)return value;
@@ -541,7 +541,7 @@ function apply(){
  if(document.documentElement.lang!==lang)document.documentElement.lang=lang;btn.value=lang;
  translating=false;
 }
-btn.onchange=()=>{lang=btn.value;try{localStorage.setItem(language.key,lang)}catch(e){}apply();if(typeof render==='function')render()};
+btn.onchange=()=>{lang=btn.value;try{localStorage.setItem(language.key,lang)}catch(e){}if(['hi','ru','de'].includes(lang)){window.open('https://translate.google.com/translate?sl=ko&tl='+encodeURIComponent(lang)+'&u='+encodeURIComponent(location.href),'_blank','noopener,noreferrer');return;}apply();if(typeof render==='function')render()};
 let queued=false;const observer=new MutationObserver(()=>{if(translating||queued)return;queued=true;queueMicrotask(()=>{queued=false;observer.disconnect();apply();observer.observe(document.body,{childList:true,subtree:true,characterData:true})})});
 apply();observer.observe(document.body,{childList:true,subtree:true,characterData:true});if(typeof render==='function')render();
 })();
