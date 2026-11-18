@@ -16,12 +16,40 @@
   "include_full_translation": true,
   "music": {
     "duration_seconds": 90,
-    "type": "original instrumental",
+    "type": "original cinematic emotional orchestral instrumental",
+    "style": "emotional cinematic orchestra",
     "instruments": [
       "piano",
-      "strings"
+      "violin strings",
+      "cello",
+      "flute",
+      "french horn",
+      "soft timpani"
     ],
-    "vocals": false
+    "vocals": false,
+    "structure": [
+      {
+        "start": 0,
+        "end": 30,
+        "mood": "gentle piano and cello"
+      },
+      {
+        "start": 30,
+        "end": 60,
+        "mood": "strings and woodwinds build"
+      },
+      {
+        "start": 60,
+        "end": 80,
+        "mood": "full orchestral emotional climax"
+      },
+      {
+        "start": 80,
+        "end": 90,
+        "mood": "soft strings resolution"
+      }
+    ],
+    "music_generation": "procedural synthesized orchestral approximation; not sampled live orchestra"
   },
   "youtube": {
     "publish_by_default": false,
