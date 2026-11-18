@@ -186,6 +186,14 @@ html[lang="en"] .life-library-banner strong > span:first-child::after{content:""
 .header-quick-links .youtube-banner-copy strong{font-size:clamp(12px,3vw,17px);white-space:normal}
 .header-quick-links .youtube-banner-copy small,.header-quick-links .youtube-banner-arrow{display:none}
 @media(max-width:620px){.header-quick-links{gap:4px}.header-quick-links > .youtube-channel-banner{min-height:32px;padding:3px 2px;gap:3px;border-radius:10px}.header-quick-links .youtube-play-mark{width:21px;height:17px;font-size:9px;border-radius:5px}.header-quick-links .youtube-banner-copy strong{font-size:clamp(10px,2.8vw,14px)}.header-quick-links > :is(.naver-blog-link,.now-link){font-size:clamp(10px,2.8vw,14px)}}
+
+/* Force all three quick links into one equal-width row on phones and desktop. */
+.top .container > .header-quick-links{grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:6px}
+.top .container > .header-quick-links > a{width:100%;min-width:0;max-width:none;box-sizing:border-box}
+.top .container > .header-quick-links .blog-brand{font-size:clamp(9px,2.8vw,15px);white-space:normal;overflow-wrap:normal}
+.top .container > .header-quick-links .blog-caption{font-size:clamp(10px,2.8vw,14px)}
+.top .container > .header-quick-links .youtube-banner-copy strong{font-size:clamp(10px,2.9vw,16px)}
+@media(max-width:620px){.top .container > .header-quick-links{gap:5px}.top .container > .header-quick-links > a{min-height:38px;padding:5px 3px;border-radius:12px}.top .container > .header-quick-links .now-link{gap:3px;font-size:clamp(10px,2.8vw,14px)}.top .container > .header-quick-links .now-symbol{font-size:13px}.top .container > .header-quick-links .youtube-play-mark{width:20px;height:16px;flex-shrink:0}.top .container > .header-quick-links .youtube-banner-copy strong{font-size:clamp(10px,2.7vw,14px)}}
 </style>
 <style>
 .daily-quote-below-hero{margin:18px auto 22px;max-width:760px}
