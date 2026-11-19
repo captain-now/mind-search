@@ -302,7 +302,15 @@
     ],
     "narrationVoiceId": "1qPUYRc2lNaqheT3BAnq",
     "narrationIntegrationStatus": "voice verified; per-video synthesis and assembly still require execution and verification",
-    "narrationVoiceName": "Ai허공장 공식 목소리 (ElevenLabs 라이브러리 이름: AI 허공장)"
+    "narrationVoiceName": "Ai허공장 공식 목소리 (ElevenLabs 라이브러리 이름: AI 허공장)",
+    "imageUniquenessPolicy": {
+      "reusePreviouslyUsedImages": false,
+      "generateFreshImageForEveryNewText": true,
+      "keepCharacterIdentityConsistent": true,
+      "adaptExpressionPoseActionBackgroundAndAtmosphereToEachText": true,
+      "requestApprovalBeforeVideoProduction": true,
+      "notes": "Never reuse an image already used in a published or approved Shorts video; new images must be original compositions, not just cropping or recoloring an old image."
+    }
   },
   "editorialPolicy": {
     "originalTextPreservation": "strict_verbatim",
