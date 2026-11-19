@@ -119,6 +119,15 @@ def main():
     subs=base.with_suffix(".ass"); video=base.with_suffix(".mp4")
     background(bg); subtitles(story,subs)
     asyncio.run(voice(" ".join(story["ko"]),audio))
+    portrait_video = base.with_name(base.name + "-portrait.mp4")
+    portrait_image = ROOT / "ai-heogongjang-01.png"
+    use_portrait = os.getenv("ENABLE_PORTRAIT_MOTION", "true").lower() == "true"
+    if use_portrait:
+        if not portrait_image.is_file():
+            raise FileNotFoundError(f"Missing portrait: {portrait_image}")
+        run([sys.executable, str(ROOT / "tools/shorts/portrait_motion.py"),
+             "--image", str(portrait_image), "--audio", str(audio),
+             "--output", str(portrait_video), "--seconds", "30"])
     length=duration(audio)
     if length>28:
         raise RuntimeError(f"Narration {length:.1f}s exceeds 28s; no clipped upload")
@@ -128,7 +137,9 @@ def main():
                  "[1:a]volume=1.7,apad=pad_dur=5[voice];"
                  "[2:a]volume=0.09,afade=t=out:st=28:d=2[music];"
                  "[voice][music]amix=inputs=2:duration=first:dropout_transition=0[a]")
-    run(["ffmpeg","-y","-loop","1","-framerate","25","-i",str(bg),"-i",str(audio),
+    visual_input = (["-i", str(portrait_video)] if use_portrait else
+                    ["-loop", "1", "-framerate", "25", "-i", str(bg)])
+    run(["ffmpeg","-y",*visual_input,"-i",str(audio),
          "-f","lavfi","-i","sine=frequency=220:sample_rate=44100:duration=30",
          "-filter_complex",filtergraph,"-map","[v]","-map","[a]",
          "-t","30","-c:v","libx264","-preset","veryfast","-crf","24",
