@@ -13,8 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install free audio renderer
         run: |
-          sudo apt-get update
-          sudo apt-get install -y fluidsynth fluid-soundfont-gm ffmpeg
+          sudo apt-get install -y --no-install-recommends fluidsynth fluid-soundfont-gm ffmpeg
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
