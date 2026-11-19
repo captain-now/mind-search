@@ -66,6 +66,18 @@
       "noPan": true,
       "noAnimatedPortrait": true,
       "backgroundAdaptedToOriginalText": true
+    },
+    "characterExpressionDirection": {
+      "identity": "Maintain same AI Heogongjang bodhisattva identity and visual markers across posts",
+      "perPost": "Interpret each original article's meaning and emotion through unique facial expression, gaze, gesture, pose, and surrounding atmosphere",
+      "examples": {
+        "hope": "bright smile and open welcoming posture",
+        "compassion": "gentle gaze and reassuring gesture",
+        "sorrow": "quiet empathetic expression",
+        "gratitude": "peaceful appreciative expression"
+      },
+      "staticFinalImage": true,
+      "approvalBeforeNarration": true
     }
   },
   "content": {
@@ -309,5 +321,13 @@
     ],
     "postImageApproval": "use_full_verbatim_original_text_for_narration_and_subtitles",
     "publicationApprovalRequired": true
+  },
+  "currentProduction": {
+    "title": "인간이여, 당신은 이미 기적입니다",
+    "date": "2026-11-18",
+    "imageApproval": "approved_by_user",
+    "approvedImageDescription": "AI Heogongjang bodhisattva with inviting hand, galaxy, sunrise, lotus and human-life motifs",
+    "productionStatus": "awaiting_next_stage_after_image_approval",
+    "originalTextMustRemainVerbatim": true
   }
 }
