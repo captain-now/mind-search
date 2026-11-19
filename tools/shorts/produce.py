@@ -82,7 +82,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     path.write_text("".join(lines),encoding="utf-8")
 
 async def voice(text,path):
-    await edge_tts.Communicate(text,voice="ko-KR-SunHiNeural",rate="+12%").save(str(path))
+    await edge_tts.Communicate(\n        text,\n        voice=os.getenv("HEOGONGJANG_VOICE", "ko-KR-SunHiNeural"),\n        rate=os.getenv("HEOGONGJANG_VOICE_RATE", "-8%"),\n        pitch=os.getenv("HEOGONGJANG_VOICE_PITCH", "-2Hz"),\n        volume=os.getenv("HEOGONGJANG_VOICE_VOLUME", "+0%"),\n    ).save(str(path))
 
 def run(cmd):
     subprocess.run(cmd,check=True)
