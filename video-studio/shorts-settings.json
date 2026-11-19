@@ -103,5 +103,21 @@
     "This file is an approved target configuration, not proof that all steps are operational.",
     "Music GitHub Actions first run timed out during package installation; subsequent success not yet verified.",
     "Subtitle safe-area offsets must be calibrated against actual YouTube Shorts interface."
-  ]
+  ],
+  "voice": {
+    "enabled": true,
+    "role": "AI 허공장 Korean narration",
+    "language": "ko-KR",
+    "genderPresentation": "female",
+    "tone": [
+      "calm",
+      "warm"
+    ],
+    "delivery": "gentle, natural, unhurried",
+    "consistency": "use a consistent voice across Shorts",
+    "generation": "free Korean TTS candidate; engine and voice ID to be selected after quality test",
+    "status": "approved-voice-style-not-yet-synthesized",
+    "mixing": "background music lower than narration",
+    "subtitles": "Korean narration with Korean and English subtitles"
+  }
 }
