@@ -90,19 +90,6 @@
       background: #35231a;
     }
     .temple-view img { display: block; width: 100%; height: 100%; object-fit: cover; }
-    .sugwangam-sasi {
-      position: absolute; right: 12px; bottom: 14px;
-      z-index: 4; min-height: 48px; width: max-content; max-width: calc(100% - 24px);
-      padding: 0 0.75em;
-      border: 2px solid #e6b95e; border-radius: 999px;
-      background: transparent;
-      color: #fff7eb; box-shadow: 0 3px 8px #1c0b1699;
-      text-shadow: 0 1px 3px #1c0b16;
-      font: 800 clamp(19px, 5vw, 28px)/1.2 "Gowun Batang", serif;
-      cursor: pointer;
-    }
-    .sugwangam-sasi:focus-visible { outline: 3px solid white; outline-offset: 3px; }
-    .sugwangam-sasi[aria-pressed="true"] { border-color: #fff7eb; }
 
     .temple-motion {
       position: relative;
@@ -524,7 +511,7 @@
     const hallChants = {
       "daejeokgwangjeon": [
         [null, "이뭣고", null, { audioSource: "./assets/temple/chant/now-hwadu.m4a" }],
-        [null, "🙏 사시예불", null, { audioSource: "https://raw.githubusercontent.com/captain-now/NOW-Mindfulness-Web/main/audio/%EC%82%AC%EC%8B%9C%EC%98%88%EB%B6%88_%EC%99%84%EC%A0%84%EC%95%95%EC%B6%95%EB%B3%B8_25MB%EC%9D%B4%ED%95%98.opus" }]
+        [null, "🙏 사시예불", null, { loop: false, audioSource: "https://raw.githubusercontent.com/captain-now/NOW-Mindfulness-Web/main/audio/%EC%82%AC%EC%8B%9C%EC%98%88%EB%B6%88_%EC%99%84%EC%A0%84%EC%95%95%EC%B6%95%EB%B3%B8_25MB%EC%9D%B4%ED%95%98.opus" }]
       ],
       "daeungjeon": [
         [null, "금강경 한문"],
@@ -551,6 +538,7 @@
         ]
       ],
       "jijangjeon": [["jijang", "지장보살", null, { audioSource: "https://raw.githubusercontent.com/captain-now/NOW-Mindfulness-Web/main/audio/%EC%A7%80%EC%9E%A5%EB%B3%B4%EC%82%B4%EC%A0%95%EA%B7%BC.m4a" }]],
+      "sugwangam": [[null, "사시불공", null, { audioSource: "./assets/temple/chant/sukwangam.opus", loop: false }]],
       "samseonggak": [
         [
           "sansin",
@@ -655,7 +643,11 @@
         current.setPlaying(false);
       }
 
-      const buttons = tracks.map(([id, label, videoSource, { audioSource, fullFrame = false, youtubeId } = {}]) => {
+      audio.addEventListener('ended', () => {
+        if (active?.media === audio) stopActive();
+      });
+
+      const buttons = tracks.map(([id, label, videoSource, { audioSource, fullFrame = false, youtubeId, loop = true } = {}]) => {
         const button = document.createElement('button');
         const name = prayerText(label);
         const available = Boolean(id || audioSource || videoSource || youtubeId);
@@ -694,12 +686,10 @@
             media.src = videoSource;
           } else {
             const source = audioSource || (audioDirectory + id + '.mp3');
+            audio.loop = loop;
             if (audio.getAttribute('src') !== source || audio.error) audio.src = source;
           }
           active = { button, media, setPlaying };
-          if (label.includes('사시예불')) {
-            audio.loop = false;
-          }
           setPlaying(true);
           try {
             if (!youtubeId) await media.play();
@@ -1305,30 +1295,6 @@
         view.replaceWith(scene);
       } else {
         view.replaceWith(image);
-      }
-      if (hall.name === '수광암') {
-        const audio = document.createElement('audio');
-        audio.preload = 'none';
-        audio.src = './assets/temple/chant/sukwangam.opus';
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'sugwangam-sasi';
-        button.textContent = '🪷 사시불공 🪷';
-        button.setAttribute('aria-label', '사시불공 소리 켜기');
-        button.setAttribute('aria-pressed', 'false');
-        const setPlaying = playing => {
-          button.setAttribute('aria-pressed', String(playing));
-          button.setAttribute('aria-label', playing ? '사시불공 소리 끄기' : '사시불공 소리 켜기');
-        };
-        button.addEventListener('click', async () => {
-          if (!audio.paused) { audio.pause(); setPlaying(false); return; }
-          try { await audio.play(); setPlaying(true); }
-          catch { setPlaying(false); button.setAttribute('aria-label', '재생 실패, 다시 누르세요'); }
-        });
-        audio.addEventListener('ended', () => setPlaying(false));
-        audio.addEventListener('pause', () => setPlaying(false));
-        window.addEventListener('pagehide', () => audio.pause());
-        section.append(audio, button);
       }
       section.classList.add('temple-view');
       section.querySelector('#view-title').hidden = true;
