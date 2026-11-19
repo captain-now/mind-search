@@ -193,7 +193,7 @@
       "warm"
     ],
     "delivery": "gentle, natural, unhurried",
-    "consistency": "use a consistent voice across Shorts",
+    "consistency": "use officialVoice.voiceId for future narration",
     "generation": "free Korean TTS candidate; engine and voice ID to be selected after quality test",
     "status": "approved-voice-style-not-yet-synthesized",
     "mixing": "background music lower than narration",
@@ -205,11 +205,21 @@
       "language": "ko",
       "gender": "female",
       "style": "warm, gentle, calm Korean narration",
-      "selectionStatus": "provisionally_selected_pending_actual_script_audition",
+      "selectionStatus": "superseded_by_verified_AI_Heogongjang_voice",
       "recommendedPace": "slightly slower than normal",
       "generationStatus": "not_integrated",
       "integrationNote": "Current connected Runway generate_speech accepts preset voice names only, not this library voiceId. Use a compatible TTS API or integration accepting voiceId; do not substitute another voice without approval.",
       "previewUrl": "https://runway-static-assets.s3.amazonaws.com/public-model-resources/pier-pledge/voice/7oLyBHyhxAjrctX6ZQlw/e6792d8eb16daa640089db8cf074ce92c9485cdf95dd60b3776c0415a11b803c.mp3"
+    },
+    "officialVoice": {
+      "name": "AI 허공장",
+      "provider": "ElevenLabs",
+      "voiceId": "1qPUYRc2lNaqheT3BAnq",
+      "language": "ko",
+      "gender": "female",
+      "description": "음높이가 살짝 낮고, 말끝에 은은한 울림이 남는 또렷한 한국어 여성 음성.",
+      "status": "verified_in_connected_voice_library",
+      "previewUrl": "https://storage.googleapis.com/eleven-public-prod/database/workspace/14d75b66e53c48cda339a13a17a7bb02/voices/1qPUYRc2lNaqheT3BAnq/33d570cf-99d6-4c2d-b766-53199df7ad47.mp3"
     }
   },
   "firstPublishedShort": {
@@ -284,14 +294,14 @@
       "receive_and_preserve_full_original_text",
       "generate_one_still_image_with_AI_Heogongjang",
       "pause_and_request_user_image_approval",
-      "only_after_approval_generate_Bomisori_narration_for_entire_original",
+      "only_after_approval_generate_official_AI_Heogongjang_voice_narration_for_entire_original",
       "add_verbatim_Korean_subtitles_and_faithful_English_translation",
       "assemble_static_image_audio_subtitles_music",
       "human_review",
       "publish_only_after_explicit_approval"
     ],
-    "narrationVoiceId": "7oLyBHyhxAjrctX6ZQlw",
-    "narrationIntegrationStatus": "pending_compatible_TTS_provider"
+    "narrationVoiceId": "1qPUYRc2lNaqheT3BAnq",
+    "narrationIntegrationStatus": "official voice found; end-to-end TTS/video workflow not yet verified"
   },
   "editorialPolicy": {
     "originalTextPreservation": "strict_verbatim",
