@@ -90,6 +90,18 @@
       background: #35231a;
     }
     .temple-view img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .sugwangam-sasi {
+      position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+      z-index: 4; min-height: 48px; width: min(68%, 320px);
+      border: 2px solid #e6b95e; border-radius: 999px;
+      background: linear-gradient(180deg, #722278, #43094f);
+      color: #fff7eb; box-shadow: 0 3px 8px #1c0b1699;
+      font: 800 clamp(19px, 5vw, 28px)/1.2 "Gowun Batang", serif;
+      cursor: pointer;
+    }
+    .sugwangam-sasi:focus-visible { outline: 3px solid white; outline-offset: 3px; }
+    .sugwangam-sasi[aria-pressed="true"] { background: linear-gradient(180deg, #9851a0, #572060); }
+
     .temple-motion {
       position: relative;
       width: 100%;
@@ -1296,6 +1308,30 @@
         view.replaceWith(scene);
       } else {
         view.replaceWith(image);
+      }
+      if (hall.name === '수광암') {
+        const audio = document.createElement('audio');
+        audio.preload = 'none';
+        audio.src = 'https://raw.githubusercontent.com/captain-now/NOW-Mindfulness-Web/main/audio/%EC%82%AC%EC%8B%9C%EC%98%88%EB%B6%88_%EC%99%84%EC%A0%84%EC%95%95%EC%B6%95%EB%B3%B8_25MB%EC%9D%B4%ED%95%98.opus';
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'sugwangam-sasi';
+        button.textContent = '🪷 사시불공 🪷';
+        button.setAttribute('aria-label', '사시불공 소리 켜기');
+        button.setAttribute('aria-pressed', 'false');
+        const setPlaying = playing => {
+          button.setAttribute('aria-pressed', String(playing));
+          button.setAttribute('aria-label', playing ? '사시불공 소리 끄기' : '사시불공 소리 켜기');
+        };
+        button.addEventListener('click', async () => {
+          if (!audio.paused) { audio.pause(); setPlaying(false); return; }
+          try { await audio.play(); setPlaying(true); }
+          catch { setPlaying(false); button.setAttribute('aria-label', '재생 실패, 다시 누르세요'); }
+        });
+        audio.addEventListener('ended', () => setPlaying(false));
+        audio.addEventListener('pause', () => setPlaying(false));
+        window.addEventListener('pagehide', () => audio.pause());
+        section.append(audio, button);
       }
       section.classList.add('temple-view');
       section.querySelector('#view-title').hidden = true;
