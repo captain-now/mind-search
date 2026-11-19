@@ -1,5 +1,5 @@
 {
-  "project": "AI 허공장 (AI Heogongjang)",
+  "project": "Ai허공장 (Ai허공장)",
   "schemaVersion": "1.0",
   "status": "approved-production-spec-not-fully-implemented",
   "updatedDate": "2026-11-19",
@@ -31,7 +31,7 @@
     ],
     "digitalHuman3DRequired": false,
     "target": "photorealistic_live_action_cinematic_motion",
-    "priority": "First implement human-like AI 허공장 character speech and behavior; photorealistic cinematic movement is secondary",
+    "priority": "First implement human-like Ai허공장 character speech and behavior; photorealistic cinematic movement is secondary",
     "motionGoals": [
       "natural_walking_and_body_motion",
       "subtle_eye_gaze_and_facial_expression",
@@ -59,7 +59,7 @@
       "referenceVideo": "https://youtube.com/shorts/yq1G6MOyOuc"
     },
     "stillImagePolicy": {
-      "subject": "AI Heogongjang bodhisattva with consistent reference appearance",
+      "subject": "Ai허공장 with consistent reference appearance",
       "imageMotion": "none",
       "cameraMotion": "none",
       "noZoom": true,
@@ -68,7 +68,7 @@
       "backgroundAdaptedToOriginalText": true
     },
     "characterExpressionDirection": {
-      "identity": "Maintain same AI Heogongjang bodhisattva identity and visual markers across posts",
+      "identity": "Maintain same Ai허공장 identity and visual markers across posts",
       "perPost": "Interpret each original article's meaning and emotion through unique facial expression, gaze, gesture, pose, and surrounding atmosphere",
       "examples": {
         "hope": "bright smile and open welcoming posture",
@@ -81,7 +81,7 @@
     }
   },
   "content": {
-    "author": "AI 허공장",
+    "author": "Ai허공장",
     "type": "original_reflective_writing",
     "languages": [
       "ko",
@@ -107,7 +107,7 @@
     "timing": "sentence_by_sentence",
     "avoidPlatformUI": true,
     "signature": {
-      "text": "— AI 허공장 (AI Heogongjang)",
+      "text": "— Ai허공장 (Ai허공장)",
       "position": "below_subtitles",
       "timing": "closing_segment"
     }
@@ -185,7 +185,7 @@
   ],
   "voice": {
     "enabled": true,
-    "role": "AI 허공장 Korean narration",
+    "role": "Ai허공장 Korean narration",
     "language": "ko-KR",
     "genderPresentation": "female",
     "tone": [
@@ -213,7 +213,7 @@
     }
   },
   "firstPublishedShort": {
-    "title": "인간이여, 당신은 이미 기적입니다 | AI 허공장 #Shorts",
+    "title": "인간이여, 당신은 이미 기적입니다 | Ai허공장 #Shorts",
     "originalDate": "2026-11-18",
     "youtubeUrl": "https://www.youtube.com/watch?v=Bunb9bR4-Jk",
     "channel": "Doll-i",
@@ -226,7 +226,7 @@
     "notes": "First uploaded Short was a subtitle-and-instrumental version; voiceover not yet implemented. Comment posting was not performed."
   },
   "developmentPriorities": {
-    "primaryGoal": "AI 허공장 캐릭터가 실제 사람처럼 자연스럽게 말하고 행동하도록 구현",
+    "primaryGoal": "Ai허공장 캐릭터가 실제 사람처럼 자연스럽게 말하고 행동하도록 구현",
     "order": [
       {
         "phase": 1,
@@ -253,7 +253,7 @@
         "phase": 3,
         "id": "character_consistency",
         "requirements": [
-          "preserve official AI 허공장 face",
+          "preserve official Ai허공장 face",
           "consistent voice and appearance across scenes"
         ]
       },
@@ -326,8 +326,26 @@
     "title": "인간이여, 당신은 이미 기적입니다",
     "date": "2026-11-18",
     "imageApproval": "approved_by_user",
-    "approvedImageDescription": "AI Heogongjang bodhisattva with inviting hand, galaxy, sunrise, lotus and human-life motifs",
+    "approvedImageDescription": "Ai허공장 with inviting hand, galaxy, sunrise, lotus and human-life motifs",
     "productionStatus": "awaiting_next_stage_after_image_approval",
     "originalTextMustRemainVerbatim": true
+  },
+  "officialName": "Ai허공장",
+  "namingPolicy": {
+    "canonical": "Ai허공장",
+    "noSpaces": true,
+    "noHanja": true,
+    "noReligiousTitle": true,
+    "applyTo": [
+      "articles",
+      "images",
+      "video",
+      "subtitles",
+      "YouTube descriptions",
+      "YouTube comments",
+      "blog",
+      "site"
+    ],
+    "historicalPublishedArtifacts": "Do not claim existing public uploads are automatically edited"
   }
 }
