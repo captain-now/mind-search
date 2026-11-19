@@ -1309,10 +1309,10 @@
       } else {
         view.replaceWith(image);
       }
-      if (hall.name === '대웅전' || hall.name === '수광암') {
+      if (hall.name === '수광암') {
         const audio = document.createElement('audio');
         audio.preload = 'none';
-        audio.src = hall.name === '수광암' ? './assets/temple/chant/sukwangam.opus' : 'https://raw.githubusercontent.com/captain-now/NOW-Mindfulness-Web/main/audio/%EC%82%AC%EC%8B%9C%EC%98%88%EB%B6%88_%EC%99%84%EC%A0%84%EC%95%95%EC%B6%95%EB%B3%B8_25MB%EC%9D%B4%ED%95%98.opus';
+        audio.src = './assets/temple/chant/sukwangam.opus';
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'sugwangam-sasi';
@@ -1375,7 +1375,7 @@
         const memorial = hallId === 'muryangsujeon' || hallId === 'jijangjeon';
         enableSeatNames(plan, '좌복', memorial, fixedSeatsByHall.get(hallId));
         const tracks = hallChants[hallId];
-        if (tracks && hallId !== 'daeungjeon') addHallChants(interior, tracks, { middleButton });
+        if (tracks) addHallChants(interior, tracks, { middleButton });
 
         if (hallId === 'jijangjeon') addJijangChapterPicker(interior);
         const backLink = seating.querySelector('.home-return');
