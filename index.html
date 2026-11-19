@@ -1221,4 +1221,43 @@ apply();observer.observe(document.body,{childList:true,subtree:true,characterDat
   setInterval(updateDailyQuote,60000);
 })();
 </script>
+
+<script id="now-visitor-counter">
+/* Counts begin at installation. These are browser visits, not verified unique people. */
+(function(){
+  const api='https://countapi.mileshilliard.com/api/v1/';
+  const prefix='captain-now_mind-search_home_20261120_';
+  const totalKey=prefix+'total';
+  const todayNode=document.getElementById('visit-today');
+  const totalNode=document.getElementById('visit-total');
+  if(!todayNode||!totalNode)return;
+  const date=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  const dayKey=prefix+'day_'+date.replace(/[^0-9]/g,'');
+  const fmt=n=>Number(n).toLocaleString('ko-KR');
+  function storageGet(key){try{return localStorage.getItem(key)}catch(e){try{return sessionStorage.getItem(key)}catch(_){return null}}}
+  function storageSet(key,value){try{localStorage.setItem(key,value)}catch(e){try{sessionStorage.setItem(key,value)}catch(_){}}}
+  async function request(method,key){
+    const res=await fetch(api+method+'/'+encodeURIComponent(key),{cache:'no-store'});
+    if(method==='get'&&res.status===404)return 0;
+    if(!res.ok)throw new Error('Visitor counter unavailable');
+    const data=await res.json();
+    const value=Number(data.value);
+    if(!Number.isSafeInteger(value)||value<0)throw new Error('Invalid visitor count');
+    return value;
+  }
+  async function update(key,node,seenKey){
+    try{
+      const counted=storageGet(seenKey)==='1';
+      const value=await request(counted?'get':'hit',key);
+      if(!counted)storageSet(seenKey,'1');
+      node.textContent=fmt(value);
+    }catch(err){
+      try{node.textContent=fmt(await request('get',key))}catch(_){node.textContent='—'}
+      console.warn('Visitor statistics temporarily unavailable',err);
+    }
+  }
+  update(totalKey,totalNode,prefix+'counted_total');
+  update(dayKey,todayNode,prefix+'counted_'+dayKey);
+})();
+</script>
 </body></html>
