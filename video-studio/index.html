@@ -1,6 +1,37 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI 허공장 | 10초 영상 스튜디오</title>
+<script type="application/json" id="heogongjang-digital-human-spec">
+{
+  "version": "2.0-design-goals",
+  "status": "requirements-saved-not-implemented",
+  "identity": {
+    "character": "AI 허공장",
+    "appearance": "공식 고정 얼굴, 흰색·남색 미래형 한복, 이마의 무한대 상징",
+    "consistency": ["얼굴", "기본 의상", "목소리"],
+    "disclosure": "AI 디지털 휴먼임을 명확히 표시"
+  },
+  "target": {"durationSeconds": 10, "aspectRatio": "9:16", "targetResolution": "1080x1920", "fps": 30, "preferredOutput": "MP4"},
+  "animationGoals": {
+    "face": ["정밀 한국어 립싱크", "자연스러운 눈 깜빡임", "시선", "감정 표정", "고개 움직임"],
+    "body": ["합장", "인사", "손 동작", "자연스러운 몸 움직임"],
+    "hair": ["바람에 따른 흔들림", "고개 회전 후 지연 반응", "관성 및 감쇠"],
+    "clothing": ["소매와 옷자락의 바람 반응", "몸 움직임에 따른 천의 지연 반응", "관성 및 감쇠"],
+    "environment": ["나뭇잎 흔들림", "구름과 안개 이동", "햇빛 및 그림자 변화"],
+    "audio": ["고정된 한국어 음색", "감정과 억양", "발화 시점과 입술의 동기화"],
+    "synchronization": "얼굴·몸·머리카락·의상·배경·음성을 동일한 타임라인에서 제어"
+  },
+  "developmentOrder": [
+    "공식 캐릭터 및 음성 고정",
+    "10초 음성·정밀 립싱크 검증",
+    "표정·눈·머리·몸 움직임",
+    "머리카락·의상 물리 움직임",
+    "배경 자연 애니메이션 및 조명",
+    "합성·1080x1920 MP4 출력·품질 검증"
+  ],
+  "currentLimitations": ["현재 엔진은 음성 파일 기반 녹화와 음성 반응 시각 효과만 제공", "정밀 립싱크·물리 시뮬레이션·실시간 디지털 휴먼은 미구현"]
+}
+</script>
 <style>
 :root{font-family:system-ui,'Noto Sans KR',sans-serif;color-scheme:dark}body{margin:0;background:#0b1426;color:#e9f1ff}main{max-width:920px;margin:auto;padding:20px}h1{font-size:1.55rem}p,small{color:#c1cce1;line-height:1.6}.layout{display:grid;grid-template-columns:minmax(240px,340px) 1fr;gap:24px}@media(max-width:720px){.layout{grid-template-columns:1fr}}canvas{width:100%;max-width:340px;aspect-ratio:9/16;border-radius:18px;background:#172a46}section{background:#17243a;border:1px solid #31405c;border-radius:16px;padding:16px;margin-bottom:14px}label{display:block;margin:12px 0 6px;font-weight:600}input,textarea,button{box-sizing:border-box;width:100%;font:inherit;border-radius:10px;padding:10px}input,textarea{background:#0c192d;border:1px solid #52617a;color:white}button{background:#8fc9f7;border:0;color:#102039;font-weight:700;margin-top:10px;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}a{color:#9edaff}#status{min-height:40px;white-space:pre-wrap}.sub{font-size:.85rem}video{max-width:100%;margin-top:12px}
 </style></head><body><main><h1>🎬 AI 허공장 · 10초 영상 스튜디오</h1><p>브라우저에서 실행하는 독립 영상 엔진입니다. 기존 홈페이지 기능을 변경하지 않습니다.</p>
