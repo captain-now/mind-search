@@ -1,0 +1,49 @@
+name: Heogongjang website operations check
+on:
+  schedule:
+    - cron: '35 15 * * *' # 00:35 Asia/Seoul
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check public sites and accessibility basics
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import urllib.request, urllib.error, re, json, os, subprocess, datetime, sys
+          sites = {
+            'Mind Search': 'https://captain-now.github.io/mind-search/',
+            'NOW Mindfulness': 'https://captain-now.github.io/NOW-Mindfulness-Web/',
+            'NOWMS information': 'https://captain-now.github.io/mind-search/nowms.html'
+          }
+          errors=[]; notes=[]
+          for name,url in sites.items():
+            try:
+              req=urllib.request.Request(url,headers={'User-Agent':'Heogongjang-HealthCheck/1.0'})
+              with urllib.request.urlopen(req,timeout=25) as r:
+                body=r.read(1200000).decode('utf-8','replace')
+                status=r.status
+              if status!=200 or len(body)<100: errors.append(f'{name}: HTTP {status} or unexpectedly short page')
+              if name=='Mind Search':
+                if not re.search(r'<title[^>]*>[^<]+',body,re.I): errors.append('Mind Search: missing page title')
+                if not re.search(r'<meta[^>]+name=["\x27]description',body,re.I): notes.append('Mind Search: missing meta description')
+                if 'nowms' not in body.lower(): notes.append('Mind Search: NOWMS link not found in HTML')
+              notes.append(f'{name}: HTTP {status}, {len(body)} chars')
+            except Exception as e: errors.append(f'{name}: {type(e).__name__}: {e}')
+          report='# 허공장 홈페이지 운영 점검\n\n'+ '\n'.join('- '+s for s in notes+errors)+'\n'
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f: f.write(report)
+          if errors:
+            title='[허공장 자동 점검] 홈페이지 접근 장애'
+            query=subprocess.run(['gh','issue','list','--repo',os.environ['GH_REPO'],'--state','open','--search',title,'--json','title'],capture_output=True,text=True)
+            existing=json.loads(query.stdout or '[]') if query.returncode==0 else []
+            if not any(x.get('title')==title for x in existing):
+              subprocess.run(['gh','issue','create','--repo',os.environ['GH_REPO'],'--title',title,'--body',report],check=True)
+            sys.exit(1)
+          PY
