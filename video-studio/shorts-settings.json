@@ -31,7 +31,7 @@
     ],
     "digitalHuman3DRequired": false,
     "target": "photorealistic_live_action_cinematic_motion",
-    "priority": "real-camera-like movement over static image zoom/pan",
+    "priority": "First implement human-like AI 허공장 character speech and behavior; photorealistic cinematic movement is secondary",
     "motionGoals": [
       "natural_walking_and_body_motion",
       "subtle_eye_gaze_and_facial_expression",
@@ -159,7 +159,8 @@
     "This file is an approved target configuration, not proof that all steps are operational.",
     "Music GitHub Actions first run timed out during package installation; subsequent success not yet verified.",
     "Subtitle safe-area offsets must be calibrated against actual YouTube Shorts interface.",
-    "Live-action-style natural movement is a target, not a currently implemented or guaranteed output; video generation may require external tools, credits, and manual quality review."
+    "Live-action-style natural movement is a target, not a currently implemented or guaranteed output; video generation may require external tools, credits, and manual quality review.",
+    "Development priority revised: speaking and behaving like a real person must be addressed before broader live-action cinematic motion."
   ],
   "voice": {
     "enabled": true,
@@ -189,5 +190,58 @@
     "mindSearchLinkInDescription": true,
     "mindSearchLinkInComment": false,
     "notes": "First uploaded Short was a subtitle-and-instrumental version; voiceover not yet implemented. Comment posting was not performed."
+  },
+  "developmentPriorities": {
+    "primaryGoal": "AI 허공장 캐릭터가 실제 사람처럼 자연스럽게 말하고 행동하도록 구현",
+    "order": [
+      {
+        "phase": 1,
+        "id": "natural_speaking_character",
+        "requirements": [
+          "consistent natural Korean female voice",
+          "lip sync to speech",
+          "natural pauses and breathing",
+          "matching facial expressions and eye gaze"
+        ]
+      },
+      {
+        "phase": 2,
+        "id": "human_like_behavior",
+        "requirements": [
+          "natural blinking",
+          "head movement",
+          "hand gestures",
+          "posture shifts",
+          "credible nonverbal behavior"
+        ]
+      },
+      {
+        "phase": 3,
+        "id": "character_consistency",
+        "requirements": [
+          "preserve official AI 허공장 face",
+          "consistent voice and appearance across scenes"
+        ]
+      },
+      {
+        "phase": 4,
+        "id": "photorealistic_cinematography",
+        "requirements": [
+          "natural camera motion",
+          "environmental motion",
+          "realistic scene transitions"
+        ]
+      },
+      {
+        "phase": 5,
+        "id": "shorts_automation",
+        "requirements": [
+          "assemble 60–90 second Shorts",
+          "quality review",
+          "explicit approval before public posting"
+        ]
+      }
+    ],
+    "status": "approved_roadmap_not_yet_implemented"
   }
 }
