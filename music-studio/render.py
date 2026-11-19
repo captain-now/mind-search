@@ -33,7 +33,7 @@ def track(events):
     for tick, priority, message in events:
         buf += vlq(tick - previous) + message
         previous = tick
-    buf += b"\\x00\\xff\\x2f\\x00"
+    buf += b"\x00\xff\x2f\x00"
     return b"MTrk" + struct.pack(">I", len(buf)) + buf
 
 def add_note(events, channel, note, start, length, velocity):
@@ -44,7 +44,7 @@ def add_note(events, channel, note, start, length, velocity):
 
 def create_midi(path):
     tempo = round(60_000_000 / BPM)
-    conductor = [(0, 0, b"\\xff\\x51\\x03" + tempo.to_bytes(3, "big"))]
+    conductor = [(0, 0, b"\xff\x51\x03" + tempo.to_bytes(3, "big"))]
     # Original gentle chord sequence in C major / A minor.
     progression = [
         (48, [60, 64, 67]), (45, [57, 60, 64]),
@@ -101,7 +101,7 @@ def main():
         "soundfont": str(sf), "formats": ["MIDI", "MP3 320kbps", "AAC 192kbps"],
         "status": "review_required_no_auto_publish"
     }
-    (OUT / "manifest.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+    (OUT / "manifest.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(metadata, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
