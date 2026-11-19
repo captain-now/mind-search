@@ -29,7 +29,35 @@
       "slow_pan",
       "soft_transitions"
     ],
-    "digitalHuman3DRequired": false
+    "digitalHuman3DRequired": false,
+    "target": "photorealistic_live_action_cinematic_motion",
+    "priority": "real-camera-like movement over static image zoom/pan",
+    "motionGoals": [
+      "natural_walking_and_body_motion",
+      "subtle_eye_gaze_and_facial_expression",
+      "realistic_hand_gestures",
+      "physically_plausible_hair_and_clothing_motion",
+      "natural_wind_sunlight_and_foliage",
+      "smooth_camera_tracking_and_dolly_motion",
+      "consistent_character_identity_across_shots"
+    ],
+    "productionApproach": {
+      "method": "AI-generated live-action-style moving clips",
+      "shotDurationSeconds": {
+        "min": 5,
+        "max": 10
+      },
+      "assembly": "combine reviewed clips into a 60–90 second vertical Short",
+      "qualityChecks": [
+        "avoid warped hands/faces",
+        "avoid unnatural body motion",
+        "maintain subject continuity",
+        "verify believable camera motion",
+        "review each clip before assembly"
+      ],
+      "status": "approved_target_not_yet_automated_or_quality_verified",
+      "referenceVideo": "https://youtube.com/shorts/yq1G6MOyOuc"
+    }
   },
   "content": {
     "author": "AI 허공장",
@@ -90,6 +118,7 @@
     "select_background",
     "compose_and_render_instrumental",
     "render_bilingual_lower_subtitles",
+    "generate_and_review_photorealistic_motion_clips",
     "compose_vertical_mp4",
     "quality_review",
     "save_for_approval"
@@ -129,7 +158,8 @@
   "implementationNotes": [
     "This file is an approved target configuration, not proof that all steps are operational.",
     "Music GitHub Actions first run timed out during package installation; subsequent success not yet verified.",
-    "Subtitle safe-area offsets must be calibrated against actual YouTube Shorts interface."
+    "Subtitle safe-area offsets must be calibrated against actual YouTube Shorts interface.",
+    "Live-action-style natural movement is a target, not a currently implemented or guaranteed output; video generation may require external tools, credits, and manual quality review."
   ],
   "voice": {
     "enabled": true,
