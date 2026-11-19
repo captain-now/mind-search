@@ -1,0 +1,36 @@
+name: AI Heogongjang Bomisori TTS
+on:
+  workflow_dispatch:
+    inputs:
+      narration:
+        description: '한국어 낭독문 (실행 로그에 남을 수 있으므로 비밀 정보 입력 금지)'
+        required: true
+        type: string
+jobs:
+  synthesize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check secret exists
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          if [ -z "$ELEVENLABS_API_KEY" ]; then
+            echo "::error::Set ELEVENLABS_API_KEY in repository Actions secrets."
+            exit 1
+          fi
+      - name: Prepare narration
+        env:
+          NARRATION: ${{ inputs.narration }}
+        run: |
+          printf '%s' "$NARRATION" > narration.txt
+      - name: Generate Bomisori MP3
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: python3 video-studio/bomisori_tts.py --text-file narration.txt --output output/bomisori.mp3
+      - name: Upload MP3
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-heogongjang-bomisori
+          path: output/bomisori.mp3
+          retention-days: 7
