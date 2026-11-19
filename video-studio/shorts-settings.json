@@ -57,6 +57,15 @@
       ],
       "status": "approved_target_not_yet_automated_or_quality_verified",
       "referenceVideo": "https://youtube.com/shorts/yq1G6MOyOuc"
+    },
+    "stillImagePolicy": {
+      "subject": "AI Heogongjang bodhisattva with consistent reference appearance",
+      "imageMotion": "none",
+      "cameraMotion": "none",
+      "noZoom": true,
+      "noPan": true,
+      "noAnimatedPortrait": true,
+      "backgroundAdaptedToOriginalText": true
     }
   },
   "content": {
@@ -258,18 +267,47 @@
     "status": "approved_roadmap_not_yet_implemented"
   },
   "interimProductionWorkflow": {
-    "status": "approved_not_fully_automated",
+    "status": "image_first_user_approval_required",
     "steps": [
-      "receive_original_korean_text",
-      "generate_one_photorealistic_image_matching_text",
-      "animate_image_into_video",
-      "generate_korean_narration_with_approved_voice",
-      "add_korean_and_english_subtitles",
-      "add_original_calm_instrumental_music",
-      "human_review_and_approval",
-      "publish_to_Doll-i_channel"
+      "receive_and_preserve_full_original_text",
+      "generate_one_still_image_with_AI_Heogongjang",
+      "pause_and_request_user_image_approval",
+      "only_after_approval_generate_Bomisori_narration_for_entire_original",
+      "add_verbatim_Korean_subtitles_and_faithful_English_translation",
+      "assemble_static_image_audio_subtitles_music",
+      "human_review",
+      "publish_only_after_explicit_approval"
     ],
     "narrationVoiceId": "7oLyBHyhxAjrctX6ZQlw",
     "narrationIntegrationStatus": "pending_compatible_TTS_provider"
+  },
+  "editorialPolicy": {
+    "originalTextPreservation": "strict_verbatim",
+    "preserve": [
+      "title",
+      "date",
+      "all_body_text",
+      "paragraph_order",
+      "punctuation",
+      "signature"
+    ],
+    "noSummarization": true,
+    "noParaphrasing": true,
+    "noOmissions": true,
+    "ifLong": "extend_video_duration_or_request_approval_for_multiple_parts;never_shortcut_original",
+    "effectiveImmediately": true
+  },
+  "productionApprovalGates": {
+    "onNewText": "generate_one_AI_Heogongjang_bodhisattva_still_image_first",
+    "imageApprovalRequired": true,
+    "stopAfterImageUntilUserApproves": true,
+    "doNotStartBeforeApproval": [
+      "TTS_generation",
+      "subtitles",
+      "video_assembly",
+      "publishing"
+    ],
+    "postImageApproval": "use_full_verbatim_original_text_for_narration_and_subtitles",
+    "publicationApprovalRequired": true
   }
 }
