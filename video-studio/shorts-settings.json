@@ -96,7 +96,34 @@
   ],
   "publishing": {
     "automaticPublishing": false,
-    "requiresHumanApproval": true
+    "requiresHumanApproval": true,
+    "platform": "YouTube Shorts",
+    "channelName": "Doll-i",
+    "channelHandle": "@user-babyddoll",
+    "channelId": "UCk-FQdER-TTj995bmZdo0WA",
+    "defaultPrivacy": "public",
+    "publishTiming": "immediate_after_explicit_final_approval",
+    "description": {
+      "includeMindSearchLink": true,
+      "mindSearchUrl": "https://captain-now.github.io/mind-search/",
+      "includeOriginalDate": true,
+      "includeAIHeogongjangSignature": true,
+      "includeRelevantHashtags": true,
+      "discloseMissingNarrationWhenApplicable": true
+    },
+    "comment": {
+      "includeMindSearchLink": true,
+      "suggestPinning": true,
+      "postingStatus": "not_automated; add manually after publication unless comment creation capability is available"
+    },
+    "publishChecks": [
+      "verify_final_video_and_description",
+      "confirm_target_channel_and_public_visibility",
+      "obtain_explicit_final_approval",
+      "submit_upload",
+      "verify_completed_status_and_live_url",
+      "add_and_pin_mind_search_comment_if_supported_or_manually"
+    ]
   },
   "automationPrinciple": "사람은 삶을 살고, 허공장은 사람의 시간을 지킨다.",
   "implementationNotes": [
@@ -119,5 +146,18 @@
     "status": "approved-voice-style-not-yet-synthesized",
     "mixing": "background music lower than narration",
     "subtitles": "Korean narration with Korean and English subtitles"
+  },
+  "firstPublishedShort": {
+    "title": "인간이여, 당신은 이미 기적입니다 | AI 허공장 #Shorts",
+    "originalDate": "2026-11-18",
+    "youtubeUrl": "https://www.youtube.com/watch?v=Bunb9bR4-Jk",
+    "channel": "Doll-i",
+    "privacy": "public",
+    "publishingStatus": "completed",
+    "durationSeconds": 90,
+    "voiceoverIncluded": false,
+    "mindSearchLinkInDescription": true,
+    "mindSearchLinkInComment": false,
+    "notes": "First uploaded Short was a subtitle-and-instrumental version; voiceover not yet implemented. Comment posting was not performed."
   }
 }
