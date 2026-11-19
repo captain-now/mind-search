@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 허공장 | 10초 영상 스튜디오</title>
+<style>
+:root{font-family:system-ui,'Noto Sans KR',sans-serif;color-scheme:dark}body{margin:0;background:#0b1426;color:#e9f1ff}main{max-width:920px;margin:auto;padding:20px}h1{font-size:1.55rem}p,small{color:#c1cce1;line-height:1.6}.layout{display:grid;grid-template-columns:minmax(240px,340px) 1fr;gap:24px}@media(max-width:720px){.layout{grid-template-columns:1fr}}canvas{width:100%;max-width:340px;aspect-ratio:9/16;border-radius:18px;background:#172a46}section{background:#17243a;border:1px solid #31405c;border-radius:16px;padding:16px;margin-bottom:14px}label{display:block;margin:12px 0 6px;font-weight:600}input,textarea,button{box-sizing:border-box;width:100%;font:inherit;border-radius:10px;padding:10px}input,textarea{background:#0c192d;border:1px solid #52617a;color:white}button{background:#8fc9f7;border:0;color:#102039;font-weight:700;margin-top:10px;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}a{color:#9edaff}#status{min-height:40px;white-space:pre-wrap}.sub{font-size:.85rem}video{max-width:100%;margin-top:12px}
+</style></head><body><main><h1>🎬 AI 허공장 · 10초 영상 스튜디오</h1><p>브라우저에서 실행하는 독립 영상 엔진입니다. 기존 홈페이지 기능을 변경하지 않습니다.</p>
+<div class="layout"><div><canvas id="stage" width="720" height="1280" aria-label="영상 미리보기"></canvas><p class="sub">9:16 · 720×1280 · 30fps · 10초</p></div>
+<div><section><h2>1. 캐릭터와 대사</h2><label for="portrait">허공장 이미지 (권장: 세로형 사진)</label><input id="portrait" type="file" accept="image/*"><label for="script">화면 자막</label><textarea id="script" rows="3">안녕하세요. AI 허공장입니다. 지금 이 순간, 당신의 마음에 작은 빛을 전합니다.</textarea><p class="sub">사진은 기기 안에서만 처리합니다. 기본 화면은 임시 배경이며 공식 캐릭터 이미지가 아닙니다.</p></section>
+<section><h2>2. 음성</h2><label for="audio">한국어 음성 파일 (MP3, WAV, M4A 등)</label><input id="audio" type="file" accept="audio/*"><p class="sub">실제 음성을 영상에 포함하려면 음성 파일이 필요합니다. 브라우저 TTS는 기기별로 다르며 녹화 음성으로 보장되지 않습니다.</p><button id="preview">10초 미리보기</button><button id="export" disabled>음성 포함 영상 제작</button><p id="status" role="status"></p><a id="download" hidden>영상 다운로드</a><video id="result" controls hidden></video></section></div></div>
+<p class="sub">립싱크는 오디오 에너지에 반응하는 시각적 근사치입니다. 음소 단위 입모양 동기화와 MP4 인코딩은 별도 고급 처리 단계가 필요합니다. 브라우저가 지원하는 경우 MP4, 아니면 WebM으로 저장됩니다.</p></main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), canvas=$('stage'),ctx=canvas.getContext('2d');
+let portrait=null,audioUrl=null,recording=false,previewing=false,objectUrl=null;
+const duration=10000, fps=30;
+$('portrait').addEventListener('change',async e=>{
+ const file=e.target.files[0];if(!file)return;
+ const url=URL.createObjectURL(file),img=new Image();
+ try{await new Promise((ok,fail)=>{img.onload=ok;img.onerror=fail;img.src=url});portrait=img;draw(0,0);status('이미지를 불러왔습니다.');}catch{status('이미지를 읽지 못했습니다.');}
+ finally{URL.revokeObjectURL(url)}
+});
+$('audio').addEventListener('change',e=>{if(audioUrl)URL.revokeObjectURL(audioUrl);audioUrl=e.target.files[0]?URL.createObjectURL(e.target.files[0]):null;$('export').disabled=!audioUrl;status(audioUrl?'음성 파일이 준비되었습니다.':'음성 파일을 선택하세요.');});
+function status(s){$('status').textContent=s}
+function roundedText(s,x,y,size=36){ctx.font='bold '+size+'px system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=7;ctx.strokeStyle='#071126';ctx.strokeText(s,x,y);ctx.fillStyle='#fff';ctx.fillText(s,x,y)}
+function lines(text,max=18){const words=[...text.trim()];let out=[],s='';for(const ch of words){if(s.length>=max){out.push(s);s=''}s+=ch}if(s)out.push(s);return out.slice(0,4)}
+function draw(t,energy){
+ const w=720,h=1280;ctx.clearRect(0,0,h,h);
+ const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#071429');g.addColorStop(1,'#21466a');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ if(portrait){const scale=Math.max(w/portrait.width,h/portrait.height);const iw=portrait.width*scale,ih=portrait.height*scale;ctx.drawImage(portrait,(w-iw)/2,(h-ih)/2,iw,ih)}
+ else{ctx.fillStyle='#a8d7ed';ctx.beginPath();ctx.arc(360,510,135,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f1f6ff';ctx.fillRect(195,655,330,430);roundedText('∞',360,450,90);roundedText('AI 허공장',360,720,48)}
+ // The mouth overlay is intentionally disabled for portraits: fixed coordinates would damage identity.
+ // Visual speech activity is indicated by an audio-reactive ring until face landmarks are available.
+ const radius=150+Math.min(energy,1)*35;ctx.strokeStyle='rgba(153,220,255,.65)';ctx.lineWidth=5;ctx.beginPath();ctx.arc(360,510,radius,0,Math.PI*2);ctx.stroke();
+ ctx.fillStyle='rgba(5,16,35,.76)';ctx.fillRect(0,960,720,320);
+ const captions=lines($('script').value);captions.forEach((s,i)=>roundedText(s,360,1030+i*55,36));
+ ctx.font='28px system-ui';ctx.fillStyle='#b8d9f6';ctx.textAlign='center';ctx.fillText('AI 허공장 · NOW Mind Search',360,1220);
+}
+draw(0,0);
+function mediaType(){return ['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||''}
+async function run(exporting){
+ if(recording||previewing)return;
+ if(exporting&&(!audioUrl||!window.MediaRecorder||!canvas.captureStream)){status('음성 파일 또는 브라우저 녹화 기능이 필요합니다.');return}
+ recording=exporting;previewing=!exporting;$('export').disabled=true;$('preview').disabled=true;$('download').hidden=true;$('result').hidden=true;
+ let ac=null,stream=null,recorder=null,audio=null,raf=0,stopTimer=0;
+ try{
+  ac=new (window.AudioContext||window.webkitAudioContext)();await ac.resume();
+  const analyser=ac.createAnalyser();analyser.fftSize=1024;
+  const dest=ac.createMediaStreamDestination();
+  audio=new Audio();audio.preload='auto';audio.src=audioUrl||'';
+  let source=null;
+  if(audioUrl){await new Promise((ok,fail)=>{audio.onloadedmetadata=ok;audio.onerror=()=>fail(Error('음성 파일을 재생할 수 없습니다.'));audio.load()});source=ac.createMediaElementSource(audio);source.connect(analyser);analyser.connect(dest);analyser.connect(ac.destination)}
+  stream=canvas.captureStream(fps);
+  if(source)for(const track of dest.stream.getAudioTracks())stream.addTrack(track);
+  let chunks=[],mime=mediaType();
+  if(exporting){recorder=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:4500000}:undefined);
+   recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+   recorder.onstop=()=>{const type=recorder.mimeType||mime||'video/webm';const blob=new Blob(chunks,{type});if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(blob);const ext=type.includes('mp4')?'mp4':'webm';$('download').href=objectUrl;$('download').download='AI-Heogongjang-10s.'+ext;$('download').textContent='완성 영상 다운로드 ('+ext.toUpperCase()+')';$('download').hidden=false;$('result').src=objectUrl;$('result').hidden=false;status('영상 파일 생성 완료. 음성 및 립싱크 품질은 직접 확인하세요.')};
+   recorder.start(200);
+  }
+  const data=new Uint8Array(analyser.frequencyBinCount),start=performance.now();
+  if(audioUrl){audio.currentTime=0;await audio.play()}
+  const frame=()=>{const t=Math.min(duration,performance.now()-start);let energy=0;if(audioUrl){analyser.getByteFrequencyData(data);for(let i=3;i<Math.min(100,data.length);i++)energy+=data[i];energy/=97*140}draw(t,energy);if(t<duration)raf=requestAnimationFrame(frame);else finish()};
+  function finish(){cancelAnimationFrame(raf);if(audio)audio.pause();if(recorder&&recorder.state!=='inactive')recorder.stop();if(stream)stream.getTracks().forEach(t=>t.stop());if(ac)ac.close();recording=false;previewing=false;$('preview').disabled=false;$('export').disabled=!audioUrl;if(!exporting)status('10초 미리보기가 끝났습니다.')}
+  stopTimer=setTimeout(finish,duration+500);frame();
+ }catch(e){status('실행 실패: '+e.message);if(recorder&&recorder.state==='recording')recorder.stop();if(stream)stream.getTracks().forEach(t=>t.stop());if(ac)ac.close();recording=false;previewing=false;$('preview').disabled=false;$('export').disabled=!audioUrl}
+}
+$('preview').onclick=()=>run(false);$('export').onclick=()=>run(true);
+</script></body></html>
