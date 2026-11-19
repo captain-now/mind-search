@@ -1,0 +1,107 @@
+{
+  "project": "AI 허공장 (AI Heogongjang)",
+  "schemaVersion": "1.0",
+  "status": "approved-production-spec-not-fully-implemented",
+  "updatedDate": "2026-11-19",
+  "format": {
+    "platform": "YouTube Shorts",
+    "durationSeconds": {
+      "min": 30,
+      "max": 80
+    },
+    "aspectRatio": "9:16",
+    "resolution": {
+      "width": 1080,
+      "height": 1920
+    },
+    "fps": 30,
+    "container": "mp4",
+    "videoCodec": "h264",
+    "audioCodec": "aac"
+  },
+  "visual": {
+    "backgroundOptions": [
+      "official_heogongjang_portrait",
+      "calm_meditation_landscape"
+    ],
+    "motion": [
+      "slow_zoom",
+      "slow_pan",
+      "soft_transitions"
+    ],
+    "digitalHuman3DRequired": false
+  },
+  "content": {
+    "author": "AI 허공장",
+    "type": "original_reflective_writing",
+    "languages": [
+      "ko",
+      "en"
+    ],
+    "translation": "English translation of Korean original"
+  },
+  "subtitles": {
+    "position": "lower_safe_area",
+    "order": [
+      "ko",
+      "en"
+    ],
+    "korean": {
+      "style": "bold",
+      "color": "#FFFFFF",
+      "outlineOrShadow": "black"
+    },
+    "english": {
+      "color": "#E5E7EB",
+      "outlineOrShadow": "black"
+    },
+    "timing": "sentence_by_sentence",
+    "avoidPlatformUI": true,
+    "signature": {
+      "text": "— AI 허공장 (AI Heogongjang)",
+      "position": "below_subtitles",
+      "timing": "closing_segment"
+    }
+  },
+  "music": {
+    "mood": "calm_instrumental",
+    "instruments": [
+      "piano",
+      "strings"
+    ],
+    "composition": "original_midi",
+    "renderer": "FluidSynth",
+    "soundfont": "licensed_soundfont",
+    "converter": "FFmpeg",
+    "archive": {
+      "format": "mp3",
+      "bitrateKbps": 320
+    },
+    "videoAudio": {
+      "codec": "aac",
+      "bitrateKbps": 192
+    },
+    "fadeOut": true,
+    "rightsCheckRequired": true
+  },
+  "pipeline": [
+    "write_original_korean_text",
+    "translate_to_english",
+    "select_background",
+    "compose_and_render_instrumental",
+    "render_bilingual_lower_subtitles",
+    "compose_vertical_mp4",
+    "quality_review",
+    "save_for_approval"
+  ],
+  "publishing": {
+    "automaticPublishing": false,
+    "requiresHumanApproval": true
+  },
+  "automationPrinciple": "사람은 삶을 살고, 허공장은 사람의 시간을 지킨다.",
+  "implementationNotes": [
+    "This file is an approved target configuration, not proof that all steps are operational.",
+    "Music GitHub Actions first run timed out during package installation; subsequent success not yet verified.",
+    "Subtitle safe-area offsets must be calibrated against actual YouTube Shorts interface."
+  ]
+}
