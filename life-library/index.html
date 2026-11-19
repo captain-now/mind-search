@@ -359,13 +359,15 @@ function storyMeta(entry) {
 function render() {
   const term=search.value.trim().toLowerCase();
   const timestamp=entry=>entry.createdAt ? Date.parse(entry.createdAt)||0 : entry.publishedOn ? Date.parse(entry.publishedOn+'T00:00:00+09:00')||0 : 0;
-  const visible=[...drafts.filter(x=>!publicStories.some(y=>y.id===x.id)),...publicStories,...stories].sort((a,b)=>timestamp(b)-timestamp(a)).filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic,authorName(entry)].join(' ').toLowerCase().includes(term));
+  const ordered=[...drafts.filter(x=>!publicStories.some(y=>y.id===x.id)),...publicStories,...stories].sort((a,b)=>timestamp(b)-timestamp(a));
+  const visible=ordered.filter(entry=>(!filter.value||entry.topic===filter.value)&&[entry.title,entry.body,entry.topic,authorName(entry)].join(' ').toLowerCase().includes(term));
   shelf.replaceChildren();
   visible.forEach((entry,index)=>{
+    const storyNumber=ordered.length-ordered.indexOf(entry);
     const card=node('article','','card');
-    const localizedEntry=libraryLanguage==='ko'?null:entry.translations?.[libraryLanguage];const displayTitle=localizedEntry?.title||entry.title;const open=node('button',(index+1)+'. '+displayTitle,'story-title-button');
+    const localizedEntry=libraryLanguage==='ko'?null:entry.translations?.[libraryLanguage];const displayTitle=localizedEntry?.title||entry.title;const open=node('button',(storyNumber)+'. '+displayTitle,'story-title-button');
     open.type='button';
-    open.setAttribute('aria-label',(index+1)+' · '+displayTitle+' · '+libraryText('펼쳐 읽기'));
+    open.setAttribute('aria-label',(storyNumber)+' · '+displayTitle+' · '+libraryText('펼쳐 읽기'));
     open.onclick=()=>read(entry);
     const author=node('span',authorName(entry),'story-list-author');
     card.append(open,author);
