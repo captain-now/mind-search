@@ -176,7 +176,20 @@
     "generation": "free Korean TTS candidate; engine and voice ID to be selected after quality test",
     "status": "approved-voice-style-not-yet-synthesized",
     "mixing": "background music lower than narration",
-    "subtitles": "Korean narration with Korean and English subtitles"
+    "subtitles": "Korean narration with Korean and English subtitles",
+    "temporaryOfficialVoice": {
+      "name": "Bomisori - Warm and Clear",
+      "provider": "ElevenLabs voice library via Runway search",
+      "voiceId": "7oLyBHyhxAjrctX6ZQlw",
+      "language": "ko",
+      "gender": "female",
+      "style": "warm, gentle, calm Korean narration",
+      "selectionStatus": "provisionally_selected_pending_actual_script_audition",
+      "recommendedPace": "slightly slower than normal",
+      "generationStatus": "not_integrated",
+      "integrationNote": "Current connected Runway generate_speech accepts preset voice names only, not this library voiceId. Use a compatible TTS API or integration accepting voiceId; do not substitute another voice without approval.",
+      "previewUrl": "https://runway-static-assets.s3.amazonaws.com/public-model-resources/pier-pledge/voice/7oLyBHyhxAjrctX6ZQlw/e6792d8eb16daa640089db8cf074ce92c9485cdf95dd60b3776c0415a11b803c.mp3"
+    }
   },
   "firstPublishedShort": {
     "title": "인간이여, 당신은 이미 기적입니다 | AI 허공장 #Shorts",
@@ -243,5 +256,20 @@
       }
     ],
     "status": "approved_roadmap_not_yet_implemented"
+  },
+  "interimProductionWorkflow": {
+    "status": "approved_not_fully_automated",
+    "steps": [
+      "receive_original_korean_text",
+      "generate_one_photorealistic_image_matching_text",
+      "animate_image_into_video",
+      "generate_korean_narration_with_approved_voice",
+      "add_korean_and_english_subtitles",
+      "add_original_calm_instrumental_music",
+      "human_review_and_approval",
+      "publish_to_Doll-i_channel"
+    ],
+    "narrationVoiceId": "7oLyBHyhxAjrctX6ZQlw",
+    "narrationIntegrationStatus": "pending_compatible_TTS_provider"
   }
 }
