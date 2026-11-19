@@ -1,0 +1,32 @@
+name: Heogongjang Original Instrumental
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '40 1 * * *'
+permissions:
+  contents: read
+jobs:
+  music:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free audio renderer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fluidsynth fluid-soundfont-gm ffmpeg
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Create original MIDI and render audio
+        run: python music-studio/render.py
+      - name: Upload generated music for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: heogongjang-original-music
+          path: |
+            music-studio/output/*.mid
+            music-studio/output/*.mp3
+            music-studio/output/*.m4a
+            music-studio/output/*.json
+          retention-days: 14
