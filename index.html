@@ -228,6 +228,22 @@ html[lang="en"] .life-library-banner strong > span:first-child::after{content:""
   .top .container > .header-quick-links .now-symbol{font-size:1.1em}
 }
 
+/* Match the vertical size of all three rows to the writings/prayer banners. */
+.top .container > .header-quick-links > :is(.naver-blog-link,.youtube-channel-banner,.now-link),
+.home-banners > :is(.humanity-writing-banner,.prayer-banner){
+  box-sizing:border-box;
+  height:108px;
+  min-height:108px;
+}
+.top .container > .header-quick-links > .now-link{grid-column:1 / -1}
+@media(max-width:620px){
+  .top .container > .header-quick-links > :is(.naver-blog-link,.youtube-channel-banner,.now-link),
+  .home-banners > :is(.humanity-writing-banner,.prayer-banner){
+    height:104px;
+    min-height:104px;
+  }
+}
+
 /* Humanity writing banner replaces the retired Life Library homepage banner. */
 .home-banners > .humanity-writing-banner{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 10px;border-radius:14px;border:1px solid #b99a6c;background:linear-gradient(112deg,#f8edcf,#e8d3a7);color:#47371f;text-decoration:none;box-shadow:0 3px 9px #6c4c2924;text-align:center}
 .humanity-writing-banner strong{font-size:clamp(.92rem,2.6vw,1.15rem);line-height:1.35;word-break:keep-all}
