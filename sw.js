@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'mind-search-pwa-';
-const CACHE = CACHE_PREFIX + 'homepage-v3-0-ko-only-20261118-b';
+const CACHE = CACHE_PREFIX + 'homepage-v3-0-quote-metrics-20261120';
 const HOME_PAGES = ['./', './index.html'];
 const ASSETS = [
   './ui-language.js?v=ko-only-1',
