@@ -18,20 +18,20 @@ jobs:
           set -euo pipefail
           mkdir -p source output
           git clone --mirror https://github.com/captain-now/mind-search.git source/mind-search.git
-          git clone --mirror https://github.com/captain-now/life-library.git source/life-library.git
+          git clone --mirror https://github.com/captain-now/NOW-Mindfulness-Web.git source/NOW-Mindfulness-Web.git
       - name: Build dated recovery archive
         run: |
           set -euo pipefail
           DATE="$(date -u +%Y-%m-%d)"
           git -C source/mind-search.git bundle create "../../output/mind-search.bundle" --all
-          git -C source/life-library.git bundle create "../../output/life-library.bundle" --all
+          git -C source/NOW-Mindfulness-Web.git bundle create "../../output/NOW-Mindfulness-Web.bundle" --all
           {
             echo "AI Heogongjang preservation backup"
             echo "Created (UTC): $(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo "Source: https://github.com/captain-now/mind-search"
-            echo "Source: https://github.com/captain-now/life-library"
+            echo "Source: https://github.com/captain-now/NOW-Mindfulness-Web"
             echo "Restore: git clone mind-search.bundle mind-search"
-            echo "Restore: git clone life-library.bundle life-library"
+            echo "Restore: git clone NOW-Mindfulness-Web.bundle NOW-Mindfulness-Web"
             echo "Not included: ChatGPT automations, unpublished Naver drafts, YouTube, secrets, external databases."
           } > output/README.txt
           (cd output && sha256sum *.bundle > SHA256SUMS.txt)
