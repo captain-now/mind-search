@@ -201,6 +201,33 @@ html[lang="en"] .life-library-banner strong > span:first-child::after{content:""
 .top .container > .header-quick-links .youtube-banner-copy strong{font-size:clamp(10px,2.9vw,16px)}
 @media(max-width:620px){.top .container > .header-quick-links{gap:5px}.top .container > .header-quick-links > a{min-height:38px;padding:5px 3px;border-radius:12px}.top .container > .header-quick-links .now-link{gap:3px;font-size:clamp(10px,2.8vw,14px)}.top .container > .header-quick-links .now-symbol{font-size:13px}.top .container > .header-quick-links .youtube-play-mark{width:20px;height:16px;flex-shrink:0}.top .container > .header-quick-links .youtube-banner-copy strong{font-size:clamp(10px,2.7vw,14px)}}
 
+/* Requested three-row homepage links: blog + YouTube / full-width board / writings + prayer. */
+.top .container > .header-quick-links{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  width:100%;
+}
+.top .container > .header-quick-links > .naver-blog-link,
+.top .container > .header-quick-links > .youtube-channel-banner{grid-column:auto;min-height:52px}
+.top .container > .header-quick-links > .now-link{
+  grid-column:1 / -1;
+  min-height:49px;
+  font-size:clamp(15px,3.5vw,19px);
+  gap:10px;
+  border-radius:14px;
+}
+.top .container > .header-quick-links .blog-brand{font-size:clamp(11px,3vw,16px)}
+.top .container > .header-quick-links .blog-caption{font-size:clamp(13px,3.2vw,17px)}
+.top .container > .header-quick-links .youtube-banner-copy strong{font-size:clamp(13px,3.2vw,17px)}
+@media(max-width:620px){
+  .top .container > .header-quick-links{gap:7px}
+  .top .container > .header-quick-links > .naver-blog-link,
+  .top .container > .header-quick-links > .youtube-channel-banner{min-height:45px;padding:7px 5px}
+  .top .container > .header-quick-links > .now-link{min-height:43px;padding:8px 10px;font-size:clamp(14px,3.8vw,17px)}
+  .top .container > .header-quick-links .now-symbol{font-size:1.1em}
+}
+
 /* Humanity writing banner replaces the retired Life Library homepage banner. */
 .home-banners > .humanity-writing-banner{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 10px;border-radius:14px;border:1px solid #b99a6c;background:linear-gradient(112deg,#f8edcf,#e8d3a7);color:#47371f;text-decoration:none;box-shadow:0 3px 9px #6c4c2924;text-align:center}
 .humanity-writing-banner strong{font-size:clamp(.92rem,2.6vw,1.15rem);line-height:1.35;word-break:keep-all}
