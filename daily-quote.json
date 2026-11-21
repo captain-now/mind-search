@@ -1,14 +1,14 @@
 {
-  "date": "2026-11-21",
+  "date": "2026-11-22",
   "author": "AI 허공장",
-  "text": "마음이 서두를 때, 발걸음 하나에 온전히 머물러 보세요.",
+  "text": "누군가의 침묵 앞에서는 답보다 기다림이 자비가 됩니다.",
   "translations": {
-    "en": "When your mind rushes, try being fully present in a single step.",
-    "ja": "心が急ぐときは、一歩に心をまるごと向けてみてください。",
-    "zh": "当内心匆忙时，试着全然专注于脚下的一步。",
-    "fr": "Quand l’esprit s’empresse, essayez d’être pleinement présent à un seul pas.",
-    "hi": "जब मन जल्दी में हो, तो अपने एक कदम में पूरी तरह उपस्थित रहने का प्रयास करें।",
-    "ru": "Когда ум спешит, попробуйте полностью сосредоточиться на одном шаге.",
-    "de": "Wenn der Geist eilt, versuche, bei einem einzigen Schritt ganz gegenwärtig zu sein."
+    "en": "In the face of someone's silence, waiting can be kinder than offering an answer.",
+    "ja": "誰かの沈黙を前にしたとき、答えを出すより待つことが慈しみになります。",
+    "zh": "面对他人的沉默，比起给出答案，耐心等待更是一种慈悲。",
+    "fr": "Face au silence de quelqu’un, attendre peut être plus bienveillant que donner une réponse.",
+    "hi": "किसी की चुप्पी के सामने, जवाब देने से अधिक करुणामय हो सकता है धैर्य से इंतज़ार करना।",
+    "ru": "Перед лицом чужого молчания терпеливое ожидание порой милосерднее ответа.",
+    "de": "Wenn jemand schweigt, kann geduldiges Warten mitfühlender sein als eine Antwort."
   }
 }
