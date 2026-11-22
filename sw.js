@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'mind-search-pwa-';
-const CACHE = CACHE_PREFIX + 'sugwangam-restored-20261123';
+const CACHE = CACHE_PREFIX + 'navigation-refresh-20261123';
 const HOME_PAGES = ['./', './index.html'];
 const ASSETS = [
   './ui-language.js?v=ko-only-1',
@@ -40,9 +40,9 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
   const scope = self.registration.scope;
-  const isHomeNavigation = request.mode === 'navigate' &&
-    HOME_PAGES.some(path => url.pathname === new URL(path, scope).pathname);
-  const network = isHomeNavigation ? fetch(request, {cache: 'reload'}) : fetch(request);
+  // Always revalidate HTML navigations against the network, bypassing stale HTTP cache.
+  const isNavigation = request.mode === 'navigate';
+  const network = isNavigation ? fetch(request, {cache: 'reload'}) : fetch(request);
   event.respondWith(network.then(response => {
     if (response.ok && url.href.startsWith(scope)) {
       const copy = response.clone();
@@ -53,10 +53,6 @@ self.addEventListener('fetch', event => {
     const cache = await caches.open(CACHE);
     const hit = await cache.match(request);
     if (hit) return hit;
-    if (request.mode === 'navigate') {
-      const home = await cache.match('./index.html');
-      if (home) return home;
-    }
     return Response.error();
   }));
 });
