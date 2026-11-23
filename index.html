@@ -615,6 +615,37 @@ main .bottom .ai-credit{text-align:center!important}
  overflow-wrap:normal!important;
  text-align:center!important;
 }
+</style><style id="mindfulness-video-slot-20261123">
+/* Keep the existing mindfulness link and reserve one quarter-width adjacent video slot. */
+.top .container > nav.nav.mindfulness-home-nav {
+ display:grid!important;
+ grid-template-columns:minmax(0,4fr) minmax(0,1fr)!important;
+ gap:8px!important;
+ align-items:stretch!important;
+}
+.top .container > nav.nav.mindfulness-home-nav > a.mindfulness-home-banner {
+ width:100%!important;
+ min-width:0!important;
+}
+.top .container > nav.nav.mindfulness-home-nav > .mindfulness-video-placeholder {
+ box-sizing:border-box;
+ display:block;
+ min-width:0;
+ min-height:64px;
+ border:1px solid #85b9a4;
+ border-radius:16px;
+ background:linear-gradient(135deg,#e9f2ed,#dcebe3);
+ box-shadow:0 3px 10px #245b4030;
+ overflow:hidden;
+}
+@media(max-width:620px){
+ .top .container > nav.nav.mindfulness-home-nav {gap:6px!important}
+ .top .container > nav.nav.mindfulness-home-nav > a.mindfulness-home-banner {gap:5px!important;padding:8px 5px!important}
+ .top .container > nav.nav.mindfulness-home-nav .mindfulness-home-copy strong {font-size:clamp(15px,4.1vw,23px)!important}
+ .top .container > nav.nav.mindfulness-home-nav .mindfulness-home-copy small {font-size:clamp(9px,2.4vw,12px)!important}
+ .top .container > nav.nav.mindfulness-home-nav .mindfulness-home-icon {font-size:20px!important}
+ .top .container > nav.nav.mindfulness-home-nav .mindfulness-home-arrow {font-size:16px!important}
+}
 </style><style id="three-rows-exact-60px-20261120">
 /* Exactly 60px high: blog/YouTube, live board, writings/prayer. */
 .top .container > .header-quick-links > a.naver-blog-link,
@@ -767,6 +798,7 @@ main .daily-quote-below-hero #daily-quote-source{
 <span class="mindfulness-home-copy"><strong>NOW 마음챙김</strong><small>염불 · 참선 · 명상 · 일상실천</small></span>
 <span class="mindfulness-home-arrow" aria-hidden="true">↗</span>
 </a>
+<div class="mindfulness-video-placeholder" aria-label="동영상 배너 자리" title="동영상 게시 예정"></div>
 </nav><section class="hero" id="home"><div class="container"><div class="hero-visit-stats" aria-label="홈페이지 방문 통계"><span>👥 오늘 방문 횟수 <strong id="visit-today">—</strong></span><span class="hero-visit-divider" aria-hidden="true"></span><span>▥ 누적 방문 횟수 <strong id="visit-total">—</strong></span></div><small>NOW Mind Search · 마음의 탐구</small><h1>지금, 여기…<br>그것이 전부입니다.</h1><p>답을 찾기보다, 물음에 머무르는 순간.<br>당신의 삶은 이미 진행형입니다.</p></div></section><div class="home-banners">
 <a class="humanity-writing-banner" href="./heogongjang.html" aria-label="Ai허공장이 인류에게 남기는 글 열기">
   <span class="humanity-writing-icon" aria-hidden="true">📜</span>
