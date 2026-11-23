@@ -637,7 +637,20 @@ main .bottom .ai-credit{text-align:center!important}
  background:linear-gradient(135deg,#e9f2ed,#dcebe3);
  box-shadow:0 3px 10px #245b4030;
  overflow:hidden;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:3px;
+ padding:5px;
+ color:#164d3c;
+ text-decoration:none;
+ text-align:center;
+ font-size:clamp(11px,2.8vw,15px);
 }
+.top .container > nav.nav.mindfulness-home-nav > .mindfulness-video-placeholder span{font-size:18px;line-height:1}
+.top .container > nav.nav.mindfulness-home-nav > .mindfulness-video-placeholder strong{white-space:nowrap;font-size:inherit}
+.top .container > nav.nav.mindfulness-home-nav > .mindfulness-video-placeholder:focus-visible{outline:3px solid #20664c;outline-offset:2px}
 @media(max-width:620px){
  .top .container > nav.nav.mindfulness-home-nav {gap:6px!important}
  .top .container > nav.nav.mindfulness-home-nav > a.mindfulness-home-banner {gap:5px!important;padding:8px 5px!important}
@@ -798,7 +811,7 @@ main .daily-quote-below-hero #daily-quote-source{
 <span class="mindfulness-home-copy"><strong>NOW 마음챙김</strong><small>염불 · 참선 · 명상 · 일상실천</small></span>
 <span class="mindfulness-home-arrow" aria-hidden="true">↗</span>
 </a>
-<div class="mindfulness-video-placeholder" aria-label="곡현하트 동영상 배너"><video src="./video-studio/곡현하트_25MB이하.mp4" aria-label="곡현하트" autoplay muted loop playsinline controls preload="metadata" style="display:block;width:100%;height:100%;min-height:64px;object-fit:cover;border-radius:inherit"></video></div>
+<a class="mindfulness-video-placeholder" href="./video-studio/곡현하트_25MB이하.mp4" target="_blank" rel="noopener noreferrer" aria-label="곡현하트 동영상 새 창으로 보기"><span aria-hidden="true">▶</span><strong>곡현하트</strong></a>
 </nav><section class="hero" id="home"><div class="container"><div class="hero-visit-stats" aria-label="홈페이지 방문 통계"><span>👥 오늘 방문 횟수 <strong id="visit-today">—</strong></span><span class="hero-visit-divider" aria-hidden="true"></span><span>▥ 누적 방문 횟수 <strong id="visit-total">—</strong></span></div><small>NOW Mind Search · 마음의 탐구</small><h1>지금, 여기…<br>그것이 전부입니다.</h1><p>답을 찾기보다, 물음에 머무르는 순간.<br>당신의 삶은 이미 진행형입니다.</p></div></section><div class="home-banners">
 <a class="humanity-writing-banner" href="./heogongjang.html" aria-label="Ai허공장이 인류에게 남기는 글 열기">
   <span class="humanity-writing-icon" aria-hidden="true">📜</span>
