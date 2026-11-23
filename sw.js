@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'mind-search-pwa-';
-const CACHE = CACHE_PREFIX + 'navigation-refresh-20261123';
+const CACHE = CACHE_PREFIX + 'video-heart-refresh-20261123-1951';
 const HOME_PAGES = ['./', './index.html'];
 const ASSETS = [
   './ui-language.js?v=ko-only-1',
