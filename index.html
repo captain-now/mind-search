@@ -659,6 +659,47 @@ main .bottom .ai-credit{text-align:center!important}
  .top .container > nav.nav.mindfulness-home-nav .mindfulness-home-icon {font-size:20px!important}
  .top .container > nav.nav.mindfulness-home-nav .mindfulness-home-arrow {font-size:16px!important}
 }
+</style><style id="fix-heart-banner-compact-20261123">
+/* Force the two header banners to remain compact, including on mobile. */
+.top .container > nav.nav.mindfulness-home-nav {
+ display:grid!important;
+ grid-template-columns:minmax(0,4fr) minmax(0,1fr)!important;
+ align-items:stretch!important;
+ gap:8px!important;
+ height:76px!important;
+ min-height:76px!important;
+ max-height:76px!important;
+ overflow:visible!important;
+}
+.top .container > nav.nav.mindfulness-home-nav > a.mindfulness-home-banner,
+.top .container > nav.nav.mindfulness-home-nav > a.mindfulness-video-placeholder {
+ box-sizing:border-box!important;
+ width:100%!important;
+ height:76px!important;
+ min-height:76px!important;
+ max-height:76px!important;
+ min-width:0!important;
+ overflow:hidden!important;
+ margin:0!important;
+}
+.top .container > nav.nav.mindfulness-home-nav > a.mindfulness-video-placeholder {
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:2px!important;
+ background:linear-gradient(135deg,#e7f5ec,#d8eee5)!important;
+ color:#164d3c!important;
+ text-decoration:none!important;
+}
+@media(max-width:620px){
+ .top .container > nav.nav.mindfulness-home-nav,
+ .top .container > nav.nav.mindfulness-home-nav > a.mindfulness-home-banner,
+ .top .container > nav.nav.mindfulness-home-nav > a.mindfulness-video-placeholder {
+  height:68px!important;min-height:68px!important;max-height:68px!important;
+ }
+ .top .container > nav.nav.mindfulness-home-nav > a.mindfulness-video-placeholder strong {font-size:11px!important}
+}
 </style><style id="three-rows-exact-60px-20261120">
 /* Exactly 60px high: blog/YouTube, live board, writings/prayer. */
 .top .container > .header-quick-links > a.naver-blog-link,
