@@ -257,6 +257,9 @@
     :is(.daeungjeon, .muryangsujeon) .chant-controls { flex-wrap: nowrap; }
     :is(.daeungjeon, .muryangsujeon) .chant-controls button { min-width: 0; }
     :is(.daeungjeon, .muryangsujeon) .chant-button-size { white-space: nowrap; }
+    .sugwangam .hall-chant { width: min(390px, calc(100vw - 24px)); }
+    .sugwangam .chant-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .sugwangam .chant-controls button { min-width: 0; }
     .gwaneumjeon .hall-chant { width: 360px; }
     .gwaneumjeon .chant-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .gwaneumjeon .chant-controls button { min-width: 0; }
@@ -538,7 +541,11 @@
         ]
       ],
       "jijangjeon": [[null, "관음시식", null, { audioSource: "./assets/temple/chant/gwaneum-sisik.m4a", loop: false }], ["jijang", "지장보살", null, { audioSource: "https://raw.githubusercontent.com/captain-now/NOW-Mindfulness-Web/main/audio/%EC%A7%80%EC%9E%A5%EB%B3%B4%EC%82%B4%EC%A0%95%EA%B7%BC.m4a" }]],
-      "sugwangam": [[null, "사시불공", null, { audioSource: "./assets/temple/chant/sukwangam.opus", loop: false }]],
+      "sugwangam": [
+        [null, "부모은중경"],
+        [null, "사시불공", null, { audioSource: "./assets/temple/chant/sukwangam.opus", loop: false }],
+        [null, "천지팔양신주경"]
+      ],
       "samseonggak": [
         [
           "sansin",
