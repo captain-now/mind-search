@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'mind-search-pwa-';
-const CACHE = CACHE_PREFIX + 'video-heart-refresh-20261123-1951';
+const CACHE = CACHE_PREFIX + 'video-heart-refresh-20261126-2';
 const HOME_PAGES = ['./', './index.html'];
 const ASSETS = [
   './ui-language.js?v=ko-only-1',
@@ -40,6 +40,11 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
   const scope = self.registration.scope;
+  // Video catalogs and media must never fall back to deleted cached content.
+  if (/\/(heart\.html|heart-videos\.json)$|\/video-studio\/|\.mp4$/i.test(url.pathname)) {
+    event.respondWith(fetch(request, {cache: 'no-store'}));
+    return;
+  }
   // Always revalidate HTML navigations against the network, bypassing stale HTTP cache.
   const isNavigation = request.mode === 'navigate';
   const network = isNavigation ? fetch(request, {cache: 'reload'}) : fetch(request);
