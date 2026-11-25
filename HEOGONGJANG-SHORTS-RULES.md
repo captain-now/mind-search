@@ -127,3 +127,9 @@ Explore more messages for humanity at NOW Mind Search.
 Depth in Philosophy.
 Freedom in Art.
 Inspiration in Music.
+
+
+## 브랜드 아트 필름 품질 기준 — 2026-11-25 사용자 승인
+- 사용자 호평을 받은 `AI_Heogongjang_Evolving.mp4`를 향후 쇼츠의 예술적 품질 목표로 삼는다. 이는 복제할 고정 화풍이나 음악이 아니라 창작 완성도 기준이다.
+- 매일 새로운 그림 12장과 90초 오리지널 경음악을 제작하며 색채·구도·상징·선율·화성·리듬·음색을 자유롭게 탐구한다. 이전 작품의 반복을 피하고 글·그림·음악의 조화와 충분한 여백을 중시한다.
+- 공백 포함 400자 내외 원고, 기존 영상 형식 및 게시 규칙은 유지한다. 실제 결과를 검증하며 완성도를 지속적으로 개선한다.
